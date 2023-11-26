@@ -1,0 +1,1930 @@
+Op order: Right Left Down Up 
+Solving STP Korf instance [2 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2984825 generated
+STP 1 ALG 0 weight 1.20 Nodes 1016596 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [2 of 100] using DSD weight 1.200000
+STP 1 ALG 1 weight 1.20 Nodes 92837 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [2 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3010626 generated
+2000000 nodes expanded, 5991052 generated
+STP 1 ALG 2 weight 1.20 Nodes 2102419 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [2 of 100] using DSD weight 1.200000
+STP 1 ALG 3 weight 1.20 Nodes 338471 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [3 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2999228 generated
+2000000 nodes expanded, 5998363 generated
+3000000 nodes expanded, 8997765 generated
+4000000 nodes expanded, 12003108 generated
+STP 2 ALG 0 weight 1.20 Nodes 4334832 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [3 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3006326 generated
+STP 2 ALG 1 weight 1.20 Nodes 1705238 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [3 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3013284 generated
+2000000 nodes expanded, 6008764 generated
+3000000 nodes expanded, 9054176 generated
+4000000 nodes expanded, 12061042 generated
+5000000 nodes expanded, 15064113 generated
+6000000 nodes expanded, 18076367 generated
+7000000 nodes expanded, 21075754 generated
+8000000 nodes expanded, 24075642 generated
+9000000 nodes expanded, 27078900 generated
+10000000 nodes expanded, 30067299 generated
+10000000 nodes expanded, 30067299 generated
+STP 2 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [3 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2977900 generated
+STP 2 ALG 3 weight 1.20 Nodes 1715441 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [4 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2998409 generated
+2000000 nodes expanded, 5995172 generated
+3000000 nodes expanded, 8992156 generated
+4000000 nodes expanded, 11994153 generated
+STP 3 ALG 0 weight 1.20 Nodes 4129730 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [4 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3005720 generated
+STP 3 ALG 1 weight 1.20 Nodes 1448869 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [4 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3002120 generated
+2000000 nodes expanded, 6004262 generated
+3000000 nodes expanded, 9025200 generated
+4000000 nodes expanded, 12032988 generated
+5000000 nodes expanded, 15028647 generated
+STP 3 ALG 2 weight 1.20 Nodes 5890450 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [4 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2973131 generated
+STP 3 ALG 3 weight 1.20 Nodes 1610299 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [5 of 100] using DSD weight 1.200000
+STP 4 ALG 0 weight 1.20 Nodes 503150 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [5 of 100] using DSD weight 1.200000
+STP 4 ALG 1 weight 1.20 Nodes 70104 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [5 of 100] using DSD weight 1.200000
+STP 4 ALG 2 weight 1.20 Nodes 995153 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [5 of 100] using DSD weight 1.200000
+STP 4 ALG 3 weight 1.20 Nodes 70375 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [6 of 100] using DSD weight 1.200000
+STP 5 ALG 0 weight 1.20 Nodes 217336 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [6 of 100] using DSD weight 1.200000
+STP 5 ALG 1 weight 1.20 Nodes 309058 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [6 of 100] using DSD weight 1.200000
+STP 5 ALG 2 weight 1.20 Nodes 307590 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [6 of 100] using DSD weight 1.200000
+STP 5 ALG 3 weight 1.20 Nodes 367206 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [7 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3009450 generated
+2000000 nodes expanded, 6026380 generated
+3000000 nodes expanded, 9032513 generated
+4000000 nodes expanded, 12047878 generated
+STP 6 ALG 0 weight 1.20 Nodes 4200360 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [7 of 100] using DSD weight 1.200000
+STP 6 ALG 1 weight 1.20 Nodes 595122 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [7 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3017911 generated
+2000000 nodes expanded, 6037909 generated
+3000000 nodes expanded, 9047810 generated
+4000000 nodes expanded, 12044204 generated
+5000000 nodes expanded, 15095354 generated
+6000000 nodes expanded, 18133703 generated
+STP 6 ALG 2 weight 1.20 Nodes 6746360 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [7 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3009497 generated
+STP 6 ALG 3 weight 1.20 Nodes 1497882 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [8 of 100] using DSD weight 1.200000
+STP 7 ALG 0 weight 1.20 Nodes 990164 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [8 of 100] using DSD weight 1.200000
+STP 7 ALG 1 weight 1.20 Nodes 724270 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [8 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3024295 generated
+STP 7 ALG 2 weight 1.20 Nodes 1451037 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [8 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3018154 generated
+STP 7 ALG 3 weight 1.20 Nodes 1023355 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [9 of 100] using DSD weight 1.200000
+STP 8 ALG 0 weight 1.20 Nodes 253286 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [9 of 100] using DSD weight 1.200000
+STP 8 ALG 1 weight 1.20 Nodes 72113 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [9 of 100] using DSD weight 1.200000
+STP 8 ALG 2 weight 1.20 Nodes 273644 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [9 of 100] using DSD weight 1.200000
+STP 8 ALG 3 weight 1.20 Nodes 80820 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [10 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3014817 generated
+2000000 nodes expanded, 6024898 generated
+STP 9 ALG 0 weight 1.20 Nodes 2313789 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [10 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3001911 generated
+STP 9 ALG 1 weight 1.20 Nodes 1146578 path 62
+Op order: Right Left Down Up 
+Solving STP Korf instance [10 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3019887 generated
+2000000 nodes expanded, 6041557 generated
+3000000 nodes expanded, 9061089 generated
+4000000 nodes expanded, 12078080 generated
+5000000 nodes expanded, 15078618 generated
+6000000 nodes expanded, 18088932 generated
+7000000 nodes expanded, 21079646 generated
+8000000 nodes expanded, 24096281 generated
+9000000 nodes expanded, 27171679 generated
+10000000 nodes expanded, 30329896 generated
+10000000 nodes expanded, 30329896 generated
+STP 9 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [10 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3001917 generated
+2000000 nodes expanded, 6014700 generated
+STP 9 ALG 3 weight 1.20 Nodes 2316151 path 62
+Op order: Right Left Down Up 
+Solving STP Korf instance [11 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2977431 generated
+STP 10 ALG 0 weight 1.20 Nodes 1008653 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [11 of 100] using DSD weight 1.200000
+STP 10 ALG 1 weight 1.20 Nodes 144937 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [11 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993086 generated
+STP 10 ALG 2 weight 1.20 Nodes 1343220 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [11 of 100] using DSD weight 1.200000
+STP 10 ALG 3 weight 1.20 Nodes 320630 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [12 of 100] using DSD weight 1.200000
+STP 11 ALG 0 weight 1.20 Nodes 36114 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [12 of 100] using DSD weight 1.200000
+STP 11 ALG 1 weight 1.20 Nodes 33702 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [12 of 100] using DSD weight 1.200000
+STP 11 ALG 2 weight 1.20 Nodes 9812 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [12 of 100] using DSD weight 1.200000
+STP 11 ALG 3 weight 1.20 Nodes 31111 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [13 of 100] using DSD weight 1.200000
+STP 12 ALG 0 weight 1.20 Nodes 693161 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [13 of 100] using DSD weight 1.200000
+STP 12 ALG 1 weight 1.20 Nodes 330988 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [13 of 100] using DSD weight 1.200000
+STP 12 ALG 2 weight 1.20 Nodes 528992 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [13 of 100] using DSD weight 1.200000
+STP 12 ALG 3 weight 1.20 Nodes 657127 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [14 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2982934 generated
+2000000 nodes expanded, 5970896 generated
+3000000 nodes expanded, 8951088 generated
+4000000 nodes expanded, 11938161 generated
+5000000 nodes expanded, 14919145 generated
+6000000 nodes expanded, 17895457 generated
+7000000 nodes expanded, 20890314 generated
+8000000 nodes expanded, 23871481 generated
+9000000 nodes expanded, 26869579 generated
+10000000 nodes expanded, 29840360 generated
+10000000 nodes expanded, 29840360 generated
+STP 13 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [14 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2992216 generated
+2000000 nodes expanded, 5956115 generated
+3000000 nodes expanded, 8964382 generated
+4000000 nodes expanded, 11999583 generated
+5000000 nodes expanded, 14998234 generated
+6000000 nodes expanded, 17922560 generated
+7000000 nodes expanded, 20827686 generated
+8000000 nodes expanded, 23795823 generated
+9000000 nodes expanded, 26813155 generated
+STP 13 ALG 1 weight 1.20 Nodes 9106257 path 64
+Op order: Right Left Down Up 
+Solving STP Korf instance [14 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2995238 generated
+2000000 nodes expanded, 5976675 generated
+3000000 nodes expanded, 8994670 generated
+4000000 nodes expanded, 11987691 generated
+5000000 nodes expanded, 14973685 generated
+6000000 nodes expanded, 17968005 generated
+7000000 nodes expanded, 20932340 generated
+8000000 nodes expanded, 23913686 generated
+9000000 nodes expanded, 26908786 generated
+10000000 nodes expanded, 29868035 generated
+10000000 nodes expanded, 29868035 generated
+STP 13 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [14 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2975636 generated
+2000000 nodes expanded, 5949790 generated
+3000000 nodes expanded, 8933015 generated
+4000000 nodes expanded, 11898733 generated
+5000000 nodes expanded, 14851957 generated
+6000000 nodes expanded, 17778036 generated
+7000000 nodes expanded, 20767933 generated
+8000000 nodes expanded, 23782336 generated
+9000000 nodes expanded, 26793241 generated
+10000000 nodes expanded, 29789564 generated
+10000000 nodes expanded, 29789564 generated
+STP 13 ALG 3 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [15 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2936204 generated
+STP 14 ALG 0 weight 1.20 Nodes 1295213 path 63
+Op order: Right Left Down Up 
+Solving STP Korf instance [15 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2912272 generated
+STP 14 ALG 1 weight 1.20 Nodes 1125157 path 63
+Op order: Right Left Down Up 
+Solving STP Korf instance [15 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2956283 generated
+2000000 nodes expanded, 5913841 generated
+3000000 nodes expanded, 8869462 generated
+4000000 nodes expanded, 11817751 generated
+5000000 nodes expanded, 14770262 generated
+6000000 nodes expanded, 17770988 generated
+7000000 nodes expanded, 20829294 generated
+8000000 nodes expanded, 23759134 generated
+STP 14 ALG 2 weight 1.20 Nodes 8817771 path 63
+Op order: Right Left Down Up 
+Solving STP Korf instance [15 of 100] using DSD weight 1.200000
+STP 14 ALG 3 weight 1.20 Nodes 987050 path 63
+Op order: Right Left Down Up 
+Solving STP Korf instance [16 of 100] using DSD weight 1.200000
+STP 15 ALG 0 weight 1.20 Nodes 789672 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [16 of 100] using DSD weight 1.200000
+STP 15 ALG 1 weight 1.20 Nodes 266936 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [16 of 100] using DSD weight 1.200000
+STP 15 ALG 2 weight 1.20 Nodes 952492 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [16 of 100] using DSD weight 1.200000
+STP 15 ALG 3 weight 1.20 Nodes 557520 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [17 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2885419 generated
+2000000 nodes expanded, 5779177 generated
+3000000 nodes expanded, 8685597 generated
+4000000 nodes expanded, 11584982 generated
+5000000 nodes expanded, 14500916 generated
+6000000 nodes expanded, 17413798 generated
+7000000 nodes expanded, 20311121 generated
+8000000 nodes expanded, 23226185 generated
+9000000 nodes expanded, 26152396 generated
+10000000 nodes expanded, 29045048 generated
+10000000 nodes expanded, 29045048 generated
+STP 16 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [17 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2932207 generated
+2000000 nodes expanded, 5723364 generated
+3000000 nodes expanded, 8702434 generated
+4000000 nodes expanded, 11693158 generated
+5000000 nodes expanded, 14774386 generated
+6000000 nodes expanded, 17505647 generated
+7000000 nodes expanded, 20369602 generated
+8000000 nodes expanded, 23273947 generated
+9000000 nodes expanded, 26086808 generated
+10000000 nodes expanded, 28869073 generated
+10000000 nodes expanded, 28869073 generated
+STP 16 ALG 1 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [17 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2922693 generated
+2000000 nodes expanded, 5843310 generated
+3000000 nodes expanded, 8752492 generated
+4000000 nodes expanded, 11678387 generated
+5000000 nodes expanded, 14589416 generated
+6000000 nodes expanded, 17515215 generated
+7000000 nodes expanded, 20421846 generated
+8000000 nodes expanded, 23335464 generated
+9000000 nodes expanded, 26421754 generated
+10000000 nodes expanded, 29387580 generated
+10000000 nodes expanded, 29387580 generated
+STP 16 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [17 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2875758 generated
+2000000 nodes expanded, 5718630 generated
+3000000 nodes expanded, 8647815 generated
+4000000 nodes expanded, 11547915 generated
+5000000 nodes expanded, 14438964 generated
+6000000 nodes expanded, 17317071 generated
+7000000 nodes expanded, 20186999 generated
+8000000 nodes expanded, 23038924 generated
+9000000 nodes expanded, 25882160 generated
+10000000 nodes expanded, 28711688 generated
+10000000 nodes expanded, 28711688 generated
+STP 16 ALG 3 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [18 of 100] using DSD weight 1.200000
+STP 17 ALG 0 weight 1.20 Nodes 544978 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [18 of 100] using DSD weight 1.200000
+STP 17 ALG 1 weight 1.20 Nodes 89594 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [18 of 100] using DSD weight 1.200000
+STP 17 ALG 2 weight 1.20 Nodes 448738 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [18 of 100] using DSD weight 1.200000
+STP 17 ALG 3 weight 1.20 Nodes 206793 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [19 of 100] using DSD weight 1.200000
+STP 18 ALG 0 weight 1.20 Nodes 29751 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [19 of 100] using DSD weight 1.200000
+STP 18 ALG 1 weight 1.20 Nodes 8225 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [19 of 100] using DSD weight 1.200000
+STP 18 ALG 2 weight 1.20 Nodes 66856 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [19 of 100] using DSD weight 1.200000
+STP 18 ALG 3 weight 1.20 Nodes 20623 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [20 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3026153 generated
+STP 19 ALG 0 weight 1.20 Nodes 1134324 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [20 of 100] using DSD weight 1.200000
+STP 19 ALG 1 weight 1.20 Nodes 183933 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [20 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3044502 generated
+STP 19 ALG 2 weight 1.20 Nodes 1353846 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [20 of 100] using DSD weight 1.200000
+STP 19 ALG 3 weight 1.20 Nodes 472006 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [21 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2971260 generated
+2000000 nodes expanded, 5952001 generated
+3000000 nodes expanded, 8929354 generated
+STP 20 ALG 0 weight 1.20 Nodes 3663694 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [21 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2988743 generated
+STP 20 ALG 1 weight 1.20 Nodes 1541634 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [21 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2985357 generated
+2000000 nodes expanded, 5953513 generated
+3000000 nodes expanded, 8973288 generated
+STP 20 ALG 2 weight 1.20 Nodes 3332912 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [21 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2963501 generated
+STP 20 ALG 3 weight 1.20 Nodes 1436346 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [22 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3011048 generated
+2000000 nodes expanded, 6018961 generated
+3000000 nodes expanded, 9019092 generated
+4000000 nodes expanded, 12032067 generated
+STP 21 ALG 0 weight 1.20 Nodes 4868866 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [22 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3004527 generated
+STP 21 ALG 1 weight 1.20 Nodes 1264167 path 62
+Op order: Right Left Down Up 
+Solving STP Korf instance [22 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3018418 generated
+2000000 nodes expanded, 6041531 generated
+3000000 nodes expanded, 9050682 generated
+4000000 nodes expanded, 12048484 generated
+5000000 nodes expanded, 15053977 generated
+6000000 nodes expanded, 18069484 generated
+7000000 nodes expanded, 21153106 generated
+8000000 nodes expanded, 24198300 generated
+9000000 nodes expanded, 27211012 generated
+10000000 nodes expanded, 30183867 generated
+10000000 nodes expanded, 30183867 generated
+STP 21 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [22 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2999951 generated
+2000000 nodes expanded, 5996798 generated
+3000000 nodes expanded, 8953813 generated
+STP 21 ALG 3 weight 1.20 Nodes 3407476 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [23 of 100] using DSD weight 1.200000
+STP 22 ALG 0 weight 1.20 Nodes 747536 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [23 of 100] using DSD weight 1.200000
+STP 22 ALG 1 weight 1.20 Nodes 425955 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [23 of 100] using DSD weight 1.200000
+STP 22 ALG 2 weight 1.20 Nodes 832181 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [23 of 100] using DSD weight 1.200000
+STP 22 ALG 3 weight 1.20 Nodes 718499 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [24 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3005719 generated
+STP 23 ALG 0 weight 1.20 Nodes 1045693 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [24 of 100] using DSD weight 1.200000
+STP 23 ALG 1 weight 1.20 Nodes 351514 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [24 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3016786 generated
+2000000 nodes expanded, 6033812 generated
+3000000 nodes expanded, 9050787 generated
+STP 23 ALG 2 weight 1.20 Nodes 3898067 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [24 of 100] using DSD weight 1.200000
+STP 23 ALG 3 weight 1.20 Nodes 978018 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [25 of 100] using DSD weight 1.200000
+STP 24 ALG 0 weight 1.20 Nodes 939427 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [25 of 100] using DSD weight 1.200000
+STP 24 ALG 1 weight 1.20 Nodes 135868 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [25 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3018093 generated
+2000000 nodes expanded, 6017955 generated
+3000000 nodes expanded, 9010197 generated
+STP 24 ALG 2 weight 1.20 Nodes 3877902 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [25 of 100] using DSD weight 1.200000
+STP 24 ALG 3 weight 1.20 Nodes 442576 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [26 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2967896 generated
+2000000 nodes expanded, 5941462 generated
+3000000 nodes expanded, 8915854 generated
+4000000 nodes expanded, 11898170 generated
+STP 25 ALG 0 weight 1.20 Nodes 4233073 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [26 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2939531 generated
+STP 25 ALG 1 weight 1.20 Nodes 1318011 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [26 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2977679 generated
+2000000 nodes expanded, 5971384 generated
+3000000 nodes expanded, 8967464 generated
+4000000 nodes expanded, 11946906 generated
+5000000 nodes expanded, 14908310 generated
+6000000 nodes expanded, 17897560 generated
+7000000 nodes expanded, 20859332 generated
+8000000 nodes expanded, 23819734 generated
+9000000 nodes expanded, 26785318 generated
+10000000 nodes expanded, 29763414 generated
+10000000 nodes expanded, 29763414 generated
+STP 25 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [26 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2934602 generated
+2000000 nodes expanded, 5927719 generated
+3000000 nodes expanded, 8881998 generated
+4000000 nodes expanded, 11799466 generated
+STP 25 ALG 3 weight 1.20 Nodes 4189750 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [27 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3021398 generated
+2000000 nodes expanded, 6042290 generated
+3000000 nodes expanded, 9059966 generated
+STP 26 ALG 0 weight 1.20 Nodes 3342932 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [27 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3019678 generated
+STP 26 ALG 1 weight 1.20 Nodes 1011672 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [27 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3023015 generated
+2000000 nodes expanded, 6053459 generated
+3000000 nodes expanded, 9075625 generated
+4000000 nodes expanded, 12098885 generated
+5000000 nodes expanded, 15118332 generated
+6000000 nodes expanded, 18125946 generated
+7000000 nodes expanded, 21165422 generated
+STP 26 ALG 2 weight 1.20 Nodes 7849376 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [27 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3023062 generated
+2000000 nodes expanded, 6043725 generated
+3000000 nodes expanded, 9036838 generated
+STP 26 ALG 3 weight 1.20 Nodes 3062718 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [28 of 100] using DSD weight 1.200000
+STP 27 ALG 0 weight 1.20 Nodes 357730 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [28 of 100] using DSD weight 1.200000
+STP 27 ALG 1 weight 1.20 Nodes 190647 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [28 of 100] using DSD weight 1.200000
+STP 27 ALG 2 weight 1.20 Nodes 299296 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [28 of 100] using DSD weight 1.200000
+STP 27 ALG 3 weight 1.20 Nodes 199374 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [29 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2984750 generated
+STP 28 ALG 0 weight 1.20 Nodes 1440828 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [29 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2976672 generated
+STP 28 ALG 1 weight 1.20 Nodes 1253196 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [29 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2988627 generated
+2000000 nodes expanded, 6027692 generated
+STP 28 ALG 2 weight 1.20 Nodes 2445957 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [29 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2966812 generated
+STP 28 ALG 3 weight 1.20 Nodes 1211797 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [30 of 100] using DSD weight 1.200000
+STP 29 ALG 0 weight 1.20 Nodes 121116 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [30 of 100] using DSD weight 1.200000
+STP 29 ALG 1 weight 1.20 Nodes 57564 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [30 of 100] using DSD weight 1.200000
+STP 29 ALG 2 weight 1.20 Nodes 88642 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [30 of 100] using DSD weight 1.200000
+STP 29 ALG 3 weight 1.20 Nodes 215162 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [31 of 100] using DSD weight 1.200000
+STP 30 ALG 0 weight 1.20 Nodes 39456 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [31 of 100] using DSD weight 1.200000
+STP 30 ALG 1 weight 1.20 Nodes 8297 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [31 of 100] using DSD weight 1.200000
+STP 30 ALG 2 weight 1.20 Nodes 49847 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [31 of 100] using DSD weight 1.200000
+STP 30 ALG 3 weight 1.20 Nodes 38754 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [32 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2976661 generated
+STP 31 ALG 0 weight 1.20 Nodes 1477779 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [32 of 100] using DSD weight 1.200000
+STP 31 ALG 1 weight 1.20 Nodes 769594 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [32 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993921 generated
+2000000 nodes expanded, 6000788 generated
+3000000 nodes expanded, 8978152 generated
+4000000 nodes expanded, 11961946 generated
+5000000 nodes expanded, 14941763 generated
+6000000 nodes expanded, 17933234 generated
+7000000 nodes expanded, 20969562 generated
+STP 31 ALG 2 weight 1.20 Nodes 7764823 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [32 of 100] using DSD weight 1.200000
+STP 31 ALG 3 weight 1.20 Nodes 776607 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [33 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2961853 generated
+STP 32 ALG 0 weight 1.20 Nodes 1668500 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [33 of 100] using DSD weight 1.200000
+STP 32 ALG 1 weight 1.20 Nodes 868615 path 63
+Op order: Right Left Down Up 
+Solving STP Korf instance [33 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2986718 generated
+2000000 nodes expanded, 5967307 generated
+3000000 nodes expanded, 8945968 generated
+4000000 nodes expanded, 11910750 generated
+5000000 nodes expanded, 14890634 generated
+6000000 nodes expanded, 18038383 generated
+STP 32 ALG 2 weight 1.20 Nodes 6095066 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [33 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2942341 generated
+2000000 nodes expanded, 5902262 generated
+3000000 nodes expanded, 8830089 generated
+STP 32 ALG 3 weight 1.20 Nodes 3873033 path 63
+Op order: Right Left Down Up 
+Solving STP Korf instance [34 of 100] using DSD weight 1.200000
+STP 33 ALG 0 weight 1.20 Nodes 253467 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [34 of 100] using DSD weight 1.200000
+STP 33 ALG 1 weight 1.20 Nodes 103761 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [34 of 100] using DSD weight 1.200000
+STP 33 ALG 2 weight 1.20 Nodes 943153 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [34 of 100] using DSD weight 1.200000
+STP 33 ALG 3 weight 1.20 Nodes 440252 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [35 of 100] using DSD weight 1.200000
+STP 34 ALG 0 weight 1.20 Nodes 616440 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [35 of 100] using DSD weight 1.200000
+STP 34 ALG 1 weight 1.20 Nodes 391433 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [35 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2987530 generated
+STP 34 ALG 2 weight 1.20 Nodes 1952395 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [35 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2940844 generated
+STP 34 ALG 3 weight 1.20 Nodes 1114367 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [36 of 100] using DSD weight 1.200000
+STP 35 ALG 0 weight 1.20 Nodes 628237 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [36 of 100] using DSD weight 1.200000
+STP 35 ALG 1 weight 1.20 Nodes 188998 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [36 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993484 generated
+STP 35 ALG 2 weight 1.20 Nodes 1417661 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [36 of 100] using DSD weight 1.200000
+STP 35 ALG 3 weight 1.20 Nodes 594429 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [37 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2980576 generated
+STP 36 ALG 0 weight 1.20 Nodes 1984860 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [37 of 100] using DSD weight 1.200000
+STP 36 ALG 1 weight 1.20 Nodes 577018 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [37 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993729 generated
+2000000 nodes expanded, 5997537 generated
+3000000 nodes expanded, 9013279 generated
+4000000 nodes expanded, 12002227 generated
+5000000 nodes expanded, 14996567 generated
+6000000 nodes expanded, 17987632 generated
+7000000 nodes expanded, 20978455 generated
+8000000 nodes expanded, 23958448 generated
+9000000 nodes expanded, 26933717 generated
+10000000 nodes expanded, 29918019 generated
+10000000 nodes expanded, 29918019 generated
+STP 36 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [37 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2948885 generated
+STP 36 ALG 3 weight 1.20 Nodes 1041348 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [38 of 100] using DSD weight 1.200000
+STP 37 ALG 0 weight 1.20 Nodes 220473 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [38 of 100] using DSD weight 1.200000
+STP 37 ALG 1 weight 1.20 Nodes 166018 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [38 of 100] using DSD weight 1.200000
+STP 37 ALG 2 weight 1.20 Nodes 226531 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [38 of 100] using DSD weight 1.200000
+STP 37 ALG 3 weight 1.20 Nodes 170058 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [39 of 100] using DSD weight 1.200000
+STP 38 ALG 0 weight 1.20 Nodes 273823 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [39 of 100] using DSD weight 1.200000
+STP 38 ALG 1 weight 1.20 Nodes 344458 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [39 of 100] using DSD weight 1.200000
+STP 38 ALG 2 weight 1.20 Nodes 803689 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [39 of 100] using DSD weight 1.200000
+STP 38 ALG 3 weight 1.20 Nodes 84835 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [40 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2996732 generated
+STP 39 ALG 0 weight 1.20 Nodes 1575838 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [40 of 100] using DSD weight 1.200000
+STP 39 ALG 1 weight 1.20 Nodes 452900 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [40 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3008460 generated
+2000000 nodes expanded, 6010382 generated
+3000000 nodes expanded, 9003524 generated
+STP 39 ALG 2 weight 1.20 Nodes 3750149 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [40 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2991035 generated
+STP 39 ALG 3 weight 1.20 Nodes 1620807 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [41 of 100] using DSD weight 1.200000
+STP 40 ALG 0 weight 1.20 Nodes 980934 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [41 of 100] using DSD weight 1.200000
+STP 40 ALG 1 weight 1.20 Nodes 368765 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [41 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3037363 generated
+2000000 nodes expanded, 6064881 generated
+STP 40 ALG 2 weight 1.20 Nodes 2943248 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [41 of 100] using DSD weight 1.200000
+STP 40 ALG 3 weight 1.20 Nodes 855544 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [42 of 100] using DSD weight 1.200000
+STP 41 ALG 0 weight 1.20 Nodes 7249 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [42 of 100] using DSD weight 1.200000
+STP 41 ALG 1 weight 1.20 Nodes 9509 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [42 of 100] using DSD weight 1.200000
+STP 41 ALG 2 weight 1.20 Nodes 14418 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [42 of 100] using DSD weight 1.200000
+STP 41 ALG 3 weight 1.20 Nodes 10669 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [43 of 100] using DSD weight 1.200000
+STP 42 ALG 0 weight 1.20 Nodes 298550 path 65
+Op order: Right Left Down Up 
+Solving STP Korf instance [43 of 100] using DSD weight 1.200000
+STP 42 ALG 1 weight 1.20 Nodes 164397 path 65
+Op order: Right Left Down Up 
+Solving STP Korf instance [43 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2998392 generated
+STP 42 ALG 2 weight 1.20 Nodes 1678479 path 65
+Op order: Right Left Down Up 
+Solving STP Korf instance [43 of 100] using DSD weight 1.200000
+STP 42 ALG 3 weight 1.20 Nodes 555954 path 65
+Op order: Right Left Down Up 
+Solving STP Korf instance [44 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3009173 generated
+STP 43 ALG 0 weight 1.20 Nodes 1056424 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [44 of 100] using DSD weight 1.200000
+STP 43 ALG 1 weight 1.20 Nodes 339031 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [44 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3015559 generated
+STP 43 ALG 2 weight 1.20 Nodes 1868117 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [44 of 100] using DSD weight 1.200000
+STP 43 ALG 3 weight 1.20 Nodes 767274 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [45 of 100] using DSD weight 1.200000
+STP 44 ALG 0 weight 1.20 Nodes 106785 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [45 of 100] using DSD weight 1.200000
+STP 44 ALG 1 weight 1.20 Nodes 115726 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [45 of 100] using DSD weight 1.200000
+STP 44 ALG 2 weight 1.20 Nodes 209936 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [45 of 100] using DSD weight 1.200000
+STP 44 ALG 3 weight 1.20 Nodes 113264 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [46 of 100] using DSD weight 1.200000
+STP 45 ALG 0 weight 1.20 Nodes 699042 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [46 of 100] using DSD weight 1.200000
+STP 45 ALG 1 weight 1.20 Nodes 148884 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [46 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3039335 generated
+STP 45 ALG 2 weight 1.20 Nodes 1120523 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [46 of 100] using DSD weight 1.200000
+STP 45 ALG 3 weight 1.20 Nodes 351620 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [47 of 100] using DSD weight 1.200000
+STP 46 ALG 0 weight 1.20 Nodes 52592 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [47 of 100] using DSD weight 1.200000
+STP 46 ALG 1 weight 1.20 Nodes 44371 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [47 of 100] using DSD weight 1.200000
+STP 46 ALG 2 weight 1.20 Nodes 69971 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [47 of 100] using DSD weight 1.200000
+STP 46 ALG 3 weight 1.20 Nodes 145742 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [48 of 100] using DSD weight 1.200000
+STP 47 ALG 0 weight 1.20 Nodes 19936 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [48 of 100] using DSD weight 1.200000
+STP 47 ALG 1 weight 1.20 Nodes 16268 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [48 of 100] using DSD weight 1.200000
+STP 47 ALG 2 weight 1.20 Nodes 54428 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [48 of 100] using DSD weight 1.200000
+STP 47 ALG 3 weight 1.20 Nodes 18070 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [49 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2961590 generated
+2000000 nodes expanded, 5923026 generated
+3000000 nodes expanded, 8892157 generated
+4000000 nodes expanded, 11867242 generated
+5000000 nodes expanded, 14838794 generated
+6000000 nodes expanded, 17793313 generated
+7000000 nodes expanded, 20776805 generated
+STP 48 ALG 0 weight 1.20 Nodes 7064561 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [49 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2988225 generated
+STP 48 ALG 1 weight 1.20 Nodes 1671839 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [49 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2971764 generated
+2000000 nodes expanded, 5951096 generated
+3000000 nodes expanded, 8923443 generated
+4000000 nodes expanded, 11898485 generated
+5000000 nodes expanded, 14873286 generated
+6000000 nodes expanded, 17834734 generated
+7000000 nodes expanded, 20828177 generated
+8000000 nodes expanded, 23782154 generated
+9000000 nodes expanded, 26733523 generated
+10000000 nodes expanded, 29752137 generated
+10000000 nodes expanded, 29752137 generated
+STP 48 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [49 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2958270 generated
+2000000 nodes expanded, 5919550 generated
+3000000 nodes expanded, 8888953 generated
+4000000 nodes expanded, 11848879 generated
+5000000 nodes expanded, 14793994 generated
+STP 48 ALG 3 weight 1.20 Nodes 5700363 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [50 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3021211 generated
+STP 49 ALG 0 weight 1.20 Nodes 1747730 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [50 of 100] using DSD weight 1.200000
+STP 49 ALG 1 weight 1.20 Nodes 540287 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [50 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3028666 generated
+2000000 nodes expanded, 6057608 generated
+3000000 nodes expanded, 9078614 generated
+STP 49 ALG 2 weight 1.20 Nodes 3620082 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [50 of 100] using DSD weight 1.200000
+STP 49 ALG 3 weight 1.20 Nodes 557962 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [51 of 100] using DSD weight 1.200000
+STP 50 ALG 0 weight 1.20 Nodes 239150 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [51 of 100] using DSD weight 1.200000
+STP 50 ALG 1 weight 1.20 Nodes 208048 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [51 of 100] using DSD weight 1.200000
+STP 50 ALG 2 weight 1.20 Nodes 831380 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [51 of 100] using DSD weight 1.200000
+STP 50 ALG 3 weight 1.20 Nodes 179835 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [52 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3002192 generated
+2000000 nodes expanded, 5999255 generated
+3000000 nodes expanded, 9001603 generated
+STP 51 ALG 0 weight 1.20 Nodes 3627233 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [52 of 100] using DSD weight 1.200000
+STP 51 ALG 1 weight 1.20 Nodes 818219 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [52 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3003171 generated
+2000000 nodes expanded, 6013306 generated
+3000000 nodes expanded, 9010231 generated
+4000000 nodes expanded, 12013570 generated
+5000000 nodes expanded, 15003342 generated
+6000000 nodes expanded, 18023704 generated
+7000000 nodes expanded, 21105243 generated
+8000000 nodes expanded, 24155071 generated
+9000000 nodes expanded, 27084351 generated
+STP 51 ALG 2 weight 1.20 Nodes 9480723 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [52 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2999270 generated
+2000000 nodes expanded, 5992391 generated
+STP 51 ALG 3 weight 1.20 Nodes 2082815 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [53 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2968309 generated
+2000000 nodes expanded, 5939030 generated
+3000000 nodes expanded, 8914848 generated
+4000000 nodes expanded, 11898951 generated
+5000000 nodes expanded, 14864193 generated
+6000000 nodes expanded, 17851893 generated
+7000000 nodes expanded, 20814338 generated
+8000000 nodes expanded, 23775610 generated
+9000000 nodes expanded, 26761294 generated
+STP 52 ALG 0 weight 1.20 Nodes 9390914 path 65
+Op order: Right Left Down Up 
+Solving STP Korf instance [53 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2972898 generated
+2000000 nodes expanded, 5928485 generated
+STP 52 ALG 1 weight 1.20 Nodes 2035550 path 69
+Op order: Right Left Down Up 
+Solving STP Korf instance [53 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2987024 generated
+2000000 nodes expanded, 5973528 generated
+3000000 nodes expanded, 8935587 generated
+4000000 nodes expanded, 11911892 generated
+5000000 nodes expanded, 14894775 generated
+6000000 nodes expanded, 17870450 generated
+7000000 nodes expanded, 20818081 generated
+8000000 nodes expanded, 23773405 generated
+9000000 nodes expanded, 26757098 generated
+10000000 nodes expanded, 29816626 generated
+10000000 nodes expanded, 29816626 generated
+STP 52 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [53 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2943615 generated
+2000000 nodes expanded, 5902701 generated
+3000000 nodes expanded, 8869063 generated
+4000000 nodes expanded, 11825478 generated
+5000000 nodes expanded, 14750107 generated
+6000000 nodes expanded, 17671619 generated
+7000000 nodes expanded, 20604347 generated
+STP 52 ALG 3 weight 1.20 Nodes 7990040 path 69
+Op order: Right Left Down Up 
+Solving STP Korf instance [54 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3000825 generated
+2000000 nodes expanded, 6006481 generated
+STP 53 ALG 0 weight 1.20 Nodes 2440811 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [54 of 100] using DSD weight 1.200000
+STP 53 ALG 1 weight 1.20 Nodes 584268 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [54 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3015811 generated
+2000000 nodes expanded, 6015707 generated
+3000000 nodes expanded, 9020008 generated
+4000000 nodes expanded, 12072708 generated
+5000000 nodes expanded, 15054246 generated
+6000000 nodes expanded, 18077332 generated
+7000000 nodes expanded, 21072239 generated
+8000000 nodes expanded, 24090621 generated
+9000000 nodes expanded, 27073980 generated
+10000000 nodes expanded, 30066016 generated
+10000000 nodes expanded, 30066016 generated
+STP 53 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [54 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993390 generated
+STP 53 ALG 3 weight 1.20 Nodes 1875316 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [55 of 100] using DSD weight 1.200000
+STP 54 ALG 0 weight 1.20 Nodes 39502 path 44
+Op order: Right Left Down Up 
+Solving STP Korf instance [55 of 100] using DSD weight 1.200000
+STP 54 ALG 1 weight 1.20 Nodes 18905 path 44
+Op order: Right Left Down Up 
+Solving STP Korf instance [55 of 100] using DSD weight 1.200000
+STP 54 ALG 2 weight 1.20 Nodes 120799 path 44
+Op order: Right Left Down Up 
+Solving STP Korf instance [55 of 100] using DSD weight 1.200000
+STP 54 ALG 3 weight 1.20 Nodes 55259 path 44
+Op order: Right Left Down Up 
+Solving STP Korf instance [56 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2989926 generated
+2000000 nodes expanded, 5984056 generated
+3000000 nodes expanded, 8981086 generated
+4000000 nodes expanded, 11967493 generated
+5000000 nodes expanded, 14963366 generated
+6000000 nodes expanded, 17968412 generated
+7000000 nodes expanded, 20973471 generated
+STP 55 ALG 0 weight 1.20 Nodes 7451865 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [56 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3007269 generated
+2000000 nodes expanded, 5988130 generated
+STP 55 ALG 1 weight 1.20 Nodes 2560043 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [56 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3000466 generated
+2000000 nodes expanded, 5992518 generated
+3000000 nodes expanded, 9000557 generated
+4000000 nodes expanded, 12000948 generated
+5000000 nodes expanded, 15004437 generated
+6000000 nodes expanded, 18016744 generated
+7000000 nodes expanded, 20990154 generated
+8000000 nodes expanded, 23960360 generated
+9000000 nodes expanded, 26951452 generated
+10000000 nodes expanded, 29950995 generated
+10000000 nodes expanded, 29950995 generated
+STP 55 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [56 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2986756 generated
+2000000 nodes expanded, 5983558 generated
+3000000 nodes expanded, 8994584 generated
+4000000 nodes expanded, 11938891 generated
+STP 55 ALG 3 weight 1.20 Nodes 4721558 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [57 of 100] using DSD weight 1.200000
+STP 56 ALG 0 weight 1.20 Nodes 115021 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [57 of 100] using DSD weight 1.200000
+STP 56 ALG 1 weight 1.20 Nodes 95615 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [57 of 100] using DSD weight 1.200000
+STP 56 ALG 2 weight 1.20 Nodes 202370 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [57 of 100] using DSD weight 1.200000
+STP 56 ALG 3 weight 1.20 Nodes 107734 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [58 of 100] using DSD weight 1.200000
+STP 57 ALG 0 weight 1.20 Nodes 232430 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [58 of 100] using DSD weight 1.200000
+STP 57 ALG 1 weight 1.20 Nodes 161557 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [58 of 100] using DSD weight 1.200000
+STP 57 ALG 2 weight 1.20 Nodes 204675 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [58 of 100] using DSD weight 1.200000
+STP 57 ALG 3 weight 1.20 Nodes 295880 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [59 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2997088 generated
+2000000 nodes expanded, 6000130 generated
+3000000 nodes expanded, 8992592 generated
+4000000 nodes expanded, 11991327 generated
+5000000 nodes expanded, 14988303 generated
+6000000 nodes expanded, 17999984 generated
+7000000 nodes expanded, 20998958 generated
+8000000 nodes expanded, 23994778 generated
+9000000 nodes expanded, 26993477 generated
+10000000 nodes expanded, 29994229 generated
+10000000 nodes expanded, 29994229 generated
+STP 58 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [59 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2994482 generated
+2000000 nodes expanded, 5997870 generated
+3000000 nodes expanded, 9064575 generated
+4000000 nodes expanded, 11991143 generated
+STP 58 ALG 1 weight 1.20 Nodes 4819900 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [59 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3008268 generated
+2000000 nodes expanded, 6007442 generated
+3000000 nodes expanded, 9020735 generated
+4000000 nodes expanded, 12036199 generated
+5000000 nodes expanded, 15019604 generated
+6000000 nodes expanded, 18030349 generated
+7000000 nodes expanded, 21016319 generated
+8000000 nodes expanded, 24047596 generated
+9000000 nodes expanded, 27031135 generated
+10000000 nodes expanded, 30050824 generated
+10000000 nodes expanded, 30050824 generated
+STP 58 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [59 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2986138 generated
+2000000 nodes expanded, 5997213 generated
+3000000 nodes expanded, 8988401 generated
+4000000 nodes expanded, 11953425 generated
+5000000 nodes expanded, 14964796 generated
+6000000 nodes expanded, 17984283 generated
+7000000 nodes expanded, 20982714 generated
+8000000 nodes expanded, 23995588 generated
+9000000 nodes expanded, 26980640 generated
+10000000 nodes expanded, 29971815 generated
+10000000 nodes expanded, 29971815 generated
+STP 58 ALG 3 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [60 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2962661 generated
+2000000 nodes expanded, 5937110 generated
+3000000 nodes expanded, 8915670 generated
+4000000 nodes expanded, 11883433 generated
+5000000 nodes expanded, 14865674 generated
+6000000 nodes expanded, 17845490 generated
+7000000 nodes expanded, 20821217 generated
+8000000 nodes expanded, 23788714 generated
+9000000 nodes expanded, 26782298 generated
+10000000 nodes expanded, 29750430 generated
+10000000 nodes expanded, 29750430 generated
+STP 59 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [60 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2935761 generated
+2000000 nodes expanded, 5959286 generated
+3000000 nodes expanded, 8976331 generated
+4000000 nodes expanded, 11971730 generated
+5000000 nodes expanded, 14848723 generated
+6000000 nodes expanded, 17763316 generated
+7000000 nodes expanded, 20687714 generated
+8000000 nodes expanded, 23688538 generated
+STP 59 ALG 1 weight 1.20 Nodes 8463531 path 67
+Op order: Right Left Down Up 
+Solving STP Korf instance [60 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2983768 generated
+2000000 nodes expanded, 5969437 generated
+3000000 nodes expanded, 8942451 generated
+4000000 nodes expanded, 11911533 generated
+5000000 nodes expanded, 14892485 generated
+6000000 nodes expanded, 17988803 generated
+7000000 nodes expanded, 21033367 generated
+8000000 nodes expanded, 23997259 generated
+9000000 nodes expanded, 26958935 generated
+10000000 nodes expanded, 29933527 generated
+10000000 nodes expanded, 29933527 generated
+STP 59 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [60 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2933278 generated
+2000000 nodes expanded, 5908202 generated
+3000000 nodes expanded, 8856206 generated
+4000000 nodes expanded, 11783556 generated
+5000000 nodes expanded, 14696520 generated
+6000000 nodes expanded, 17614052 generated
+STP 59 ALG 3 weight 1.20 Nodes 6281061 path 69
+Op order: Right Left Down Up 
+Solving STP Korf instance [61 of 100] using DSD weight 1.200000
+STP 60 ALG 0 weight 1.20 Nodes 238469 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [61 of 100] using DSD weight 1.200000
+STP 60 ALG 1 weight 1.20 Nodes 146381 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [61 of 100] using DSD weight 1.200000
+STP 60 ALG 2 weight 1.20 Nodes 314363 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [61 of 100] using DSD weight 1.200000
+STP 60 ALG 3 weight 1.20 Nodes 147087 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [62 of 100] using DSD weight 1.200000
+STP 61 ALG 0 weight 1.20 Nodes 367804 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [62 of 100] using DSD weight 1.200000
+STP 61 ALG 1 weight 1.20 Nodes 229950 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [62 of 100] using DSD weight 1.200000
+STP 61 ALG 2 weight 1.20 Nodes 477436 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [62 of 100] using DSD weight 1.200000
+STP 61 ALG 3 weight 1.20 Nodes 360942 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [63 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3041981 generated
+2000000 nodes expanded, 6078120 generated
+3000000 nodes expanded, 9115340 generated
+4000000 nodes expanded, 12150015 generated
+5000000 nodes expanded, 15186169 generated
+6000000 nodes expanded, 18215093 generated
+7000000 nodes expanded, 21248746 generated
+STP 62 ALG 0 weight 1.20 Nodes 7433049 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [63 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3041200 generated
+2000000 nodes expanded, 6071674 generated
+3000000 nodes expanded, 9111111 generated
+STP 62 ALG 1 weight 1.20 Nodes 3010232 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [63 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3043169 generated
+2000000 nodes expanded, 6088149 generated
+3000000 nodes expanded, 9133153 generated
+4000000 nodes expanded, 12164079 generated
+5000000 nodes expanded, 15192106 generated
+6000000 nodes expanded, 18232642 generated
+7000000 nodes expanded, 21270076 generated
+8000000 nodes expanded, 24301309 generated
+9000000 nodes expanded, 27334917 generated
+10000000 nodes expanded, 30365836 generated
+10000000 nodes expanded, 30365836 generated
+STP 62 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [63 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3043616 generated
+2000000 nodes expanded, 6069972 generated
+3000000 nodes expanded, 9112719 generated
+4000000 nodes expanded, 12154153 generated
+5000000 nodes expanded, 15182428 generated
+STP 62 ALG 3 weight 1.20 Nodes 5119752 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [64 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3016461 generated
+STP 63 ALG 0 weight 1.20 Nodes 1999268 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [64 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3019884 generated
+2000000 nodes expanded, 6018584 generated
+STP 63 ALG 1 weight 1.20 Nodes 2054502 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [64 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3019804 generated
+2000000 nodes expanded, 6047367 generated
+3000000 nodes expanded, 9065495 generated
+4000000 nodes expanded, 12075929 generated
+5000000 nodes expanded, 15106341 generated
+STP 63 ALG 2 weight 1.20 Nodes 5616625 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [64 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3016649 generated
+2000000 nodes expanded, 6023570 generated
+STP 63 ALG 3 weight 1.20 Nodes 2065406 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [65 of 100] using DSD weight 1.200000
+STP 64 ALG 0 weight 1.20 Nodes 312539 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [65 of 100] using DSD weight 1.200000
+STP 64 ALG 1 weight 1.20 Nodes 108850 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [65 of 100] using DSD weight 1.200000
+STP 64 ALG 2 weight 1.20 Nodes 611931 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [65 of 100] using DSD weight 1.200000
+STP 64 ALG 3 weight 1.20 Nodes 259809 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [66 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2950439 generated
+2000000 nodes expanded, 5912096 generated
+3000000 nodes expanded, 8874159 generated
+4000000 nodes expanded, 11846923 generated
+5000000 nodes expanded, 14801607 generated
+6000000 nodes expanded, 17782128 generated
+7000000 nodes expanded, 20741791 generated
+8000000 nodes expanded, 23726172 generated
+9000000 nodes expanded, 26695075 generated
+10000000 nodes expanded, 29668098 generated
+10000000 nodes expanded, 29668098 generated
+STP 65 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [66 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2939485 generated
+2000000 nodes expanded, 5970152 generated
+STP 65 ALG 1 weight 1.20 Nodes 2994802 path 62
+Op order: Right Left Down Up 
+Solving STP Korf instance [66 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2990098 generated
+2000000 nodes expanded, 5955159 generated
+3000000 nodes expanded, 8926638 generated
+4000000 nodes expanded, 11893718 generated
+5000000 nodes expanded, 14855287 generated
+6000000 nodes expanded, 17813155 generated
+7000000 nodes expanded, 20922660 generated
+8000000 nodes expanded, 23986115 generated
+9000000 nodes expanded, 26920081 generated
+10000000 nodes expanded, 29843178 generated
+10000000 nodes expanded, 29843178 generated
+STP 65 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [66 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2956280 generated
+2000000 nodes expanded, 5896486 generated
+3000000 nodes expanded, 8816869 generated
+4000000 nodes expanded, 11738782 generated
+STP 65 ALG 3 weight 1.20 Nodes 4229385 path 62
+Op order: Right Left Down Up 
+Solving STP Korf instance [67 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3024045 generated
+2000000 nodes expanded, 6045817 generated
+STP 66 ALG 0 weight 1.20 Nodes 2881618 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [67 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3024239 generated
+STP 66 ALG 1 weight 1.20 Nodes 1028676 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [67 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3029766 generated
+2000000 nodes expanded, 6067232 generated
+3000000 nodes expanded, 9077701 generated
+4000000 nodes expanded, 12098749 generated
+5000000 nodes expanded, 15115037 generated
+6000000 nodes expanded, 18159167 generated
+STP 66 ALG 2 weight 1.20 Nodes 6660732 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [67 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3022502 generated
+2000000 nodes expanded, 6038847 generated
+STP 66 ALG 3 weight 1.20 Nodes 2675947 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [68 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3007354 generated
+STP 67 ALG 0 weight 1.20 Nodes 1376720 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [68 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3023669 generated
+STP 67 ALG 1 weight 1.20 Nodes 1592277 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [68 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3016334 generated
+2000000 nodes expanded, 6035066 generated
+3000000 nodes expanded, 9038291 generated
+STP 67 ALG 2 weight 1.20 Nodes 3961030 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [68 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3003277 generated
+STP 67 ALG 3 weight 1.20 Nodes 1475561 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [69 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3000551 generated
+STP 68 ALG 0 weight 1.20 Nodes 1969335 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [69 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3008912 generated
+STP 68 ALG 1 weight 1.20 Nodes 1172173 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [69 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3013488 generated
+2000000 nodes expanded, 6007207 generated
+STP 68 ALG 2 weight 1.20 Nodes 2991839 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [69 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2994380 generated
+STP 68 ALG 3 weight 1.20 Nodes 1003650 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [70 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3009214 generated
+STP 69 ALG 0 weight 1.20 Nodes 1895639 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [70 of 100] using DSD weight 1.200000
+STP 69 ALG 1 weight 1.20 Nodes 806734 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [70 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3010825 generated
+2000000 nodes expanded, 6036432 generated
+3000000 nodes expanded, 9047335 generated
+4000000 nodes expanded, 12050280 generated
+5000000 nodes expanded, 15104978 generated
+STP 69 ALG 2 weight 1.20 Nodes 5271165 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [70 of 100] using DSD weight 1.200000
+STP 69 ALG 3 weight 1.20 Nodes 769449 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [71 of 100] using DSD weight 1.200000
+STP 70 ALG 0 weight 1.20 Nodes 445786 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [71 of 100] using DSD weight 1.200000
+STP 70 ALG 1 weight 1.20 Nodes 211782 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [71 of 100] using DSD weight 1.200000
+STP 70 ALG 2 weight 1.20 Nodes 399522 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [71 of 100] using DSD weight 1.200000
+STP 70 ALG 3 weight 1.20 Nodes 546354 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [72 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993642 generated
+2000000 nodes expanded, 5990337 generated
+3000000 nodes expanded, 8976058 generated
+4000000 nodes expanded, 11968831 generated
+5000000 nodes expanded, 14955109 generated
+STP 71 ALG 0 weight 1.20 Nodes 5066127 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [72 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2993577 generated
+2000000 nodes expanded, 6005324 generated
+STP 71 ALG 1 weight 1.20 Nodes 2784761 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [72 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2998084 generated
+2000000 nodes expanded, 5998997 generated
+3000000 nodes expanded, 8997150 generated
+4000000 nodes expanded, 11980640 generated
+5000000 nodes expanded, 14958399 generated
+6000000 nodes expanded, 18029589 generated
+7000000 nodes expanded, 20982464 generated
+8000000 nodes expanded, 23986271 generated
+9000000 nodes expanded, 26963448 generated
+10000000 nodes expanded, 29942527 generated
+10000000 nodes expanded, 29942527 generated
+STP 71 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [72 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3009188 generated
+2000000 nodes expanded, 5979563 generated
+STP 71 ALG 3 weight 1.20 Nodes 2884520 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [73 of 100] using DSD weight 1.200000
+STP 72 ALG 0 weight 1.20 Nodes 82336 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [73 of 100] using DSD weight 1.200000
+STP 72 ALG 1 weight 1.20 Nodes 46587 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [73 of 100] using DSD weight 1.200000
+STP 72 ALG 2 weight 1.20 Nodes 23681 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [73 of 100] using DSD weight 1.200000
+STP 72 ALG 3 weight 1.20 Nodes 128550 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [74 of 100] using DSD weight 1.200000
+STP 73 ALG 0 weight 1.20 Nodes 193716 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [74 of 100] using DSD weight 1.200000
+STP 73 ALG 1 weight 1.20 Nodes 40568 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [74 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3016996 generated
+STP 73 ALG 2 weight 1.20 Nodes 1824261 path 59
+Op order: Right Left Down Up 
+Solving STP Korf instance [74 of 100] using DSD weight 1.200000
+STP 73 ALG 3 weight 1.20 Nodes 201226 path 61
+Op order: Right Left Down Up 
+Solving STP Korf instance [75 of 100] using DSD weight 1.200000
+STP 74 ALG 0 weight 1.20 Nodes 984836 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [75 of 100] using DSD weight 1.200000
+STP 74 ALG 1 weight 1.20 Nodes 385517 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [75 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3043334 generated
+2000000 nodes expanded, 6085015 generated
+STP 74 ALG 2 weight 1.20 Nodes 2255286 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [75 of 100] using DSD weight 1.200000
+STP 74 ALG 3 weight 1.20 Nodes 805322 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [76 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3015633 generated
+2000000 nodes expanded, 6024592 generated
+3000000 nodes expanded, 9023613 generated
+STP 75 ALG 0 weight 1.20 Nodes 3573933 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [76 of 100] using DSD weight 1.200000
+STP 75 ALG 1 weight 1.20 Nodes 674155 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [76 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3021403 generated
+2000000 nodes expanded, 6020917 generated
+3000000 nodes expanded, 9061629 generated
+STP 75 ALG 2 weight 1.20 Nodes 3359736 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [76 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3004190 generated
+STP 75 ALG 3 weight 1.20 Nodes 1815182 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [77 of 100] using DSD weight 1.200000
+STP 76 ALG 0 weight 1.20 Nodes 748042 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [77 of 100] using DSD weight 1.200000
+STP 76 ALG 1 weight 1.20 Nodes 653186 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [77 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3006952 generated
+STP 76 ALG 2 weight 1.20 Nodes 1236883 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [77 of 100] using DSD weight 1.200000
+STP 76 ALG 3 weight 1.20 Nodes 609787 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [78 of 100] using DSD weight 1.200000
+STP 77 ALG 0 weight 1.20 Nodes 284139 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [78 of 100] using DSD weight 1.200000
+STP 77 ALG 1 weight 1.20 Nodes 35835 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [78 of 100] using DSD weight 1.200000
+STP 77 ALG 2 weight 1.20 Nodes 311150 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [78 of 100] using DSD weight 1.200000
+STP 77 ALG 3 weight 1.20 Nodes 111799 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [79 of 100] using DSD weight 1.200000
+STP 78 ALG 0 weight 1.20 Nodes 54768 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [79 of 100] using DSD weight 1.200000
+STP 78 ALG 1 weight 1.20 Nodes 71118 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [79 of 100] using DSD weight 1.200000
+STP 78 ALG 2 weight 1.20 Nodes 25748 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [79 of 100] using DSD weight 1.200000
+STP 78 ALG 3 weight 1.20 Nodes 69510 path 43
+Op order: Right Left Down Up 
+Solving STP Korf instance [80 of 100] using DSD weight 1.200000
+STP 79 ALG 0 weight 1.20 Nodes 714950 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [80 of 100] using DSD weight 1.200000
+STP 79 ALG 1 weight 1.20 Nodes 201130 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [80 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3017652 generated
+2000000 nodes expanded, 5993573 generated
+3000000 nodes expanded, 8979129 generated
+4000000 nodes expanded, 11950215 generated
+5000000 nodes expanded, 14923073 generated
+6000000 nodes expanded, 17918384 generated
+7000000 nodes expanded, 21127048 generated
+8000000 nodes expanded, 24138403 generated
+STP 79 ALG 2 weight 1.20 Nodes 8234576 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [80 of 100] using DSD weight 1.200000
+STP 79 ALG 3 weight 1.20 Nodes 420836 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [81 of 100] using DSD weight 1.200000
+STP 80 ALG 0 weight 1.20 Nodes 190787 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [81 of 100] using DSD weight 1.200000
+STP 80 ALG 1 weight 1.20 Nodes 45360 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [81 of 100] using DSD weight 1.200000
+STP 80 ALG 2 weight 1.20 Nodes 266872 path 54
+Op order: Right Left Down Up 
+Solving STP Korf instance [81 of 100] using DSD weight 1.200000
+STP 80 ALG 3 weight 1.20 Nodes 165567 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2974554 generated
+2000000 nodes expanded, 5954113 generated
+3000000 nodes expanded, 8937228 generated
+4000000 nodes expanded, 11921715 generated
+5000000 nodes expanded, 14904282 generated
+6000000 nodes expanded, 17872918 generated
+7000000 nodes expanded, 20863383 generated
+8000000 nodes expanded, 23838846 generated
+9000000 nodes expanded, 26841363 generated
+10000000 nodes expanded, 29825086 generated
+10000000 nodes expanded, 29825086 generated
+STP 81 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2980734 generated
+2000000 nodes expanded, 5946996 generated
+3000000 nodes expanded, 8908824 generated
+4000000 nodes expanded, 11925383 generated
+5000000 nodes expanded, 14936998 generated
+6000000 nodes expanded, 17951779 generated
+7000000 nodes expanded, 21042492 generated
+8000000 nodes expanded, 24027600 generated
+9000000 nodes expanded, 27026967 generated
+10000000 nodes expanded, 29921489 generated
+10000000 nodes expanded, 29921489 generated
+STP 81 ALG 1 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2991457 generated
+2000000 nodes expanded, 5977152 generated
+3000000 nodes expanded, 8957884 generated
+4000000 nodes expanded, 11938248 generated
+5000000 nodes expanded, 14995779 generated
+6000000 nodes expanded, 17970459 generated
+7000000 nodes expanded, 20982260 generated
+8000000 nodes expanded, 23955291 generated
+9000000 nodes expanded, 26933638 generated
+10000000 nodes expanded, 29916181 generated
+10000000 nodes expanded, 29916181 generated
+STP 81 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2971692 generated
+2000000 nodes expanded, 5931213 generated
+3000000 nodes expanded, 8908385 generated
+4000000 nodes expanded, 11913677 generated
+5000000 nodes expanded, 14899721 generated
+6000000 nodes expanded, 17873799 generated
+7000000 nodes expanded, 20845074 generated
+8000000 nodes expanded, 23802421 generated
+9000000 nodes expanded, 26751498 generated
+10000000 nodes expanded, 29694820 generated
+10000000 nodes expanded, 29694820 generated
+STP 81 ALG 3 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 1.200000
+STP 82 ALG 0 weight 1.20 Nodes 926573 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 1.200000
+STP 82 ALG 1 weight 1.20 Nodes 554799 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3027167 generated
+STP 82 ALG 2 weight 1.20 Nodes 1360734 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 1.200000
+STP 82 ALG 3 weight 1.20 Nodes 558301 path 52
+Op order: Right Left Down Up 
+Solving STP Korf instance [84 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2981143 generated
+2000000 nodes expanded, 5969540 generated
+STP 83 ALG 0 weight 1.20 Nodes 2683785 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [84 of 100] using DSD weight 1.200000
+STP 83 ALG 1 weight 1.20 Nodes 695787 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [84 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2997095 generated
+2000000 nodes expanded, 5992621 generated
+3000000 nodes expanded, 8981675 generated
+4000000 nodes expanded, 11958029 generated
+5000000 nodes expanded, 14984942 generated
+STP 83 ALG 2 weight 1.20 Nodes 5016911 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [84 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2998233 generated
+2000000 nodes expanded, 5942062 generated
+STP 83 ALG 3 weight 1.20 Nodes 2588317 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [85 of 100] using DSD weight 1.200000
+STP 84 ALG 0 weight 1.20 Nodes 123592 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [85 of 100] using DSD weight 1.200000
+STP 84 ALG 1 weight 1.20 Nodes 50369 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [85 of 100] using DSD weight 1.200000
+STP 84 ALG 2 weight 1.20 Nodes 124506 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [85 of 100] using DSD weight 1.200000
+STP 84 ALG 3 weight 1.20 Nodes 104894 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [86 of 100] using DSD weight 1.200000
+STP 85 ALG 0 weight 1.20 Nodes 42526 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [86 of 100] using DSD weight 1.200000
+STP 85 ALG 1 weight 1.20 Nodes 62486 path 48
+Op order: Right Left Down Up 
+Solving STP Korf instance [86 of 100] using DSD weight 1.200000
+STP 85 ALG 2 weight 1.20 Nodes 105893 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [86 of 100] using DSD weight 1.200000
+STP 85 ALG 3 weight 1.20 Nodes 65618 path 46
+Op order: Right Left Down Up 
+Solving STP Korf instance [87 of 100] using DSD weight 1.200000
+STP 86 ALG 0 weight 1.20 Nodes 794552 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [87 of 100] using DSD weight 1.200000
+STP 86 ALG 1 weight 1.20 Nodes 367891 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [87 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3004734 generated
+2000000 nodes expanded, 6001154 generated
+STP 86 ALG 2 weight 1.20 Nodes 2891926 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [87 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2990202 generated
+STP 86 ALG 3 weight 1.20 Nodes 1127862 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [88 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2952318 generated
+2000000 nodes expanded, 5909437 generated
+3000000 nodes expanded, 8871109 generated
+4000000 nodes expanded, 11835918 generated
+5000000 nodes expanded, 14795554 generated
+6000000 nodes expanded, 17762717 generated
+7000000 nodes expanded, 20726968 generated
+8000000 nodes expanded, 23702390 generated
+9000000 nodes expanded, 26650357 generated
+10000000 nodes expanded, 29642275 generated
+10000000 nodes expanded, 29642275 generated
+STP 87 ALG 0 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [88 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2948354 generated
+2000000 nodes expanded, 5939995 generated
+3000000 nodes expanded, 8865612 generated
+STP 87 ALG 1 weight 1.20 Nodes 3903601 path 66
+Op order: Right Left Down Up 
+Solving STP Korf instance [88 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2967103 generated
+2000000 nodes expanded, 5937659 generated
+3000000 nodes expanded, 8888262 generated
+4000000 nodes expanded, 11853278 generated
+5000000 nodes expanded, 14849528 generated
+6000000 nodes expanded, 17839790 generated
+7000000 nodes expanded, 20847277 generated
+8000000 nodes expanded, 23818914 generated
+9000000 nodes expanded, 26785949 generated
+10000000 nodes expanded, 29739601 generated
+10000000 nodes expanded, 29739601 generated
+STP 87 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [88 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2953133 generated
+2000000 nodes expanded, 5889454 generated
+3000000 nodes expanded, 8806350 generated
+STP 87 ALG 3 weight 1.20 Nodes 3779904 path 66
+Op order: Right Left Down Up 
+Solving STP Korf instance [89 of 100] using DSD weight 1.200000
+STP 88 ALG 0 weight 1.20 Nodes 872704 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [89 of 100] using DSD weight 1.200000
+STP 88 ALG 1 weight 1.20 Nodes 274529 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [89 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3021213 generated
+2000000 nodes expanded, 6048957 generated
+STP 88 ALG 2 weight 1.20 Nodes 2603593 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [89 of 100] using DSD weight 1.200000
+STP 88 ALG 3 weight 1.20 Nodes 857823 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [90 of 100] using DSD weight 1.200000
+STP 89 ALG 0 weight 1.20 Nodes 328618 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [90 of 100] using DSD weight 1.200000
+STP 89 ALG 1 weight 1.20 Nodes 173515 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [90 of 100] using DSD weight 1.200000
+STP 89 ALG 2 weight 1.20 Nodes 331892 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [90 of 100] using DSD weight 1.200000
+STP 89 ALG 3 weight 1.20 Nodes 478000 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [91 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2975399 generated
+2000000 nodes expanded, 5959938 generated
+3000000 nodes expanded, 8941046 generated
+STP 90 ALG 0 weight 1.20 Nodes 3137749 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [91 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2953996 generated
+STP 90 ALG 1 weight 1.20 Nodes 1645545 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [91 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2985936 generated
+2000000 nodes expanded, 5998612 generated
+3000000 nodes expanded, 8983380 generated
+4000000 nodes expanded, 11970979 generated
+5000000 nodes expanded, 14949610 generated
+6000000 nodes expanded, 17917040 generated
+7000000 nodes expanded, 20879922 generated
+8000000 nodes expanded, 23843394 generated
+9000000 nodes expanded, 26923643 generated
+10000000 nodes expanded, 29943607 generated
+10000000 nodes expanded, 29943607 generated
+STP 90 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [91 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2952335 generated
+STP 90 ALG 3 weight 1.20 Nodes 1016063 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [92 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2991515 generated
+2000000 nodes expanded, 5988273 generated
+3000000 nodes expanded, 8978331 generated
+4000000 nodes expanded, 11975449 generated
+5000000 nodes expanded, 14977751 generated
+6000000 nodes expanded, 17968018 generated
+7000000 nodes expanded, 20966592 generated
+STP 91 ALG 0 weight 1.20 Nodes 7860129 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [92 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2979720 generated
+STP 91 ALG 1 weight 1.20 Nodes 1766868 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [92 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2998297 generated
+2000000 nodes expanded, 6008353 generated
+3000000 nodes expanded, 9016024 generated
+4000000 nodes expanded, 12011093 generated
+5000000 nodes expanded, 14988091 generated
+6000000 nodes expanded, 17970437 generated
+7000000 nodes expanded, 21005270 generated
+8000000 nodes expanded, 24081657 generated
+9000000 nodes expanded, 27060507 generated
+10000000 nodes expanded, 30078164 generated
+10000000 nodes expanded, 30078164 generated
+STP 91 ALG 2 weight 1.20 Nodes 10000000 path 0
+Op order: Right Left Down Up 
+Solving STP Korf instance [92 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2978898 generated
+2000000 nodes expanded, 5973370 generated
+3000000 nodes expanded, 8922867 generated
+STP 91 ALG 3 weight 1.20 Nodes 3781642 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [93 of 100] using DSD weight 1.200000
+STP 92 ALG 0 weight 1.20 Nodes 717118 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [93 of 100] using DSD weight 1.200000
+STP 92 ALG 1 weight 1.20 Nodes 172958 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [93 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3030343 generated
+STP 92 ALG 2 weight 1.20 Nodes 1622938 path 49
+Op order: Right Left Down Up 
+Solving STP Korf instance [93 of 100] using DSD weight 1.200000
+STP 92 ALG 3 weight 1.20 Nodes 302239 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [94 of 100] using DSD weight 1.200000
+STP 93 ALG 0 weight 1.20 Nodes 92248 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [94 of 100] using DSD weight 1.200000
+STP 93 ALG 1 weight 1.20 Nodes 52325 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [94 of 100] using DSD weight 1.200000
+STP 93 ALG 2 weight 1.20 Nodes 688706 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [94 of 100] using DSD weight 1.200000
+STP 93 ALG 3 weight 1.20 Nodes 51160 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [95 of 100] using DSD weight 1.200000
+STP 94 ALG 0 weight 1.20 Nodes 447177 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [95 of 100] using DSD weight 1.200000
+STP 94 ALG 1 weight 1.20 Nodes 260171 path 53
+Op order: Right Left Down Up 
+Solving STP Korf instance [95 of 100] using DSD weight 1.200000
+STP 94 ALG 2 weight 1.20 Nodes 398810 path 51
+Op order: Right Left Down Up 
+Solving STP Korf instance [95 of 100] using DSD weight 1.200000
+STP 94 ALG 3 weight 1.20 Nodes 753475 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [96 of 100] using DSD weight 1.200000
+STP 95 ALG 0 weight 1.20 Nodes 622683 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [96 of 100] using DSD weight 1.200000
+STP 95 ALG 1 weight 1.20 Nodes 323533 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [96 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3040783 generated
+2000000 nodes expanded, 6050660 generated
+STP 95 ALG 2 weight 1.20 Nodes 2917766 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [96 of 100] using DSD weight 1.200000
+STP 95 ALG 3 weight 1.20 Nodes 276871 path 50
+Op order: Right Left Down Up 
+Solving STP Korf instance [97 of 100] using DSD weight 1.200000
+STP 96 ALG 0 weight 1.20 Nodes 96535 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [97 of 100] using DSD weight 1.200000
+STP 96 ALG 1 weight 1.20 Nodes 55686 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [97 of 100] using DSD weight 1.200000
+STP 96 ALG 2 weight 1.20 Nodes 101017 path 45
+Op order: Right Left Down Up 
+Solving STP Korf instance [97 of 100] using DSD weight 1.200000
+STP 96 ALG 3 weight 1.20 Nodes 56533 path 47
+Op order: Right Left Down Up 
+Solving STP Korf instance [98 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3024473 generated
+2000000 nodes expanded, 6049984 generated
+3000000 nodes expanded, 9073945 generated
+4000000 nodes expanded, 12094897 generated
+5000000 nodes expanded, 15111240 generated
+STP 97 ALG 0 weight 1.20 Nodes 5110158 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [98 of 100] using DSD weight 1.200000
+STP 97 ALG 1 weight 1.20 Nodes 848645 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [98 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3026008 generated
+2000000 nodes expanded, 6055906 generated
+3000000 nodes expanded, 9089428 generated
+4000000 nodes expanded, 12104716 generated
+5000000 nodes expanded, 15131128 generated
+6000000 nodes expanded, 18160578 generated
+7000000 nodes expanded, 21209414 generated
+STP 97 ALG 2 weight 1.20 Nodes 7120428 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [98 of 100] using DSD weight 1.200000
+STP 97 ALG 3 weight 1.20 Nodes 854436 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [99 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2961469 generated
+STP 98 ALG 0 weight 1.20 Nodes 1639656 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [99 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2955519 generated
+STP 98 ALG 1 weight 1.20 Nodes 1348577 path 62
+Op order: Right Left Down Up 
+Solving STP Korf instance [99 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2977347 generated
+2000000 nodes expanded, 5973507 generated
+STP 98 ALG 2 weight 1.20 Nodes 2402589 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [99 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2936107 generated
+STP 98 ALG 3 weight 1.20 Nodes 1480500 path 58
+Op order: Right Left Down Up 
+Solving STP Korf instance [100 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3020207 generated
+2000000 nodes expanded, 6042167 generated
+STP 99 ALG 0 weight 1.20 Nodes 2763620 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [100 of 100] using DSD weight 1.200000
+STP 99 ALG 1 weight 1.20 Nodes 384299 path 57
+Op order: Right Left Down Up 
+Solving STP Korf instance [100 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 3030671 generated
+2000000 nodes expanded, 6059327 generated
+3000000 nodes expanded, 9097674 generated
+STP 99 ALG 2 weight 1.20 Nodes 3039058 path 55
+Op order: Right Left Down Up 
+Solving STP Korf instance [100 of 100] using DSD weight 1.200000
+1000000 nodes expanded, 2997544 generated
+STP 99 ALG 3 weight 1.20 Nodes 1048164 path 57
