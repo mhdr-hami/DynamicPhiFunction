@@ -19,7 +19,8 @@ enum tExpansionPriority {
 	kGreedy=4,
 	kFullEdgeDrop=5,
 	kPathSuboptDouble=6,
-	kDSDPolicyCount=7,
+	kSofarSubopt = 7,
+	kDSDPolicyCount=8,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -591,8 +592,19 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]);
 				SetNextWeight(maxSlopeH, maxSlopeG, (soFar+weight)-1); // const Graphics::point &loc
 			}
+			else if(policy == kSofarSubopt)
+			{
+				// Assigns the next weight based on how suboptimal the cost to here was.
+				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float soFar = 1 - theHeuristic->HCost(start, neighbors[which])/maxSlopeG;
+				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * soFar); // const Graphics::point &loc
+			}
 			else {
-				// last argument will be ignored
+				// last argument will be }ignored
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
 			}
 		}
