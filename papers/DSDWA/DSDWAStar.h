@@ -18,7 +18,8 @@ enum tExpansionPriority {
 	kHalfEdgeDrop=3,
 	kGreedy=4,
 	kFullEdgeDrop=5,
-	kDSDPolicyCount=6
+	kPathSuboptDouble=6,
+	kDSDPolicyCount=7,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -261,6 +262,20 @@ public:
 	 *
 	 * \param minWeight (returned) The minimum weight that can be used without going under the lower limit
 	 * \param maxWeight (returned) The maximum weight that can be used without going over the upper limit
+	 **/
+	void GetNextWeightRange(float &minWeight, float &maxWeight, float nextSlope)
+	{
+		if (data.size() > 0)
+			GetNextWeightRange(minWeight, maxWeight, data.back().crossPoint, nextSlope);
+		else
+			GetNextWeightRange(minWeight, maxWeight, {1, 0}, nextSlope);
+	}
+
+	/**
+	 * Given the slope of the next bounding line, give the possbile range of weights that can be used in the priority function
+	 *
+	 * \param minWeight (returned) The minimum weight that can be used without going under the lower limit
+	 * \param maxWeight (returned) The maximum weight that can be used without going over the upper limit
 	 * \param currPoint The point on the previous bounding line with priorirty 1.0
 	 * \param nextSlope The slope of the next bounding line
 	 **/
@@ -402,15 +417,8 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 	}
 	while (!DoSingleSearchStep(thePath))
 	{
-		if (0 == nodesExpanded%1000000)
-			printf("%" PRId64 " nodes expanded, %" PRId64 " generated\n", nodesExpanded, nodesTouched);
-        if (0 == nodesExpanded%10000000)
-            {
-                printf("%" PRId64 " nodes expanded, %" PRId64 " generated\n", nodesExpanded, nodesTouched);
-                
-                printf("%" PRId64 " nodes expanded, %" PRId64 " generated\n LIMIT PASSED", nodesExpanded, nodesTouched);
-//                break;
-            }
+//		if (0 == nodesExpanded%100000)
+//			printf("%" PRId64 " nodes expanded, %" PRId64 " generated\n", nodesExpanded, nodesTouched);
 	}
 }
 
@@ -575,6 +583,13 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			}
 			else if (policy == kFullEdgeDrop) {
 				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f-edgeCosts[which]*(1-weight));
+			}
+			else if (policy == kPathSuboptDouble)
+			{
+				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
+				// Actual cost to here: maxSlopeG
+				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]);
+				SetNextWeight(maxSlopeH, maxSlopeG, (soFar+weight)-1); // const Graphics::point &loc
 			}
 			else {
 				// last argument will be ignored
