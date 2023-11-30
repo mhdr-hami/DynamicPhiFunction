@@ -1,5 +1,6 @@
 import numpy as np 
 import sys
+# first arg is number of policies and second one is number of weights in the experiment.
 import matplotlib.pyplot as plt
 # import os
 # fname = "unique.txt"
@@ -9,7 +10,7 @@ import matplotlib.pyplot as plt
 # table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # count_table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # weight_to_int = {'1.20':0, '1.50':1, '2.00':2, '5.00':3, '10.00':4}
-# int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop'}
+int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kSofarSubopt'}
 
 # with open("./papers/DSDWA/results.txt", "r") as f:
 #     for line in f:
@@ -102,9 +103,10 @@ with open("./papers/DSDWA/results81.txt", "r") as f:
 x_axis = list(dataset[0].keys())
 y_axis = [list(i.values()) for i in dataset]
 
-plt.plot(x_axis, y_axis[0], 'ko-', label='WA*')
-plt.plot(x_axis, y_axis[1], 'g*-', label='XDP')
-plt.plot(x_axis, y_axis[2], 'bs-', label='XUP')
-plt.plot(x_axis, y_axis[3], 'rv-', label='HalfEdgeDrop')
+for i in range(int(sys.argv[1])):
+    plt.plot(x_axis, y_axis[i], label=int_to_alg[i])
+    # plt.plot(x_axis, y_axis[i], 'g*-', label='XDP')
+    # plt.plot(x_axis, y_axis[2], 'bs-', label='XUP')
+    # plt.plot(x_axis, y_axis[3], 'rv-', label='HalfEdgeDrop')
 plt.legend(loc='upper right')
 plt.show()
