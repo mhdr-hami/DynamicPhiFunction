@@ -1,21 +1,15 @@
 Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 0 weight 2.00 Nodes 173306 path 75
+Op order: Right Left Down Up 
 Solving STP Korf instance [82 of 100] using DSD weight 3.000000
 STP 81 ALG 0 weight 3.00 Nodes 5096 path 95
 Op order: Right Left Down Up 
 Solving STP Korf instance [82 of 100] using DSD weight 4.000000
 STP 81 ALG 0 weight 4.00 Nodes 5840 path 109
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 5.000000
-STP 81 ALG 0 weight 5.00 Nodes 11186 path 115
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 6.000000
-STP 81 ALG 0 weight 6.00 Nodes 9459 path 131
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 7.000000
-STP 81 ALG 0 weight 7.00 Nodes 2065 path 131
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 8.000000
-STP 81 ALG 0 weight 8.00 Nodes 3842 path 137
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 1 weight 2.00 Nodes 16929 path 77
 Op order: Right Left Down Up 
 Solving STP Korf instance [82 of 100] using DSD weight 3.000000
 STP 81 ALG 1 weight 3.00 Nodes 27254 path 89
@@ -23,17 +17,8 @@ Op order: Right Left Down Up
 Solving STP Korf instance [82 of 100] using DSD weight 4.000000
 STP 81 ALG 1 weight 4.00 Nodes 11778 path 99
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 5.000000
-STP 81 ALG 1 weight 5.00 Nodes 4002 path 119
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 6.000000
-STP 81 ALG 1 weight 6.00 Nodes 3391 path 145
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 7.000000
-STP 81 ALG 1 weight 7.00 Nodes 3360 path 145
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 8.000000
-STP 81 ALG 1 weight 8.00 Nodes 3273 path 145
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 2 weight 2.00 Nodes 139112 path 75
 Op order: Right Left Down Up 
 Solving STP Korf instance [82 of 100] using DSD weight 3.000000
 STP 81 ALG 2 weight 3.00 Nodes 129118 path 91
@@ -41,17 +26,8 @@ Op order: Right Left Down Up
 Solving STP Korf instance [82 of 100] using DSD weight 4.000000
 STP 81 ALG 2 weight 4.00 Nodes 12730 path 109
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 5.000000
-STP 81 ALG 2 weight 5.00 Nodes 7032 path 121
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 6.000000
-STP 81 ALG 2 weight 6.00 Nodes 1721 path 121
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 7.000000
-STP 81 ALG 2 weight 7.00 Nodes 9526 path 133
-Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 8.000000
-STP 81 ALG 2 weight 8.00 Nodes 4517 path 143
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 3 weight 2.00 Nodes 40282 path 77
 Op order: Right Left Down Up 
 Solving STP Korf instance [82 of 100] using DSD weight 3.000000
 STP 81 ALG 3 weight 3.00 Nodes 27678 path 89
@@ -59,17 +35,44 @@ Op order: Right Left Down Up
 Solving STP Korf instance [82 of 100] using DSD weight 4.000000
 STP 81 ALG 3 weight 4.00 Nodes 5427 path 103
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 5.000000
-STP 81 ALG 3 weight 5.00 Nodes 7571 path 117
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 4 weight 2.00 Nodes 38552 path 77
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 6.000000
-STP 81 ALG 3 weight 6.00 Nodes 5140 path 119
+Solving STP Korf instance [82 of 100] using DSD weight 3.000000
+STP 81 ALG 4 weight 3.00 Nodes 20841 path 95
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 7.000000
-STP 81 ALG 3 weight 7.00 Nodes 3304 path 117
+Solving STP Korf instance [82 of 100] using DSD weight 4.000000
+STP 81 ALG 4 weight 4.00 Nodes 5730 path 103
 Op order: Right Left Down Up 
-Solving STP Korf instance [82 of 100] using DSD weight 8.000000
-STP 81 ALG 3 weight 8.00 Nodes 3689 path 117
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 5 weight 2.00 Nodes 40282 path 77
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 3.000000
+STP 81 ALG 5 weight 3.00 Nodes 28257 path 89
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 4.000000
+STP 81 ALG 5 weight 4.00 Nodes 11403 path 99
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 6 weight 2.00 Nodes 139112 path 75
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 3.000000
+STP 81 ALG 6 weight 3.00 Nodes 129118 path 91
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 4.000000
+STP 81 ALG 6 weight 4.00 Nodes 12730 path 109
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 2.000000
+STP 81 ALG 7 weight 2.00 Nodes 139112 path 75
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 3.000000
+STP 81 ALG 7 weight 3.00 Nodes 129118 path 91
+Op order: Right Left Down Up 
+Solving STP Korf instance [82 of 100] using DSD weight 4.000000
+STP 81 ALG 7 weight 4.00 Nodes 12730 path 109
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 0 weight 2.00 Nodes 88992 path 58
 Op order: Right Left Down Up 
 Solving STP Korf instance [83 of 100] using DSD weight 3.000000
 STP 82 ALG 0 weight 3.00 Nodes 3630 path 62
@@ -77,17 +80,8 @@ Op order: Right Left Down Up
 Solving STP Korf instance [83 of 100] using DSD weight 4.000000
 STP 82 ALG 0 weight 4.00 Nodes 1076 path 74
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 5.000000
-STP 82 ALG 0 weight 5.00 Nodes 2193 path 90
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 6.000000
-STP 82 ALG 0 weight 6.00 Nodes 2589 path 90
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 7.000000
-STP 82 ALG 0 weight 7.00 Nodes 4002 path 106
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 8.000000
-STP 82 ALG 0 weight 8.00 Nodes 3090 path 106
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 1 weight 2.00 Nodes 17317 path 62
 Op order: Right Left Down Up 
 Solving STP Korf instance [83 of 100] using DSD weight 3.000000
 STP 82 ALG 1 weight 3.00 Nodes 3407 path 82
@@ -95,17 +89,8 @@ Op order: Right Left Down Up
 Solving STP Korf instance [83 of 100] using DSD weight 4.000000
 STP 82 ALG 1 weight 4.00 Nodes 2532 path 82
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 5.000000
-STP 82 ALG 1 weight 5.00 Nodes 2419 path 96
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 6.000000
-STP 82 ALG 1 weight 6.00 Nodes 2233 path 96
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 7.000000
-STP 82 ALG 1 weight 7.00 Nodes 2291 path 92
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 8.000000
-STP 82 ALG 1 weight 8.00 Nodes 5593 path 152
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 2 weight 2.00 Nodes 22834 path 56
 Op order: Right Left Down Up 
 Solving STP Korf instance [83 of 100] using DSD weight 3.000000
 STP 82 ALG 2 weight 3.00 Nodes 11693 path 66
@@ -113,17 +98,8 @@ Op order: Right Left Down Up
 Solving STP Korf instance [83 of 100] using DSD weight 4.000000
 STP 82 ALG 2 weight 4.00 Nodes 17356 path 86
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 5.000000
-STP 82 ALG 2 weight 5.00 Nodes 4530 path 86
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 6.000000
-STP 82 ALG 2 weight 6.00 Nodes 11576 path 100
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 7.000000
-STP 82 ALG 2 weight 7.00 Nodes 6946 path 116
-Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 8.000000
-STP 82 ALG 2 weight 8.00 Nodes 4824 path 120
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 3 weight 2.00 Nodes 21631 path 60
 Op order: Right Left Down Up 
 Solving STP Korf instance [83 of 100] using DSD weight 3.000000
 STP 82 ALG 3 weight 3.00 Nodes 1169 path 78
@@ -131,14 +107,38 @@ Op order: Right Left Down Up
 Solving STP Korf instance [83 of 100] using DSD weight 4.000000
 STP 82 ALG 3 weight 4.00 Nodes 1326 path 82
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 5.000000
-STP 82 ALG 3 weight 5.00 Nodes 1661 path 92
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 4 weight 2.00 Nodes 20809 path 60
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 6.000000
-STP 82 ALG 3 weight 6.00 Nodes 3001 path 82
+Solving STP Korf instance [83 of 100] using DSD weight 3.000000
+STP 82 ALG 4 weight 3.00 Nodes 7102 path 62
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 7.000000
-STP 82 ALG 3 weight 7.00 Nodes 1327 path 100
+Solving STP Korf instance [83 of 100] using DSD weight 4.000000
+STP 82 ALG 4 weight 4.00 Nodes 1318 path 82
 Op order: Right Left Down Up 
-Solving STP Korf instance [83 of 100] using DSD weight 8.000000
-STP 82 ALG 3 weight 8.00 Nodes 1340 path 96
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 5 weight 2.00 Nodes 21631 path 60
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 3.000000
+STP 82 ALG 5 weight 3.00 Nodes 2174 path 78
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 4.000000
+STP 82 ALG 5 weight 4.00 Nodes 1243 path 82
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 6 weight 2.00 Nodes 22834 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 3.000000
+STP 82 ALG 6 weight 3.00 Nodes 11693 path 66
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 4.000000
+STP 82 ALG 6 weight 4.00 Nodes 17356 path 86
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 2.000000
+STP 82 ALG 7 weight 2.00 Nodes 22834 path 56
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 3.000000
+STP 82 ALG 7 weight 3.00 Nodes 11693 path 66
+Op order: Right Left Down Up 
+Solving STP Korf instance [83 of 100] using DSD weight 4.000000
+STP 82 ALG 7 weight 4.00 Nodes 17356 path 86

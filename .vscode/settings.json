@@ -1,5 +1,21 @@
 {
     "files.associations": {
-        "vector": "cpp"
+        "vector": "cpp",
+        "__config": "cpp",
+        "__hash_table": "cpp",
+        "__locale": "cpp",
+        "__split_buffer": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "iomanip": "cpp",
+        "ios": "cpp",
+        "iterator": "cpp",
+        "locale": "cpp",
+        "ostream": "cpp",
+        "regex": "cpp",
+        "sstream": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "thread": "cpp"
     }
 }
