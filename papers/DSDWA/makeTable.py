@@ -1,6 +1,6 @@
 import numpy as np 
 import sys
-# first arg is number of policies and second one is number of weights in the experiment.
+### first arg is number of policies and second one is number of weights in the experiment.
 import matplotlib.pyplot as plt
 # import os
 # fname = "unique.txt"
