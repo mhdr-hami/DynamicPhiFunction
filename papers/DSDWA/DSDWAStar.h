@@ -893,6 +893,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			which = x;
 		}
 	}
+	
 	float lastRegion = floor(atan(maxSlope) * 180 / PI)+1;
 	if (fgreater(lastRegion, maxRegion))
 	{
