@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 # table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # count_table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # weight_to_int = {'1.20':0, '1.50':1, '2.00':2, '5.00':3, '10.00':4}
-int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kSofarSubopt'}
-
+int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kSofarSubopt', 8:'kLastDelta'}
+markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', 'D-', '|-']
 # with open("./papers/DSDWA/results.txt", "r") as f:
 #     for line in f:
 #         data = line.split()
@@ -22,7 +22,7 @@ int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFull
 # result = np.divide(table, count_table)
 # print()
 # print('====================================== Average Expansions Table ======================================')
-# print('Algorithm/Weight|      1.20      |      1.50      |      2.00      |      5.00      |      10.00     |')
+# print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00     |')
 # for i in range(len(table)):
 #     print(int_to_alg[i],end="")
 #     for k in range(16-len(int_to_alg[i])):
