@@ -20,8 +20,9 @@ enum tExpansionPriority {
 	kFullEdgeDrop=5,
 	kPathSuboptDouble=6,
 	kNodeBased= 7,
-	kSofarSubopt = 8,
-	kDSDPolicyCount=9,
+	kLastDelta = 8,
+	kSofarSubopt = 9,
+	kDSDPolicyCount=10,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -768,6 +769,31 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]);
 				SetNextWeight(maxSlopeH, maxSlopeG, (soFar+weight)-1); // const Graphics::point &loc
 			}
+			else if(policy == kLastDelta)
+			{
+				// Assigns the next weight based on how suboptimal the last action was.
+				// Estimated cost to here: theHeuristic->HCost(start, node);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float deltaHb = theHeuristic->HCost(start, neighbors[which]) - theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data);
+				float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
+				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * (1-deltaHb/deltaG)); // const Graphics::point &loc
+			}
+			else if(policy == kNodeBased)
+			{
+				// Assigns the next weight based on the number of the nodes.
+				// Increases the weight if lots of nodes have been added to OPEN recently.
+				// So new nodes would have a lower priority and we will delay expanding the ones in the OPEN.
+				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float soFar = 1 - theHeuristic->HCost(start, neighbors[which])/maxSlopeG;
+				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * soFar); // const Graphics::point &loc
+			}
 			else if(policy == kSofarSubopt)
 			{
 				// Assigns the next weight based on how suboptimal the cost to here was.
@@ -952,6 +978,31 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// Actual cost to here: maxSlopeG
 				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]);
 				SetNextWeight(maxSlopeH, maxSlopeG, (soFar+weight)-1, true); // const Graphics::point &loc
+			}
+			else if(policy == kLastDelta)
+			{
+				// Assigns the next weight based on how suboptimal the last action was.
+				// Estimated cost to here: theHeuristic->HCost(start, node);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float deltaHb = theHeuristic->HCost(start, neighbors[which]) - theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data);
+				float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
+				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * (1-deltaHb/deltaG), true); // const Graphics::point &loc
+			}
+			else if(policy == kNodeBased)
+			{
+				// Assigns the next weight based on the number of the nodes.
+				// Increases the weight if lots of nodes have been added to OPEN recently.
+				// So new nodes would have a lower priority and we will delay expanding the ones in the OPEN.
+				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float soFar = 1 - theHeuristic->HCost(start, neighbors[which])/maxSlopeG;
+				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * soFar, true); // const Graphics::point &loc
 			}
 			else if(policy == kSofarSubopt)
 			{
