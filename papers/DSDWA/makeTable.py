@@ -104,7 +104,7 @@ x_axis = list(dataset[0].keys())
 y_axis = [list(i.values()) for i in dataset]
 
 for i in range(int(sys.argv[1])):
-    plt.plot(x_axis, y_axis[i], label=int_to_alg[i])
+    plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
     # plt.plot(x_axis, y_axis[i], 'g*-', label='XDP')
     # plt.plot(x_axis, y_axis[2], 'bs-', label='XUP')
     # plt.plot(x_axis, y_axis[3], 'rv-', label='HalfEdgeDrop')
