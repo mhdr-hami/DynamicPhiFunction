@@ -19,8 +19,9 @@ enum tExpansionPriority {
 	kGreedy=4,
 	kFullEdgeDrop=5,
 	kPathSuboptDouble=6,
-	kSofarSubopt = 7,
-	kDSDPolicyCount=8,
+	kNodeBased= 7,
+	kSofarSubopt = 8,
+	kDSDPolicyCount=9,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -39,6 +40,7 @@ public:
 	state goal, start;
 	
 	bool InitializeSearch(environment *env, const state& from, const state& to, std::vector<state> &thePath);
+	bool InitializeSearch(environment *env, const state& from, const state& to, std::vector<state> &thePath, bool dummy);
 	bool DoSingleSearchStep(std::vector<state> &thePath);
 	bool DoSingleSearchStep(std::vector<state> &thePath, float &maxRegion);
 	void AddAdditionalStartState(state& newState);
@@ -128,7 +130,6 @@ public:
 				return data[x].K*(g + data[x].weight * h);
 		return INFINITY;
 	}
-
 	float GetPriority(float h, float g, float region)
 	{
 		if (data.size() == 0)
@@ -205,15 +206,16 @@ public:
 		}
 	}
 
-/*
+/**
 * directly target next suboptimality
 * This one is the discretized version of the previous function
 * @author mohammadreza hami
 * @date 1/23/Dec
-* @param h and g value of the state
+*
+* @param h and @param g The h and g values of the state
 * @param target weight that is going to be assigned for the next state
 * @param a dummy bool that shows this function is the discretized version one
-*/ 
+**/ 
 	void SetNextWeight(float h, float g, float targetWeight, bool dummy) // const Graphics::point &loc
 	{
 		if (fequal(h, 0))
@@ -547,7 +549,7 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 template <class state, class action, class environment, class openList>
 void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, const state& from, const state& to, std::vector<state> &thePath, bool dummy)
 {
-	if (!InitializeSearch(_env, from, to, thePath))
+	if (!InitializeSearch(_env, from, to, thePath, dummy))
 	{
 		return;
 	}
@@ -582,7 +584,6 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 	}
 }
 
-
 /**
  * Initialize the A* search
  * @author Nathan Sturtevant
@@ -612,6 +613,40 @@ bool DSDWAStar<state,action,environment,openList>::InitializeSearch(environment 
 
 	double h = theHeuristic->HCost(start, goal);
 	openClosedList.AddOpenNode(start, env->GetStateHash(start), Phi(h, 0), 0, h);
+	
+	return true;
+}
+
+/**
+ * Initialize the A* search
+ * It is the discretized verion of the last one
+ * @author mohammadreza hami
+ * @date 01/23/Dec
+ *
+ * @param _env The search environment
+ * @param from The start state
+ * @param to The goal state
+ * @return TRUE if initialization was successful, FALSE otherwise
+ */
+template <class state, class action, class environment, class openList>
+bool DSDWAStar<state,action,environment,openList>::InitializeSearch(environment *_env, const state& from, const state& to, std::vector<state> &thePath, bool dummy)
+{
+	if (theHeuristic == 0)
+		theHeuristic = _env;
+	thePath.resize(0);
+	env = _env;
+	openClosedList.Reset(env->GetMaxHash());
+	ResetNodeCount();
+	start = from;
+	goal = to;
+	if (env->GoalTest(from, to) && (stopAfterGoal)) //assumes that from and to are valid states
+	{
+		return false;
+	}
+	data.resize(0);
+
+	double h = theHeuristic->HCost(start, goal);
+	openClosedList.AddOpenNode(start, env->GetStateHash(start), Phi(h, 0, dummy), 0, h);
 	
 	return true;
 }
@@ -893,7 +928,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			which = x;
 		}
 	}
-	
+
 	float lastRegion = floor(atan(maxSlope) * 180 / PI)+1;
 	if (fgreater(lastRegion, maxRegion))
 	{
