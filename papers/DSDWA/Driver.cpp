@@ -227,7 +227,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
-		dsd_mnp.GetPath(&mnp, start, goal, path);
+		dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
 		exit(0);
 	}
@@ -236,7 +236,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		assert(maxNumArgs >= 5);
 		me = new MapEnvironment(new Map(argument[1]));
 		ScenarioLoader sl(argument[2]);
-		for (int x = 0; x < sl.GetNumExperiments(); x++)
+		std::cout<<"number of experiments is "<<sl.GetNumExperiments()<<std::endl;
+		for (int x = 0; x < std::min(sl.GetNumExperiments(), 100); x++)
 		{
 			Experiment exp = sl.GetNthExperiment(x);
 			start.x = exp.GetStartX();
@@ -245,7 +246,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd.SetWeight(atof(argument[4]));
-			dsd.GetPath(me, start, goal, solution);
+			dsd.GetPath(me, start, goal, solution, true);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
 		}
 		exit(0);
