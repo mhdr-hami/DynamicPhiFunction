@@ -1,17 +1,13 @@
 import numpy as np 
 import sys
-### first arg is number of policies and second one is number of weights in the experiment.
 import matplotlib.pyplot as plt
-# import os
-# fname = "unique.txt"
-# print(os.path.abspath(fname))
-
+## first arg is number of policies and second one is number of weights in the experiment.
 
 # table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # count_table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # weight_to_int = {'1.20':0, '1.50':1, '2.00':2, '5.00':3, '10.00':4}
-int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kSofarSubopt', 8:'kLastDelta'}
-markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', 'D-', '|-']
+int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kNodeBased', 8:'kLastDelta'}
+markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '|-', 'D-']
 # with open("./papers/DSDWA/results.txt", "r") as f:
 #     for line in f:
 #         data = line.split()
@@ -91,22 +87,23 @@ markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', 'D-', '|-']
 ############################################################################################
 
 # Third idea: create plots like the ones in the paper based on the bound and number of expansions
+## For one problem and different weights, compares te algorithms
+for problem in range(81, 100):
+    dataset = [{} for _ in range(int(sys.argv[1]))]
 
-dataset = [{} for _ in range(int(sys.argv[1]))]
+    with open("./papers/DSDWA/results.txt", "r") as f:
+        for line in f:
+            data = line.split()
+            if data[0] == 'STP' and data[1] ==str(problem):# and data[9]!='0':
+                dataset[int(data[3])][float(data[5])] = int(data[7]) #dataset[1(xdp)][1.20] = 23455
 
-with open("./papers/DSDWA/results81.txt", "r") as f:
-    for line in f:
-        data = line.split()
-        if data[0] == 'STP' and data[1] =='81':# and data[9]!='0':
-            dataset[int(data[3])][float(data[5])] = int(data[7]) #dataset[1(xdp)][1.20] = 23455
+    x_axis = list(dataset[0].keys())
+    y_axis = [list(i.values()) for i in dataset]
 
-x_axis = list(dataset[0].keys())
-y_axis = [list(i.values()) for i in dataset]
-
-for i in range(int(sys.argv[1])):
-    plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
-    # plt.plot(x_axis, y_axis[i], 'g*-', label='XDP')
-    # plt.plot(x_axis, y_axis[2], 'bs-', label='XUP')
-    # plt.plot(x_axis, y_axis[3], 'rv-', label='HalfEdgeDrop')
-plt.legend(loc='upper right')
-plt.show()
+    for i in range(int(sys.argv[1])):
+        plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
+        # plt.plot(x_axis, y_axis[i], 'g*-', label='XDP')
+        # plt.plot(x_axis, y_axis[2], 'bs-', label='XUP')
+        # plt.plot(x_axis, y_axis[3], 'rv-', label='HalfEdgeDrop')
+    plt.legend(loc='upper right')
+    plt.show()
