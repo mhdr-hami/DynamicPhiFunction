@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 # table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # count_table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
 # weight_to_int = {'1.20':0, '1.50':1, '2.00':2, '5.00':3, '10.00':4}
-int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kNodeBased', 8:'kLastDelta'}
-markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '|-', 'D-']
+int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kMixed', 8:'kLastDelta'}
+markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
 # with open("./papers/DSDWA/results.txt", "r") as f:
 #     for line in f:
 #         data = line.split()
@@ -88,7 +88,7 @@ markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '|-', 'D-']
 
 # Third idea: create plots like the ones in the paper based on the bound and number of expansions
 ## For one problem and different weights, compares te algorithms
-for problem in range(81, 100):
+for problem in range(80, 82):
     dataset = [{} for _ in range(int(sys.argv[1]))]
 
     with open("./papers/DSDWA/results.txt", "r") as f:
@@ -102,8 +102,10 @@ for problem in range(81, 100):
 
     for i in range(int(sys.argv[1])):
         plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
-        # plt.plot(x_axis, y_axis[i], 'g*-', label='XDP')
-        # plt.plot(x_axis, y_axis[2], 'bs-', label='XUP')
-        # plt.plot(x_axis, y_axis[3], 'rv-', label='HalfEdgeDrop')
+
     plt.legend(loc='upper right')
+    plt.xlabel('weight')
+    plt.ylabel('Node Expansions')
+    plt.title('Problem '+str(problem))
+    # plt(num='Problem '+str(problem))
     plt.show()
