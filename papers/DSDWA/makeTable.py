@@ -106,6 +106,6 @@ for problem in range(80, 82):
     plt.legend(loc='upper right')
     plt.xlabel('weight')
     plt.ylabel('Node Expansions')
-    plt.title('Problem '+str(problem))
+    plt.title('STP Problem '+str(problem))
     # plt(num='Problem '+str(problem))
     plt.show()
