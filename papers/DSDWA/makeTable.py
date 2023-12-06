@@ -7,35 +7,48 @@ plt.rcParams["figure.figsize"] = [9.00, 7.00]
 
 ## first arg is number of policies and second one is number of weights in the experiment.
 
-# table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
-# count_table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
-# weight_to_int = {'1.20':0, '1.50':1, '2.00':2, '5.00':3, '10.00':4}
-int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDouble', 7:'kRandomPolicy', 8:'kLastDelta'}
+table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
+count_table = np.zeros((int(sys.argv[1]), int(sys.argv[2])))
+weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
+int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
-# with open("./papers/DSDWA/results.txt", "r") as f:
-#     for line in f:
-#         data = line.split()
-#         if data[0] == "STP" :# and data[9]!='0':
-#             table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
-#             count_table[int(data[3])][weight_to_int[data[5]]] += 1
+with open("./papers/DSDWA/results.txt", "r") as f:
+    for line in f:
+        data = line.split()
+        if data[0] == "STP" :# and data[9]!='0':
+            table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
+            count_table[int(data[3])][weight_to_int[data[5]]] += 1
 
-# result = np.divide(table, count_table)
-# print()
-# print('====================================== Average Expansions Table ======================================')
-# print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00     |')
-# for i in range(len(table)):
-#     print(int_to_alg[i],end="")
-#     for k in range(16-len(int_to_alg[i])):
-#         print(' ',end="")
-#     print('|', end="")
-#     for j in range(len(table[i])):
-#         print(result[i][j], end="")
-#         for k in range(16-len(str(result[i][j]))):
-#             print(' ',end="")
-#         print('|', end="")
-#     print()
-# print()
-# print()
+
+result = np.divide(table, count_table)
+print()
+print('============================================== Average Expansions Table ==============================================')
+print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
+print('_________________' * 7)
+for i in range(len(table)):
+    print(int_to_alg[i],end="")
+    for k in range(16-len(int_to_alg[i])):
+        print(' ',end="")
+    print('|', end="")
+    for j in range(len(table[i])):
+        print(round(result[i][j], 2), end="")
+        for k in range(16-len(str(round(result[i][j], 2)))):
+            print(' ',end="")
+        print('|', end="")
+    print()
+print('_________________' * 7)
+for cnt in range(len(table[0])):
+    print(str(cnt+1)+' Best Algorithm |', end="")
+    for i in range(len(table[0])):
+        col = table[:,i]
+        print(int_to_alg[np.argsort(col)[cnt]], end="")
+        # print(int_to_alg[np.argmin(col)], end="")
+        for k in range(16-len(int_to_alg[np.argsort(col)[cnt]])):
+            print(' ',end="")
+        print('|', end="")
+    print()
+print('======================================================================================================================')
+print()
 
 # One question about this idea: what to do with huge runs? 
 # if we should not ignore them, leave the comment here 
@@ -92,23 +105,25 @@ markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
 
 # Third idea: create plots like the ones in the paper based on the bound and number of expansions
 ## For one problem and different weights, compares te algorithms
-for problem in range(60, 84):
-    dataset = [{} for _ in range(int(sys.argv[1]))]
+# for problem in range(20, 61):
+#     dataset = [{} for _ in range(int(sys.argv[1]))]
 
-    with open("./papers/DSDWA/results.txt", "r") as f:
-        for line in f:
-            data = line.split()
-            if data[0] == 'STP' and data[1] ==str(problem):# and data[9]!='0':
-                dataset[int(data[3])][float(data[5])] = int(data[7]) #dataset[1(xdp)][1.20] = 23455
+#     with open("./papers/DSDWA/results.txt", "r") as f:
+#         for line in f:
+#             data = line.split()
+#             if data[0] == 'STP' and data[1] ==str(problem):# and data[9]!='0':
+#                 dataset[int(data[3])][float(data[5])] = int(data[7]) #dataset[1(xdp)][1.20] = 23455
 
-    x_axis = list(dataset[0].keys())
-    y_axis = [list(i.values()) for i in dataset]
+#     x_axis = list(dataset[0].keys())
+#     y_axis = [list(i.values()) for i in dataset]
 
-    for i in range(int(sys.argv[1])):
-        plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
+#     for i in range(int(sys.argv[1])):
+#         plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
+        
 
-    plt.legend(loc='upper right')
-    plt.xlabel('weight')
-    plt.ylabel('Node Expansions')
-    plt.title('STP Problem '+str(problem))
-    plt.show()
+#     plt.legend(loc='upper right')
+#     plt.yscale('log')
+#     plt.xlabel('weight')
+#     plt.ylabel('Node Expansions')
+#     plt.title('STP Problem '+str(problem))
+#     plt.show()
