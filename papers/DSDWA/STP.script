@@ -24,4 +24,4 @@ end
 
 mv results.txt ./papers/DSDWA
 
-python3 ./papers/DSDWA/makeTable.py 9 6
+python3 ./papers/DSDWA/makeTable.py -stp 1 9 6

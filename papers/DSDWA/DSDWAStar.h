@@ -960,7 +960,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 	{
 		maxRegion = lastRegion;
 		float lastRegion = nodesExpanded - lastRegionExpanded;
-		std::cout<<lastRegion<< " " << nodesExpanded << " "<< lastRegionExpanded << std::endl;
 		lastRegionExpanded = nodesExpanded;
 
 		// TODO: handle edge cases

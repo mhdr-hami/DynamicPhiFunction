@@ -237,7 +237,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		me = new MapEnvironment(new Map(argument[1]));
 		ScenarioLoader sl(argument[2]);
 		std::cout<<"number of experiments is "<<sl.GetNumExperiments()<<std::endl;
-		for (int x = 0; x < std::min(sl.GetNumExperiments(), 100); x++)
+		// for (int x = 0; x < std::min(sl.GetNumExperiments(), 100); x++)
+		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
 			Experiment exp = sl.GetNthExperiment(x);
 			start.x = exp.GetStartX();
@@ -246,7 +247,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd.SetWeight(atof(argument[4]));
-			dsd.GetPath(me, start, goal, solution, true);
+			dsd.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
 		}
 		exit(0);

@@ -1,18 +1,22 @@
 #!/bin/tcsh
 
+foreach scen (./scenarios/random/*-10-*.scen)
+
 foreach alg (`seq 0 8`)
 
-#foreach weight ( 1.25 1.5 2 3 5 9 )
-foreach weight (8.0 9.0) #LastDelta
-
-foreach scen (./scenarios/random/*-10-*.scen)
+foreach weight ( 1.25 1.5 2.0 3.0 5.0 9.0 )
+# foreach weight (8.0 9.0) #LastDelta
 
 set x = `echo $scen | sed 's/.*\///g'`
 set map = `echo $x | sed 's/.scen//'`
 echo "ALG " $alg " weight " $weight " map " $map
 
-./bin/release/DSDWA -map ./maps/radnom/$map $scen $alg $weight >> random-results.txt
+./bin/release/DSDWA -map ./maps/random/$map $scen $alg $weight >> random-results.txt
 
 end
 end
 end
+
+mv random-results.txt ./papers/DSDWA
+
+python3 ./papers/DSDWA/makeTable.py -map 3 9 6
