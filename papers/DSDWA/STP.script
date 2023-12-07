@@ -3,25 +3,22 @@
 foreach problem (`seq 0 99`)
 
 echo "------------------"
-echo "problem number" $problem
 
-foreach alg (`seq 0 8`)
-
-echo "algorithm" $alg
+foreach alg (`seq 0 5`)
+# set alg = `echo 8`
 
 foreach weight ( 1.25 1.50 2.0 3.00 5.00 9.00 )
 #foreach weight (4.0 5.0 6.0 7.0 8.0 9.0) #LastDelta and RandomPolicy
 
-echo "with weight" $weight
-
-./bin/release/DSDWA -stp $problem $alg $weight >> results.txt
-
-end
+echo " Problem " $problem "ALG " $alg " weight " $weight
+./bin/release/DSDWA -stp $problem $alg $weight >> STP_results1.txt
 
 end
 
 end
 
-mv results.txt ./papers/DSDWA
+end
 
-python3 ./papers/DSDWA/makeTable.py -stp 1 9 6
+mv STP_results1.txt ./papers/DSDWA
+
+python3 ./papers/DSDWA/makeTable.py -stp 1 6 6

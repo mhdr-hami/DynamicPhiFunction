@@ -12,14 +12,14 @@
 #include "TemplateAStar.h" // to get state definitions
 
 enum tExpansionPriority {
-	kWA=0,
-	kXDP=1,
+	kNineth=0,
+	kSixth=1,
+	kPathSuboptDouble=2,
 	kXUP=3,
-	kPathSuboptDouble=3,
-	kSixth=4,
-	kEighth=5,
-	kNineth=6,
-	kRandomPolicy=7,
+	kXDP=4,
+	kWA=5,
+	kRandomPolicy=6,
+	kEighth=7,
 	kSeventh=8,
 	kHalfEdgeDrop=9,
 	kGreedy=10,

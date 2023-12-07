@@ -5,7 +5,8 @@ plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: Adress Domain #Experiment #Policies #Weights
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
+# int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
+int_to_alg = {0:'kNineth', 1:'kSixth', 2:'kPathSuboptDoub', 3:'kpwXUP', 4:'kpwXDP', 5:'WA*'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
         
 
@@ -15,7 +16,7 @@ if sys.argv[1] == '-stp':
         ##Experiment 1: Creates a table from average of runs of different problems over different weights
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
-        with open("./papers/DSDWA/results.txt", "r") as f:
+        with open("./papers/DSDWA/STP_results1.txt", "r") as f:
             for line in f:
                 data = line.split()
                 if data[0] == "STP" :# and data[9]!='0':
@@ -27,7 +28,7 @@ if sys.argv[1] == '-stp':
         print('============================================== Average Expansions Table ==============================================')
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('_________________' * 7)
-        for i in range(len(table)):
+        for i in range(6):
             print(int_to_alg[i],end="")
             for k in range(16-len(int_to_alg[i])):
                 print(' ',end="")
@@ -40,8 +41,8 @@ if sys.argv[1] == '-stp':
             print()
         print('_________________' * 7)
 
-        for cnt in range(len(table[0])):
-            print(str(cnt+1)+' Best Algorithm |', end="")
+        for cnt in range(5):
+            print(str(cnt+1)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
@@ -50,7 +51,7 @@ if sys.argv[1] == '-stp':
                     print(' ',end="")
                 print('|', end="")
             print()
-        print('======================================================================================================================')
+        print('============================================== Average STP Domain Table ==============================================')
         print()
 
     ############################################################################################
@@ -132,12 +133,12 @@ elif sys.argv[1] == '-map':
         weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
         int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
         markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
-        with open("./papers/DSDWA/results.txt", "r") as f:
+        with open("./papers/DSDWA/results/main-random-10-results.txt", "r") as f:
             for line in f:
                 data = line.split()
                 if data[0] == "MAP" :# and data[9]!='0':
-                    table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
-                    count_table[int(data[3])][weight_to_int[data[5]]] += 1
+                    table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
+                    count_table[int(data[5])][weight_to_int[data[7]]] += 1
 
         result = np.divide(table, count_table)
         print()
@@ -156,8 +157,8 @@ elif sys.argv[1] == '-map':
                 print('|', end="")
             print()
         print('_________________' * 7)
-        for cnt in range(len(table[0])):
-            print(str(cnt+1)+' Best Algorithm |', end="")
+        for cnt in range(5):
+            print(str(cnt+1)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
@@ -166,7 +167,7 @@ elif sys.argv[1] == '-map':
                     print(' ',end="")
                 print('|', end="")
             print()
-        print('======================================================================================================================')
+        print('============================================== Average random 10% Table ==============================================')
         print()
 
     ############################################################################################
@@ -221,7 +222,7 @@ elif sys.argv[1] == '-map':
         ##Experiment 3: For each problem, creates a plot of applying different algorithms using different weights
 
         problemsList = []
-        with open("./papers/DSDWA/ALL-random-10-results.txt", "r") as f:
+        with open("./papers/DSDWA/ALL-random-40-results.txt", "r") as f:
             for line in f:
                 data = line.split()
                 if data[0] == 'MAP' and (data[1] not in problemsList):
@@ -230,7 +231,7 @@ elif sys.argv[1] == '-map':
         
         for problem in problemsList:
             numberOfScenarios = 0
-            with open("./papers/DSDWA/ALL-random-10-results.txt", "r") as f:
+            with open("./papers/DSDWA/ALL-random-40-results.txt", "r") as f:
                 dataset = [{} for _ in range(int(sys.argv[3]))]
 
                 for line in f:
