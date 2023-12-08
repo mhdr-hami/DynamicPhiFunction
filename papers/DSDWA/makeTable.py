@@ -151,16 +151,17 @@ elif sys.argv[1] == '-map':
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('_________________' * 7)
         for i in range(len(table)):
-            print(int_to_alg[i],end="")
-            for k in range(16-len(int_to_alg[i])):
-                print(' ',end="")
-            print('|', end="")
-            for j in range(len(table[i])):
-                print(round(result[i][j], 2), end="")
-                for k in range(16-len(str(round(result[i][j], 2)))):
+            if i != 2:
+                print(int_to_alg[i],end="")
+                for k in range(16-len(int_to_alg[i])):
                     print(' ',end="")
                 print('|', end="")
-            print()
+                for j in range(len(table[i])):
+                    print(round(result[i][j], 2), end="")
+                    for k in range(16-len(str(round(result[i][j], 2)))):
+                        print(' ',end="")
+                    print('|', end="")
+                print()
         print('_________________' * 7)
         for cnt in range(1, 6):
             print(str(cnt)+' Best Algorithm|', end="")
