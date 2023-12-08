@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 plt.rcParams["figure.figsize"] = [9.00, 7.00]
-## Args: Adress Domain #Experiment #Policies #Weights
+## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
 # int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
@@ -16,10 +16,10 @@ if sys.argv[1] == '-stp':
         ##Experiment 1: Creates a table from average of runs of different problems over different weights
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
-        with open("./papers/DSDWA/STP_results1.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
             for line in f:
                 data = line.split()
-                if data[0] == "STP" :# and data[9]!='0':
+                if data[0] == "STP" and data[3]!='2':# and data[9]!='0':
                     table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
                     count_table[int(data[3])][weight_to_int[data[5]]] += 1
 
@@ -29,20 +29,21 @@ if sys.argv[1] == '-stp':
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('_________________' * 7)
         for i in range(6):
-            print(int_to_alg[i],end="")
-            for k in range(16-len(int_to_alg[i])):
-                print(' ',end="")
-            print('|', end="")
-            for j in range(len(table[i])):
-                print(round(result[i][j], 2), end="")
-                for k in range(16-len(str(round(result[i][j], 2)))):
+            if i!=2:
+                print(int_to_alg[i],end="")
+                for k in range(16-len(int_to_alg[i])):
                     print(' ',end="")
                 print('|', end="")
-            print()
+                for j in range(len(table[i])):
+                    print(round(result[i][j], 2), end="")
+                    for k in range(16-len(str(round(result[i][j], 2)))):
+                        print(' ',end="")
+                    print('|', end="")
+                print()
         print('_________________' * 7)
 
-        for cnt in range(5):
-            print(str(cnt+1)+' Best Algorithm|', end="")
+        for cnt in range(1, 6):
+            print(str(cnt)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
@@ -51,7 +52,14 @@ if sys.argv[1] == '-stp':
                     print(' ',end="")
                 print('|', end="")
             print()
-        print('============================================== Average STP Domain Table ==============================================')
+
+        print('==============================================',end='')
+        for _ in range((26 - len(sys.argv[5]))//2):
+            print(' ', end='')
+        print(sys.argv[5], end='')
+        for _ in range((26 - len(sys.argv[5]))//2):
+            print(' ', end='')
+        print('==============================================')
         print()
 
     ############################################################################################
@@ -130,13 +138,10 @@ elif sys.argv[1] == '-map':
         ##Experiment 1: Creates a table from average of runs of different problems over different weights
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
-        weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-        int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
-        markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
-        with open("./papers/DSDWA/results/main-random-10-results.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
             for line in f:
                 data = line.split()
-                if data[0] == "MAP" :# and data[9]!='0':
+                if data[0] == "MAP" and data[5]!='2':# and data[9]!='0':
                     table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
                     count_table[int(data[5])][weight_to_int[data[7]]] += 1
 
@@ -157,8 +162,8 @@ elif sys.argv[1] == '-map':
                 print('|', end="")
             print()
         print('_________________' * 7)
-        for cnt in range(5):
-            print(str(cnt+1)+' Best Algorithm|', end="")
+        for cnt in range(1, 6):
+            print(str(cnt)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
@@ -167,7 +172,14 @@ elif sys.argv[1] == '-map':
                     print(' ',end="")
                 print('|', end="")
             print()
-        print('============================================== Average random 10% Table ==============================================')
+        
+        print('==============================================',end='')
+        for _ in range((26 - len(sys.argv[5]))//2):
+            print(' ', end='')
+        print(sys.argv[5], end='')
+        for _ in range((26 - len(sys.argv[5]))//2):
+            print(' ', end='')
+        print('==============================================')
         print()
 
     ############################################################################################
@@ -219,6 +231,55 @@ elif sys.argv[1] == '-map':
 
     ############################################################################################
     elif sys.argv[2] == '3':
+        ##Experiment 3: For each problem, creates a plot of applying different algorithms using different weights
+
+        problemsList = []
+        with open("./papers/DSDWA/ALL-random-40-results.txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if data[0] == 'MAP' and (data[1] not in problemsList):
+                    problemsList.append(data[1])
+        f.close()
+        
+        for problem in problemsList:
+            numberOfScenarios = 0
+            with open("./papers/DSDWA/ALL-random-40-results.txt", "r") as f:
+                dataset = [{} for _ in range(int(sys.argv[3]))]
+
+                for line in f:
+                    data = line.split()
+                    if data[0] == 'MAP' and data[1] == problem :# and data[11]!='0':
+                        if float(data[7]) not in list(dataset[int(data[5])].keys()):
+                            dataset[int(data[5])][float(data[7])] = 0
+
+                        dataset[int(data[5])][float(data[7])] += int(data[9]) #dataset[1(xdp)][1.20] = 23455
+
+                        numberOfScenarios += 1
+                        
+
+                x_axis = list(dataset[0].keys())
+                y_axis = [list(alg.values()) for alg in dataset]
+
+                # print(y_axis)
+                # print(y_axis)
+                numberOfScenarios /= int(sys.argv[3])
+                numberOfScenarios /= int(sys.argv[4])
+                print(numberOfScenarios)
+                for alg in range(len(y_axis)):
+                    for i in range(len(y_axis[alg])):
+                        y_axis[alg][i] = y_axis[alg][i]/numberOfScenarios
+                # print(y_axis)
+
+                for i in range(int(sys.argv[3])):
+                    plt.plot(x_axis, y_axis[i], markers[i], label=int_to_alg[i])
+                    
+
+                plt.legend(loc='upper right')
+                plt.yscale('log')
+                plt.xlabel('weight')
+                plt.ylabel('Node Expansions')
+                plt.title('MAP Problem '+str(problem))
+                plt.show()
         ##Experiment 3: For each problem, creates a plot of applying different algorithms using different weights
 
         problemsList = []
