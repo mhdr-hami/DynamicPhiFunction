@@ -849,12 +849,14 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if (Hb < maxSlopeH)
 				{
 					float soFar = 1 - Hb/maxSlopeG;
-					SetNextWeight(maxSlopeH, maxSlopeG, weight+((maxWeight-0.25*(maxWeight-weight))-weight)*soFar); // const Graphics::point &loc
+					float next = weight+((maxWeight-0.25*(maxWeight-weight))-weight)*soFar;
+					SetNextWeight(maxSlopeH, maxSlopeG, next); // const Graphics::point &loc
 				}
 				else if(Hb >= maxSlopeH)
 				{
 					float soFar = 1 - Hb/maxSlopeG;
-					SetNextWeight(maxSlopeH, maxSlopeG, minWeight+0.25*(weight-minWeight((minWeight+0.25*(weight-minWeight))-minWeight)*soFar); // const Graphics::point &loc
+					float next = minWeight+0.25*(weight-minWeight)+(weight-minWeight)*soFar;
+					SetNextWeight(maxSlopeH, maxSlopeG, next); // const Graphics::point &loc
 				}
 			} 
 			else {
