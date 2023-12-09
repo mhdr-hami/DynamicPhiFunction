@@ -5,10 +5,8 @@ plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-# int_to_alg = {0:'WA*', 1:'XDP', 2:'XUP', 3:'HalfEdgeDrop', 4:'kGreedy', 5:'kFullEdgeDrop', 6:'kPathSuboptDoub', 7:'kRandomPolicy', 8:'kLastDelta'}
-int_to_alg = {0:'kNineth', 1:'kSixth', 2:'kPathSuboptDoub', 3:'kpwXUP', 4:'kpwXDP', 5:'WA*'}
+int_to_alg = {0:'kNineth', 1:'kSixth', 2:'kPathSuboptDoub', 3:'kpwXUP', 4:'kpwXDP', 5:'WA*', 6:'kTenth'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
-        
 
 if sys.argv[1] == '-stp':
     if sys.argv[2] == '1':
@@ -28,7 +26,7 @@ if sys.argv[1] == '-stp':
         print('============================================== Average Expansions Table ==============================================')
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('_________________' * 7)
-        for i in range(6):
+        for i in range(7):
             if i!=2:
                 print(int_to_alg[i],end="")
                 for k in range(16-len(int_to_alg[i])):

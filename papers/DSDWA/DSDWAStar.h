@@ -18,16 +18,16 @@ enum tExpansionPriority {
 	kXUP=3,
 	kXDP=4,
 	kWA=5,
-	kRandomPolicy=6,
-	kEighth=7,
+	kTenth=6,
+	kRandomPolicy=7,
 	kSeventh=8,
 	kHalfEdgeDrop=9,
 	kGreedy=10,
 	kFullEdgeDrop=11,
     kDSDPolicyCount=12,
-	kNewPolicy=13,
-	kNodeBased=14,
-	kLastDelta=11,
+	kNodeBased=13,
+	kLastDelta=14,
+	kEighth=15,
 };
 // enum tExpansionPriority {
 // 	kWA=0,
@@ -789,7 +789,18 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]);
 				SetNextWeight(maxSlopeH, maxSlopeG, 2*soFar-1); // const Graphics::point &loc
 			}
-	// kTenth=7, 
+			else if(policy == kLastDelta)
+			{
+				// Assigns the next weight based on how suboptimal the last action was.
+				// Estimated cost to here: theHeuristic->HCost(start, node);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float deltaHb = theHeuristic->HCost(start, neighbors[which]) - theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data);
+				float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
+				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * (1-deltaHb/deltaG), true); // const Graphics::point &loc
+			}
 			else if (policy == kSixth) 
 			{
 				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
@@ -816,16 +827,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]) - 1;
 				SetNextWeight(maxSlopeH, maxSlopeG, weight+(maxWeight-weight)*soFar); // const Graphics::point &loc
 			}
-			else if (policy == kEighth)
-			{
-				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
-				// Actual cost to here: maxSlopeG
-				float nextSlope = maxSlopeG / maxSlopeH;
-				float minWeight, maxWeight;
-				GetNextWeightRange(minWeight, maxWeight, nextSlope);
-				float soFar = maxSlopeG/theHeuristic->HCost(start, neighbors[which]) - 1;
-				SetNextWeight(maxSlopeH, maxSlopeG, weight+(maxWeight-weight)*soFar); // const Graphics::point &loc
-			} 
 			else if(policy == kNineth)
 			{
 				// Assigns the next weight based on how suboptimal the last action was.
@@ -837,6 +838,25 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float soFar = 1 - theHeuristic->HCost(start, neighbors[which])/maxSlopeG;
 				SetNextWeight(maxSlopeH, maxSlopeG, weight+(maxWeight-weight)*soFar); // const Graphics::point &loc
 			}
+			else if (policy == kTenth)
+			{
+				// Estimated cost to here: theHeuristic->HCost(start, neighbors[which]);
+				// Actual cost to here: maxSlopeG
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float Hb = theHeuristic->HCost(start, neighbors[which]);
+				if (Hb < maxSlopeH)
+				{
+					float soFar = 1 - Hb/maxSlopeG;
+					SetNextWeight(maxSlopeH, maxSlopeG, weight+((maxWeight-0.25*(maxWeight-weight))-weight)*soFar); // const Graphics::point &loc
+				}
+				else if(Hb >= maxSlopeH)
+				{
+					float soFar = 1 - Hb/maxSlopeG;
+					SetNextWeight(maxSlopeH, maxSlopeG, minWeight+0.25*(weight-minWeight((minWeight+0.25*(weight-minWeight))-minWeight)*soFar); // const Graphics::point &loc
+				}
+			} 
 			else {
 				// last argument will be }ignored
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
