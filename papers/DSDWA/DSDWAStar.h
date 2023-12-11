@@ -19,15 +19,17 @@ enum tExpansionPriority {
 	kXDP=4,
 	kWA=5,
 	kTenth=6,
-	kRandomPolicy=7,
-	kSeventh=8,
-	kHalfEdgeDrop=9,
-	kGreedy=10,
-	kFullEdgeDrop=11,
-    kDSDPolicyCount=12,
-	kNodeBased=13,
-	kLastDelta=14,
-	kEighth=15,
+	kSuper=7,
+	kSuper2=8,
+	kRandomPolicy=9,
+	kSeventh=10,
+	kHalfEdgeDrop=11,
+	kGreedy=12,
+	kFullEdgeDrop=13,
+    kDSDPolicyCount=14,
+	kNodeBased=15,
+	kLastDelta=16,
+	kEighth=17,
 };
 // enum tExpansionPriority {
 // 	kWA=0,
@@ -858,7 +860,77 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					float next = minWeight+0.25*(weight-minWeight)+(weight-minWeight)*soFar;
 					SetNextWeight(maxSlopeH, maxSlopeG, next); // const Graphics::point &loc
 				}
+			}
+			else if (policy == kSuper)
+			{
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float Hb = theHeuristic->HCost(start, neighbors[which]);
+				float soFar = 1 - Hb/maxSlopeG;
+				
+				if(nodesExpanded <= 10)
+				{
+					//kWA*
+					SetNextWeight(maxSlopeH, maxSlopeG, weight); // const Graphics::point &loc
+				}
+				else
+				{
+					float deltaHb = Hb - theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data);
+					float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
+					float enhancedHeuristicStoG = deltaG/deltaHb * theHeuristic->HCost(start, goal);
+					if (flesseq(enhancedHeuristicStoG, maxSlopeG))
+					{
+						float next = weight + ((maxWeight - 0.10*(maxWeight-weight)) - weight) * soFar;
+						SetNextWeight(maxSlopeH, maxSlopeG, next);
+					}
+					else
+					{
+						float next = weight + ((maxWeight - 0.25*(maxWeight-weight)) - weight) * soFar;
+						SetNextWeight(maxSlopeH, maxSlopeG, next);
+						// if (fless(Hb, maxSlopeH))
+						// {
+						// 	float next = minWeight + (weight - minWeight) * soFar;
+						// 	SetNextWeight(maxSlopeH, maxSlopeG, next);
+						// }
+						// else
+						// {
+						// 	float next = weight + (maxWeight - weight) * soFar;
+						// 	SetNextWeight(maxSlopeH, maxSlopeG, next);
+						// }
+					}
+				}
 			} 
+			else if (policy == kSuper2) 
+			{
+				float nextSlope = maxSlopeG / maxSlopeH;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, nextSlope);
+				float Hb = theHeuristic->HCost(start, neighbors[which]);
+				float soFar = 1 - Hb/maxSlopeG;
+				
+				if(nodesExpanded <= 10)
+				{
+					//kWA*
+					SetNextWeight(maxSlopeH, maxSlopeG, weight); // const Graphics::point &loc
+				}
+				else
+				{
+					float deltaHb = Hb - theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data);
+					float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
+					float enhancedHeuristicStoG = deltaG/deltaHb * theHeuristic->HCost(start, goal);
+					if (flesseq(enhancedHeuristicStoG, maxSlopeG))
+					{
+						float next = weight + (maxWeight  - weight) * soFar * 0.9;
+						SetNextWeight(maxSlopeH, maxSlopeG, next);
+					}
+					else
+					{
+						float next = weight + (maxWeight  - weight) * soFar * 0.75;
+						SetNextWeight(maxSlopeH, maxSlopeG, next);
+					}
+				}
+			}
 			else {
 				// last argument will be }ignored
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
