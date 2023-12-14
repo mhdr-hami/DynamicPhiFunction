@@ -1147,7 +1147,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
 				SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight) * (1-deltaHb/deltaG), true); // const Graphics::point &loc
 			}
-			else if (policy == kSuper2) 
+			else if (policy == kX)
 			{
 				float nextSlope = maxSlopeG / maxSlopeH;
 				float minWeight, maxWeight;
