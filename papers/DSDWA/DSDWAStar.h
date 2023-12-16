@@ -1345,7 +1345,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if(lastRegion <= 4)
 				{
 					//kpwXD
-					SetNextWeight(maxSlopeH, maxSlopeG, weight, true); 
+					SetNextWeight(maxSlopeH, maxSlopeG, minWeight, true); 
 				}
 				else
 				{
