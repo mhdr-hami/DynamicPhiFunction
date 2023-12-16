@@ -51,6 +51,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Policy", "Increment policy", kAnyModifier, '}');
 	InstallKeyboardHandler(MyDisplayHandler, "Policy", "Decrement policy", kAnyModifier, '{');
 	InstallKeyboardHandler(MyDisplayHandler, "Problem", "Increment problem", kAnyModifier, '.');
+	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-map", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
@@ -267,6 +268,18 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
+		case 'w': 
+			data.resize(0);
+			if(bound==9) bound=1.25;
+			else bound = (bound-1)*2+1;
+			MyWindowHandler(windowID, kWindowDestroyed);
+			MyWindowHandler(windowID, kWindowCreated);
+			dsd.policy = (tExpansionPriority)((dsd.policy)%kDSDPolicyCount);
+			printf("Policy: %d\n", dsd.policy);
+			printf("new Bound: %.2f\n", bound);
+			dsd.InitializeSearch(me, start, goal, solution);
+			searchRunning = true;
+			break;
 		case 'p': showPlane = !showPlane; break;
 		case '[': stepsPerFrame = std::max(stepsPerFrame/2, 1); break;
 		case ']': stepsPerFrame = stepsPerFrame*2; break;
@@ -291,6 +304,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				goal.x = random()%me->GetMap()->GetMapWidth();
 				goal.y = random()%me->GetMap()->GetMapHeight();
 			} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
+			printf("Policy: %d\n", dsd.policy);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
