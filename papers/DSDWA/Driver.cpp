@@ -260,7 +260,13 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 {
 	switch (key)
 	{
-		case 'r': data.resize(0); break;
+		case 'r': 
+			data.resize(0); 
+			dsd.policy = (tExpansionPriority)((dsd.policy)%kDSDPolicyCount);
+			printf("Policy: %d\n", dsd.policy);
+			dsd.InitializeSearch(me, start, goal, solution);
+			searchRunning = true;
+			break;
 		case 'p': showPlane = !showPlane; break;
 		case '[': stepsPerFrame = std::max(stepsPerFrame/2, 1); break;
 		case ']': stepsPerFrame = stepsPerFrame*2; break;
