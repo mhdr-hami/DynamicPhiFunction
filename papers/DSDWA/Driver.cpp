@@ -49,6 +49,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Faster", "Speed up search animation", kAnyModifier, ']');
 	InstallKeyboardHandler(MyDisplayHandler, "Slower", "Slow down search animation", kAnyModifier, '[');
 	InstallKeyboardHandler(MyDisplayHandler, "Policy", "Increment policy", kAnyModifier, '}');
+	InstallKeyboardHandler(MyDisplayHandler, "Policy", "Decrement policy", kAnyModifier, '{');
 	InstallKeyboardHandler(MyDisplayHandler, "Problem", "Increment problem", kAnyModifier, '.');
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
@@ -124,7 +125,7 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 				if (solution.size() == 0)
 				{
 					if (dsd.DoSingleSearchStep(solution))
-						std::cout << "Expansions: " << dsd.GetNodesExpanded() << "\n";
+						std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
 				}
 			}
 			dsd.Draw(display);
@@ -227,7 +228,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
-		dsd_mnp.GetPath(&mnp, start, goal, path);
+		dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
 		exit(0);
 	}
@@ -247,7 +248,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd.SetWeight(atof(argument[4]));
-			dsd.GetPath(me, start, goal, solution);
+			dsd.GetPath(me, start, goal, solution, true);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
 		}
 		exit(0);
@@ -261,10 +262,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 	{
 		case 'r': data.resize(0); break;
 		case 'p': showPlane = !showPlane; break;
-		case '[': stepsPerFrame = stepsPerFrame/2; break;
+		case '[': stepsPerFrame = std::max(stepsPerFrame/2, 1); break;
 		case ']': stepsPerFrame = stepsPerFrame*2; break;
 		case '}':
 			dsd.policy = (tExpansionPriority)((dsd.policy+1)%kDSDPolicyCount);
+			printf("Policy: %d\n", dsd.policy);
+			dsd.InitializeSearch(me, start, goal, solution);
+			searchRunning = true;
+			break;
+		case '{':
+			dsd.policy = (tExpansionPriority)((dsd.policy-1)%kDSDPolicyCount);
 			printf("Policy: %d\n", dsd.policy);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
