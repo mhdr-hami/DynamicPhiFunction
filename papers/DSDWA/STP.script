@@ -1,19 +1,19 @@
 #!/bin/tcsh
-
+cd ./build/SFML
+make
+cd ../..
+echo "============================================================================================"
 foreach problem (`seq 0 99`)
 
 echo "------------------"
 
-foreach alg (`seq 0 6`)
-# set alg = `echo 8`
+# foreach alg (`seq 0 7`)
+set alg = `echo 10`
 
 foreach weight ( 1.25 1.50 2.0 3.00 5.00 9.00 )
-#foreach weight (4.0 5.0 6.0 7.0 8.0 9.0) #LastDelta and RandomPolicy
 
 echo " Problem " $problem "ALG " $alg " weight " $weight
 ./bin/release/DSDWA -stp $problem $alg $weight >> STP1-results.txt
-
-end
 
 end
 
