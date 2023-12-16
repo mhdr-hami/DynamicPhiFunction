@@ -20,6 +20,7 @@
 
 int stepsPerFrame = 1;
 float bound = 2;
+int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
 float GetPriority(float h, float g);
@@ -264,7 +265,9 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 		case 'r': 
 			data.resize(0); 
 			dsd.policy = (tExpansionPriority)((dsd.policy)%kDSDPolicyCount);
+			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
+			printf("Bound: %.2f\n", bound);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
@@ -274,9 +277,11 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			else bound = (bound-1)*2+1;
 			MyWindowHandler(windowID, kWindowDestroyed);
 			MyWindowHandler(windowID, kWindowCreated);
+			problemNumber = 0;
 			dsd.policy = (tExpansionPriority)((dsd.policy)%kDSDPolicyCount);
+			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
-			printf("new Bound: %.2f\n", bound);
+			printf("Bound: %.2f\n", bound);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
@@ -285,13 +290,17 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 		case ']': stepsPerFrame = stepsPerFrame*2; break;
 		case '}':
 			dsd.policy = (tExpansionPriority)((dsd.policy+1)%kDSDPolicyCount);
+			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
+			printf("Bound: %.2f\n", bound);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
 		case '{':
 			dsd.policy = (tExpansionPriority)((dsd.policy-1)%kDSDPolicyCount);
+			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
+			printf("Bound: %.2f\n", bound);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
@@ -304,7 +313,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				goal.x = random()%me->GetMap()->GetMapWidth();
 				goal.y = random()%me->GetMap()->GetMapHeight();
 			} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
+			problemNumber +=1;
+			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
+			printf("Bound: %.2f\n", bound);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
 			break;
