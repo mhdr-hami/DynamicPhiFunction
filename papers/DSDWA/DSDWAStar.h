@@ -1022,35 +1022,39 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				float HstartTOgoal = theHeuristic->HCost(start, goal);
 				float deltaH = openClosedList.Lookup(nodeid).h - maxSlopeH;
-				// float HE = std::abs(HstartTOgoal - maxSlopeH) / maxSlopeG * deltaH/std::abs(deltaH);
+				float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
 				float HE = maxSlopeG/(HstartTOgoal - maxSlopeH);
 				float direction = HstartTOgoal - maxSlopeH;
-				// std::cout<<"HE was : "<<HE<<" and w was: "<<weight<<std::endl;
 				float lastRegion = floor(atan(maxSlope) * 180 / PI)+1;
 				float Hb = theHeuristic->HCost(start, neighbors[which]);
+				float flow = maxSlopeG/std::abs(HstartTOgoal - maxSlopeH) - openClosedList.Lookup(nodeid).g / std::abs(HstartTOgoal - openClosedList.Lookup(nodeid).h);
 				
-				if(lastRegion <= 4)
+				if(lastRegion <= 5) // 5 is the best for this part
 				{
 					//kpwXD
-					SetNextWeight(maxSlopeH, maxSlopeG, weight); 
+					SetNextWeight(maxSlopeH, maxSlopeG, weight); // min is the best for this part
 				}
 				else
 				{
-					if(direction < 0)
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+					
+					if(flow > 0)
+						{
+							SetNextWeight(maxSlopeH, maxSlopeG, minWeight); // min is the best for this part
+							// std::cout<<"it did WA*"<<std::endl;
+						}
 					else
 					{
-						SetNextWeight(maxSlopeH, maxSlopeG, weight + weight*(- HE + 1));
+						// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*1.001);
+						SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*1.1);
+						// SetNextWeight(maxSlopeH, maxSlopeG, weight + weight*(- maxSlopeG/Hb + 1));
+						// SetNextWeight(maxSlopeH, maxSlopeG, weight + weight*(- maxSlopeG/Hb*deltaG/std::abs(deltaH) + 1));
+						// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG, lastRegion) + weight*(- HE + 1), true);
 						// std::cout<<"HE was: "<<HE<<std::endl;
 						// float next = GetCurrentWeight(maxSlopeH, maxSlopeG) - HE + 1;
 						// float next = weight - HE + 1;
 						// float next = GetCurrentWeight() + std::abs(weight - GetCurrentWeight()) * HE;
 						// SetNextWeight(maxSlopeH, maxSlopeG, next);
-						
-
 					}
-					
-
 				}
 
 				// float nextSlope = maxSlopeG / maxSlopeH;
@@ -1335,42 +1339,37 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				float HstartTOgoal = theHeuristic->HCost(start, goal);
 				float deltaH = openClosedList.Lookup(nodeid).h - maxSlopeH;
-				// float HE = std::abs(HstartTOgoal - maxSlopeH) / maxSlopeG * deltaH/std::abs(deltaH);
+				float deltaG = maxSlopeG - openClosedList.Lookup(nodeid).g;
 				float HE = maxSlopeG/(HstartTOgoal - maxSlopeH);
 				float direction = HstartTOgoal - maxSlopeH;
-				// std::cout<<"HE was : "<<HE<<" and w was: "<<weight<<std::endl;
 				float lastRegion = floor(atan(maxSlope) * 180 / PI)+1;
 				float Hb = theHeuristic->HCost(start, neighbors[which]);
 				
-				if(lastRegion <= 4)
+				if(lastRegion <= 5) // 5 is the best for this part
 				{
 					//kpwXD
-					SetNextWeight(maxSlopeH, maxSlopeG, minWeight, true); 
+					SetNextWeight(maxSlopeH, maxSlopeG, minWeight, true); // min is the best for this part
 				}
 				else
 				{
-					if(direction < 0)
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight, true);
-					else
-					{
-						SetNextWeight(maxSlopeH, maxSlopeG, weight + weight*(- HE + 1), true);
-						// std::cout<<"HE was: "<<HE<<std::endl;
-						// float next = GetCurrentWeight(maxSlopeH, maxSlopeG) - HE + 1;
-						// float next = weight - HE + 1;
-						// float next = GetCurrentWeight() + std::abs(weight - GetCurrentWeight()) * HE;
-						// SetNextWeight(maxSlopeH, maxSlopeG, next);
-						
-
-					}
-					
-
+					SetNextWeight(maxSlopeH, maxSlopeG, weight + (- std::abs(HE) + 1), true);
+					// if(direction < 0)
+					// 	{
+					// 		SetNextWeight(maxSlopeH, maxSlopeG, minWeight, true); // min is the best for this part
+					// 		// std::cout<<"it did WA*"<<std::endl;
+					// 	}
+					// else
+					// {
+					// 	// SetNextWeight(maxSlopeH, maxSlopeG, weight + weight*(- maxSlopeG/Hb + 1), true);
+					// 	SetNextWeight(maxSlopeH, maxSlopeG, weight + weight*(- std::abs(HE) + 1), true);
+					// 	// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG, lastRegion) + weight*(- HE + 1), true);
+					// 	// std::cout<<"HE was: "<<HE<<std::endl;
+					// 	// float next = GetCurrentWeight(maxSlopeH, maxSlopeG) - HE + 1;
+					// 	// float next = weight - HE + 1;
+					// 	// float next = GetCurrentWeight() + std::abs(weight - GetCurrentWeight()) * HE;
+					// 	// SetNextWeight(maxSlopeH, maxSlopeG, next);
+					// }
 				}
-			
-				// maxG_over_Hb = std::max(HE, maxG_over_Hb);
-				// SetNextWeight(maxSlopeH, maxSlopeG, weight - maxG_over_Hb + 1, true);
-				// SetNextWeight(maxSlopeH, maxSlopeG, weight - HE + 1, true);
-
-				// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG, lastRegion) - HE + 1, true);
 			}
 			else {
 				// last argument will be }ignored
