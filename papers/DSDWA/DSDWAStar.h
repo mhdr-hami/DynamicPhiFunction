@@ -34,29 +34,6 @@
 // 	kEighth=19,
 // };
 
-// enum tExpansionPriority {
-// 	kNineth=0,
-// 	kSixth=1,
-// 	kPathSuboptDouble=2,
-// 	kXUP=3,
-// 	kXDP=4,
-// 	kWA=5,
-// 	kTenth=6,
-// 	kSuper=7,
-// 	kX=8,
-// 	kTheX=9,
-// 	kTheOne=10,
-// 	kRandomPolicy=11,
-// 	kSeventh=12,
-// 	kHalfEdgeDrop=13,
-// 	kGreedy=14,
-// 	kFullEdgeDrop=15,
-//     kDSDPolicyCount=16,
-// 	kNodeBased=17,
-// 	kLastDelta=18,
-// 	kEighth=19,
-// };
-
 enum tExpansionPriority {
 	kNineth=0,
 	kSixth=1,
@@ -1073,20 +1050,29 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// SetNextWeight(maxSlopeH, maxSlopeG, minWeight + (weight-minWeight)*minH/maxSlopeH);
 				// SetNextWeight(maxSlopeH, maxSlopeG, minWeight + (GetCurrentWeight(maxSlopeH, maxSlopeG)-minWeight)*minH/maxSlopeH);
 				// std::cout<<"CURRENT:"<<weight*minH/maxSlopeH<<std::endl;
+				
+				
 				// SetNextWeight(maxSlopeH, maxSlopeG, weight*minH/maxSlopeH);
 				// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG) - (weight-minWeight)*(1-minH/maxSlopeH));
 				// SetNextWeight(maxSlopeH, maxSlopeG, weight - (weight)*(maxSlopeH - minH)/HstartTOgoal);
 
 				if(minH == hParent)
 				{
-						// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*maxSlopeG/Hb);
-					SetNextWeight(maxSlopeH, maxSlopeG, weight); // min is the best for this part
+					SetNextWeight(maxSlopeH, maxSlopeG, weight); //GOOD
+					// SetNextWeight(maxSlopeH, maxSlopeG, weight);
+					// SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
 						// std::cout<<"it did WA*"<<std::endl;
 				}
 				else
 				{
-						// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*Hb/maxSlopeG);
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight); //GOOD
+					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight)*(1-minH/hParent));
+					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight)*std::abs(1-hParent/HstartTOgoal));
+					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - GetCurrentWeight(maxSlopeH, maxSlopeG)*1.1);
+					
+					if(maxSlopeH > maxSlopeG) SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+					else SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+
 				}
 
 				// if(lastRegion <= 5) // 5 is the best for this part
@@ -1297,7 +1283,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		lastRegionExpanded = nodesExpanded;
 
 		// TODO: handle edge cases
-		if (openClosedList.OpenSize() != 0)
+		if (openClosedList.OpenSize() != 0 || openClosedList.OpenSize() == 0)
 		{
 			if (policy == kGreedy)
 			{
@@ -1406,19 +1392,32 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float direction = HstartTOgoal - maxSlopeH;
 				float lastRegion = floor(atan(maxSlope) * 180 / PI)+1;
 				float Hb = theHeuristic->HCost(start, neighbors[which]);
-				minH = std::min(minH, maxSlopeH);
+				float hParent = openClosedList.Lookup(nodeid).h;
+				minH = std::min(minH, hParent);
 
-				if(minH < maxSlopeH)
+				if(minH == hParent)
 				{
-						// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*maxSlopeG/Hb);
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight); // min is the best for this part
+					// SetNextWeight(maxSlopeH, maxSlopeG, weight, true);
+					SetNextWeight(maxSlopeH, maxSlopeG, weight, true);
 						// std::cout<<"it did WA*"<<std::endl;
 				}
 				else
 				{
-						// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*Hb/maxSlopeG);
-					SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight, true);
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight - (maxWeight - minWeight)*(minH/hParent), true);
 				}
+
+				// if(minH < maxSlopeH)
+				// {
+				// 		// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*maxSlopeG/Hb);
+				// 	SetNextWeight(maxSlopeH, maxSlopeG, maxWeight); // min is the best for this part
+				// 		// std::cout<<"it did WA*"<<std::endl;
+				// }
+				// else
+				// {
+				// 		// SetNextWeight(maxSlopeH, maxSlopeG, GetCurrentWeight(maxSlopeH, maxSlopeG)*Hb/maxSlopeG);
+				// 	SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+				// }
 
 				// if(lastRegion <= 5) // 5 is the best for this part
 				// {
