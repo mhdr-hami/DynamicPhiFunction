@@ -20,5 +20,10 @@ end
 end
 
 mv STP1-results.txt ./papers/DSDWA
-
-# python3 ./papers/DSDWA/makeTable.py -stp 1 6 6
+rm ./papers/DSDWA/results/STP-results.txt
+rm ./papers/DSDWA/results/STP1-results.txt
+mv ./papers/DSDWA/STP1-results.txt ./papers/DSDWA/results
+cd ./papers/DSDWA/results
+cat STP9-results.txt STP1-results.txt > STP-results.txt
+cd ../../..
+python3 ./papers/DSDWA/makeTable.py -stp 1 11 6 STP
