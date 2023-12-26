@@ -1,9 +1,1 @@
-bin/**
-build/**
-.DS_Store
-bin/debug/DSDWA
-bin/release/DSDWA
-papers/DSDWA/.DS_Store
-build/XCode/HOG2 ObjC/HOG2 ObjC.xcodeproj/project.xcworkspace/xcuserdata/mohammadrezahami.xcuserdatad/UserInterfaceState.xcuserstate
-objs/DSDWA/debug/papers/DSDWA/Driver.o
-objs/DSDWA/release/papers/DSDWA/Driver.o
+*-results.txt
