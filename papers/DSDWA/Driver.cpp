@@ -126,6 +126,7 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 			{
 				if (solution.size() == 0)
 				{
+					// if (dsd.DoSingleSearchStep(solution, true))
 					if (dsd.DoSingleSearchStep(solution))
 						std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
 				}
@@ -230,6 +231,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
+		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
 		exit(0);
@@ -250,6 +252,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd.SetWeight(atof(argument[4]));
+			// dsd.GetPath(me, start, goal, solution, true);
 			dsd.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
 		}
