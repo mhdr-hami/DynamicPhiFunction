@@ -16,7 +16,7 @@
 // 	kSixth=1,
 // 	kPathSuboptDouble=2,
 // 	kX=3,
-// 	k90=4,
+// 	kXDP90=4,
 // 	kSuper=5,
 // 	kTenth=6,
 // 	kWA=7,
@@ -45,7 +45,7 @@ enum tExpansionPriority {
 	kTenth=6,
 	kSuper=7,
 	kX=8,
-	k90=9,
+	kXDP90=9,
 	// kTheOne=10,
 	kHopeFul=10,
 	kRandomPolicy=11,
@@ -1028,13 +1028,13 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// 	}
 				// }
 			}
-			else if (policy == k90) 
+			else if (policy == kXDP90) 
 			{
-				float nextSlope = maxSlopeG / maxSlopeH;
 				float minWeight, maxWeight;
-				GetNextWeightRange(minWeight, maxWeight, nextSlope);
-				float newDegree = floor(atan(maxSlope) * 180 / PI)+1;
-				SetNextWeight(maxSlopeH, maxSlopeG, minWeight + newDegree/90*(maxWeight-minWeight));
+				GetNextWeightRange(minWeight, maxWeight, maxSlopeG/maxSlopeH);
+				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+				assert(angle>=0 && angle<=90);
+				SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle/90))
 			}
 			else if (policy == kHopeFul) 
 			{
