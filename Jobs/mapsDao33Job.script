@@ -1,0 +1,20 @@
+#!/bin/tcsh
+#SBATCH -o ./outputs/dao33-results.txt
+#SBATCH --account=def-nathanst-ab
+#SBATCH --time=23:59:59
+
+foreach scen (./../scenarios/dao/orz*.scen)
+#set scen = `echo ./scenarios/dao/orz900d.map.scen`
+foreach alg (`seq 9 10`)
+
+foreach weight ( 1.25 1.5 2.0 3.0 5.0 9.0 )
+
+set x = `echo $scen | sed 's/.*\///g'`
+set map = `echo $x | sed 's/.scen//'`
+echo "ALG " $alg " weight " $weight " map " $map
+
+./../bin/release/DSDWA -map ./../maps/dao/$map $scen $alg $weight
+
+end
+end
+end

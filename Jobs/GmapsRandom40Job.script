@@ -1,0 +1,22 @@
+#!/bin/tcsh
+#SBATCH -o ./outputs/G10random40-results.txt
+#SBATCH --account=def-nathanst-ab
+#SBATCH --gpus-per-node=2
+#SBATCH --time=24:00:00
+
+foreach scen (./../scenarios/random/*-40-*.scen)
+
+foreach alg (`seq 9 10`)
+#set alg = `echo 8`
+
+foreach weight ( 1.25 1.5 2.0 3.0 5.0 9.0 )
+
+set x = `echo $scen | sed 's/.*\///g'`
+set map = `echo $x | sed 's/.scen//'`
+echo "ALG " $alg " weight " $weight " map " $map
+
+./../bin/release/DSDWA -map ./../maps/random/$map $scen $alg $weight
+
+end
+end
+end

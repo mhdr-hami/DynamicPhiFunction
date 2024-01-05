@@ -1,0 +1,5 @@
+module load python/3.10
+
+module load scipy-stack
+
+python3 ./papers/DSDWA/makeTable.py -map 1 11 6 F10dao

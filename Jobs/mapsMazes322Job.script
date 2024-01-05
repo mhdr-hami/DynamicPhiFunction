@@ -1,0 +1,20 @@
+#!/bin/tcsh
+#SBATCH -o ./outputs/mazes322-results.txt
+#SBATCH --account=def-nathanst-ab
+#SBATCH --time=24:00:00
+
+#foreach scen (./scenarios/mazes/*-32-*.scen)
+set scen = `echo ./scenarios/mazes/maze512-32-2.map.scen`
+#foreach alg (`seq 0 6`)
+set alg = `echo 8`
+
+foreach weight ( 1.25 1.5 2.0 3.0 5.0 9.0 )
+
+set x = `echo $scen | sed 's/.*\///g'`
+set map = `echo $x | sed 's/.scen//'`
+echo "ALG " $alg " weight " $weight " map " $map
+
+./bin/release/DSDWA -map ./maps/mazes/$map $scen $alg $weight
+
+#end
+end
