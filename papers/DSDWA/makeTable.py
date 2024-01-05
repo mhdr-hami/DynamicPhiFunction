@@ -5,8 +5,8 @@ plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-int_to_alg = {0:'kNineth', 1:'kSixth', 2:'kPathSuboptDoub', 3:'kpwXUP', 4:'kpwXDP', 5:'WA*', 6:'kTenth', 7:'kSuper', 8:'kX', 9:'kTheX', 10:'kTheOne'}
-markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', 'D-']
+int_to_alg = {0:'kNineth', 1:'kSixth', 2:'kPathSuboptDoub', 3:'kpwXUP', 4:'kpwXDP', 5:'WA*', 6:'kTenth', 7:'kSuper', 8:'kX', 9:'kXDP90', 10:'kTheOne'}
+markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp':
     if sys.argv[2] == '1':
@@ -107,10 +107,10 @@ if sys.argv[1] == '-stp':
     elif sys.argv[2] == '3':
         ##Experiment 3: For each problem, creates a plot of applying different algorithms using different weights
 
-        for problem in range(20, 61):
+        for problem in range(81, 83):
             dataset = [{} for _ in range(int(sys.argv[3]))]
 
-            with open("./papers/DSDWA/results.txt", "r") as f:
+            with open("./papers/DSDWA/results/STP-results.txt", "r") as f:
                 for line in f:
                     data = line.split()
                     if data[0] == 'STP' and data[1] ==str(problem):# and data[9]!='0':
