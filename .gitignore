@@ -1,1 +1,9 @@
 *-results.txt
+bin/**
+build/**
+objs/**
+bin/debug/DSDWA
+bin/release/DSDWA
+objs/DSDWA/debug/papers/DSDWA/Driver.o
+objs/DSDWA/release/papers/DSDWA/Driver.o
+
