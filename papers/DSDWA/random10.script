@@ -2,6 +2,7 @@
 cd ./build/SFML
 make
 cd ../..
+rm random101-results.txt
 echo "============================================================================================"
 foreach scen (./scenarios/random/*-10-*.map.scen)
 

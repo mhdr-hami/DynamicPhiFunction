@@ -2,12 +2,13 @@
 cd ./build/SFML
 make
 cd ../..
+rm STP1-results.txt
 echo "============================================================================================"
 foreach problem (`seq 0 99`)
 
 echo "------------------"
 
-# foreach alg (`seq 0 7`)
+# foreach alg (`seq 9 10`)
 set alg = `echo 10`
 
 foreach weight ( 1.25 1.50 2.0 3.00 5.00 9.00 )
@@ -16,7 +17,7 @@ echo " Problem " $problem "ALG " $alg " weight " $weight
 ./bin/release/DSDWA -stp $problem $alg $weight >> STP1-results.txt
 
 end
-
+# end
 end
 
 mv STP1-results.txt ./papers/DSDWA
@@ -26,4 +27,5 @@ mv ./papers/DSDWA/STP1-results.txt ./papers/DSDWA/results
 cd ./papers/DSDWA/results
 cat STP9-results.txt STP1-results.txt > STP-results.txt
 cd ../../..
+
 python3 ./papers/DSDWA/makeTable.py -stp 1 11 6 STP
