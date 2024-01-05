@@ -17,7 +17,7 @@ if sys.argv[1] == '-stp':
         with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
             for line in f:
                 data = line.split()
-                if data[0] == "STP" : #and data[3]!='2':# and data[9]!='0':
+                if data[0] == "STP" and data[3]!='0' and data[3]!='1' and data[3]!='6' and data[3]!='8': # and data[9]!='0':
                     table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
                     count_table[int(data[3])][weight_to_int[data[5]]] += 1
 
@@ -27,7 +27,7 @@ if sys.argv[1] == '-stp':
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('_________________' * 7)
         for i in range(len(table)):
-            if i!=-1:
+            if i!=0 and i!=1 and i!=6 and i!=8:
                 print(int_to_alg[i],end="")
                 for k in range(16-len(int_to_alg[i])):
                     print(' ',end="")
@@ -40,8 +40,8 @@ if sys.argv[1] == '-stp':
                 print()
         print('_________________' * 7)
 
-        for cnt in range(0, 6):
-            print(str(cnt)+' Best Algorithm|', end="")
+        for cnt in range(4, 11):
+            print(str(cnt-3)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
@@ -139,7 +139,7 @@ elif sys.argv[1] == '-map':
         with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
             for line in f:
                 data = line.split()
-                if data[0] == "MAP": # and data[5]!='2':# and data[9]!='0':
+                if data[0] == "MAP" and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
                     table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
                     count_table[int(data[5])][weight_to_int[data[7]]] += 1
 
@@ -149,7 +149,7 @@ elif sys.argv[1] == '-map':
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('_________________' * 7)
         for i in range(len(table)):
-            if i != -1:
+            if i!=0 and i!=1 and i!=6 and i!=8:
                 print(int_to_alg[i],end="")
                 for k in range(16-len(int_to_alg[i])):
                     print(' ',end="")
@@ -161,8 +161,8 @@ elif sys.argv[1] == '-map':
                     print('|', end="")
                 print()
         print('_________________' * 7)
-        for cnt in range(0, 6):
-            print(str(cnt)+' Best Algorithm|', end="")
+        for cnt in range(4, 11):
+            print(str(cnt-3)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
