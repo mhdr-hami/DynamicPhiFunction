@@ -1034,7 +1034,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				GetNextWeightRange(minWeight, maxWeight, maxSlopeG/maxSlopeH);
 				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
 				assert(angle>=0 && angle<=90);
-				SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle/90))
+                SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle/90));
 			}
 			else if (policy == kHopeFul) 
 			{
@@ -1530,7 +1530,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// 	}
 				// }
 			}
-			else if (policy == k90)
+			else if (policy == kXDP90)
 			{
 				float nextSlope = maxSlopeG / maxSlopeH;
 				float minWeight, maxWeight;
