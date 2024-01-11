@@ -271,7 +271,12 @@ private:
 template <int width, int height>
 MNPuzzle<width, height>::MNPuzzle()
 {
-	weight = kUnitWeight;
+	// weight = kUnitWeight;
+	// weight = kSquareRoot;
+	// weight = kSquared;
+	weight = kUnitPlusFrac; 
+	// weight = kSquarePlusOneRoot;
+
 	// stores applicable operators at each of the width*height positions
 	Change_Op_Order(Get_Op_Order_From_Hash(15)); // Right, Left, Down, Up is default operator ordering
 	goal_stored = false;
@@ -284,7 +289,12 @@ MNPuzzle<width, height>::MNPuzzle(const std::vector<slideDir> op_order)
 	Change_Op_Order(op_order);
 	goal_stored = false;
 	use_manhattan = true;
-	weight = kUnitWeight;
+	// weight = kUnitWeight;
+	// weight = kSquareRoot;
+	// weight = kSquared;
+	weight = kUnitPlusFrac;
+	// weight = kSquarePlusOneRoot;
+
 }
 
 template <int width, int height>
