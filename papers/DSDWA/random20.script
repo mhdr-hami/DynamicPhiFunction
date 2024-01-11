@@ -1,0 +1,32 @@
+#!/bin/tcsh
+cd ./build/SFML
+make
+cd ../..
+rm random101-results.txt
+echo "============================================================================================"
+foreach scen (./scenarios/random/*-20-*.map.scen)
+
+foreach alg (`seq 9 10`)
+# set alg = `echo 8`
+
+foreach weight ( 1.25 1.5 2.0 3.0 5.0 9.0 )
+# foreach weight (8.0 9.0) #LastDelta
+
+set x = `echo $scen | sed 's/.*\///g'`
+set map = `echo $x | sed 's/.scen//'`
+echo "ALG " $alg " weight " $weight " map " $map
+
+./bin/release/DSDWA -map ./maps/random/$map $scen $alg $weight >> random201-results.txt
+
+end
+end
+end
+
+mv random201-results.txt ./papers/DSDWA
+rm ./papers/DSDWA/results/random20-results.txt
+rm ./papers/DSDWA/results/random201-results.txt
+mv ./papers/DSDWA/random201-results.txt ./papers/DSDWA/results
+cd ./papers/DSDWA/results
+cat random208-results.txt random201-results.txt > random20-results.txt
+cd ../../..
+python3 ./papers/DSDWA/makeTable.py -map 1 11 6 random20

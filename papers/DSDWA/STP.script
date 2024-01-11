@@ -8,24 +8,24 @@ foreach problem (`seq 0 99`)
 
 echo "------------------"
 
-# foreach alg (`seq 9 10`)
-set alg = `echo 10`
+foreach alg (`seq 0 2`)
+# set alg = `echo 10`
 
 foreach weight ( 1.25 1.50 2.0 3.00 5.00 9.00 )
 
 echo " Problem " $problem "ALG " $alg " weight " $weight
-./bin/release/DSDWA -stp $problem $alg $weight >> STP1-results.txt
+./bin/release/DSDWA -stp $problem $alg $weight >> STP_UnitPlusFrac-results.txt
 
 end
-# end
+end
 end
 
-mv STP1-results.txt ./papers/DSDWA
-rm ./papers/DSDWA/results/STP-results.txt
-rm ./papers/DSDWA/results/STP1-results.txt
-mv ./papers/DSDWA/STP1-results.txt ./papers/DSDWA/results
-cd ./papers/DSDWA/results
-cat STP9-results.txt STP1-results.txt > STP-results.txt
-cd ../../..
+mv STP_UnitPlusFrac-results.txt ./papers/DSDWA
+# rm ./papers/DSDWA/results/STP-results.txt
+# rm ./papers/DSDWA/results/STP1-results.txt
+mv ./papers/DSDWA/STP_UnitPlusFrac-results.txt ./papers/DSDWA/results
+# cd ./papers/DSDWA/results
+# cat STP9-results.txt STP1-results.txt > STP-results.txt
+# cd ../../..
 
-python3 ./papers/DSDWA/makeTable.py -stp 1 11 6 STP
+python3 ./papers/DSDWA/makeTable.py -stp 1 3 6 STP_UnitPlusFrac
