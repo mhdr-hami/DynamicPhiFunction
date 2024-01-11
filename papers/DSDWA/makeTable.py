@@ -5,7 +5,7 @@ plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-int_to_alg = {0:'mn-mx', 1:'lmd-hmd', 2:'lhmd-hlmd', 3:'PathSuboptDouble', 4:'Super', 5:'XDP90', 6:'kTheOne', 7:'kSuper', 8:'kX', 9:'kXDP90', 10:'kTheOne'}
+int_to_alg = {0:'mn-mx', 1:'lmd-hmd', 2:'lhmd-hlmd', 3:'PathSuboptDou', 4:'Super', 5:'XDP90', 6:'kTheOne', 7:'kSuper', 8:'kX', 9:'kXDP90', 10:'kTheOne'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp':
