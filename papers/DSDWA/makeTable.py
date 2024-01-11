@@ -139,9 +139,10 @@ elif sys.argv[1] == '-map':
         with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
             for line in f:
                 data = line.split()
-                if data[0] == "MAP" and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
-                    table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
-                    count_table[int(data[5])][weight_to_int[data[7]]] += 1
+                if len(data):
+                    if data[0] == "MAP" and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
+                        table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
+                        count_table[int(data[5])][weight_to_int[data[7]]] += 1
 
         result = np.divide(table, count_table)
         print()
