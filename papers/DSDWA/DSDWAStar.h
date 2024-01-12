@@ -11,46 +11,20 @@
 
 #include "TemplateAStar.h" // to get state definitions
 
-// enum tExpansionPriority {
-// 	kWA=0,
-// 	kpwXDP=1,
-// 	kpwXUP=2,
-// 	kXDP=3,
-// 	kTheOne=4,
-// 	kTheOne2=5,
-// 	kTheOne3=6,
-// 	kXDP90=7,
-// 	kSuper=7,
-// 	kPathSuboptDouble=7,
-// 	kNineth=8,
-// 	kX=9,
-// 	kSixth=10,
-// 	kTenth=11,
-// 	kRandomPolicy=12,
-// 	kSeventh=13,
-// 	kHalfEdgeDrop=14,
-// 	kGreedy=15,
-// 	kFullEdgeDrop=16,
-//     kDSDPolicyCount=17,
-// 	kNodeBased=18,
-// 	kLastDelta=19,
-// 	kEighth=20,
-// };
 
 enum tExpansionPriority {
 	kTheOne=0,
-	kTheOne2=1,
-	kTheOne3=2,
-	kWA=3,
-	kpwXDP=4,
-	kpwXUP=5,
-	kXDP=6,
-	kXDP90=7,
+	kWA=1,
+	kpwXDP=2,
+	kpwXUP=3,
+	kXDP=4,
+	kXUP=5,
+	kGreedy=6,
+	kHalfEdgeDrop=7,
 	kPathSuboptDouble=8,
-	kHalfEdgeDrop=9,
-	kGreedy=10,
-	kFullEdgeDrop=11,
-    kDSDPolicyCount=12,
+	kXDP90=9,
+	kFullEdgeDrop=10,
+    kDSDPolicyCount=11,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -128,7 +102,14 @@ public:
 		if (policy == kXDP)
 		{
 				float nextF = (g+(2*weight-1)*h+sqrt((g-h)*(g-h)+4*weight*g*h))/(2*weight);
+				return nextF; 
+				
+		}
+		if (policy == kXUP)
+		{
+				float nextF = (g+h+sqrt((g+h)*(g+h)+4*weight*(weight-1)*h*h))/(2*weight);
 				return nextF;
+				
 		}
 		else return GetPriority(h, g);
 	}
@@ -877,6 +858,14 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				SetNextPriority(maxSlopeH, maxSlopeG, nextF);
 
 			}
+			else if (policy == kXUP)
+			{
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+				SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+
+			}
 			else if (policy == kTheOne) 
 			{
 				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH SECTION IT WAS FROM.
@@ -922,124 +911,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
 				////WEIGHTS IN THE RANGE OF minWeight to maxWeight
 				float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
-
-				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
-
-				if (fgreater(maxSlope, data.back().slope))
-				{
-					// maxRegion = lastRegion;
-					thirdLast = secondLast;
-					secondLast = firstLast;
-					firstLast = 0;
-				}
-
-			}
-			else if (policy == kTheOne2) 
-			{
-				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH SECTION IT WAS FROM.
-				//ADD ONE TO THE NUMBER OF THAT SECTION.
-				float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
-				float weightGuider;
-				if(data.size()>=3)
-				{
-					if(nodeSlope <= data[data.size()-3].slope)
-						thirdLast += 1;
-					else if(nodeSlope <= data[data.size()-2].slope)
-						secondLast += 1;
-					else if(nodeSlope <= data[data.size()-1].slope)
-						firstLast += 1;
-				}
-
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				midWeight = (maxWeight + minWeight)/2;
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
-
-				float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
-				float rangeTop = (thirdLast + secondLast + firstLast)/2;
-				float rangeButtom = (thirdLast + secondLast + firstLast)/6;
-				
-				////LARGER WEIGHTS IF (PROGRESS MADE = NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
-				//// 0<=weightGuider<=1
-				// if(rangeTop - rangeButtom !=0)
-				// 	weightGuider = (WMA - rangeButtom)/(rangeTop - rangeButtom);
-				// else
-				// 	weightGuider = 0;
-				////SMALLER WEIGHTS IF (PROGRESS MADE = NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
-				//// 0<=weightGuider<=1
-				if(rangeTop - rangeButtom !=0)
-					weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-				else
-					weightGuider = 0;
-
-				////WEIGHTS IN THE RANGE OF minWeight to midWeight
-				// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
-				////WEIGHTS IN THE RANGE OF lowMidWeight to highMidWeight
-				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
-				////WEIGHTS IN THE RANGE OF minWeight to maxWeight
-				// float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
-
-				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
-
-				if (fgreater(maxSlope, data.back().slope))
-				{
-					// maxRegion = lastRegion;
-					thirdLast = secondLast;
-					secondLast = firstLast;
-					firstLast = 0;
-				}
-
-			}
-			else if (policy == kTheOne3) 
-			{
-				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH SECTION IT WAS FROM.
-				//ADD ONE TO THE NUMBER OF THAT SECTION.
-				float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
-				float weightGuider;
-				if(data.size()>=3)
-				{
-					if(nodeSlope <= data[data.size()-3].slope)
-						thirdLast += 1;
-					else if(nodeSlope <= data[data.size()-2].slope)
-						secondLast += 1;
-					else if(nodeSlope <= data[data.size()-1].slope)
-						firstLast += 1;
-				}
-
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight, lowHighMidWeight, highLowMidWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				midWeight = (maxWeight + minWeight)/2;
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
-				lowHighMidWeight = (lowMidWeight + midWeight)/2;
-				highLowMidWeight = (highMidWeight + midWeight)/2;
-
-				float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
-				float rangeTop = (thirdLast + secondLast + firstLast)/2;
-				float rangeButtom = (thirdLast + secondLast + firstLast)/6;
-				
-				////LARGER WEIGHTS IF (PROGRESS MADE = NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
-				//// 0<=weightGuider<=1
-				// if(rangeTop - rangeButtom !=0)
-				// 	weightGuider = (WMA - rangeButtom)/(rangeTop - rangeButtom);
-				// else
-				// 	weightGuider = 0;
-				////SMALLER WEIGHTS IF (PROGRESS MADE = NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
-				//// 0<=weightGuider<=1
-				if(rangeTop - rangeButtom !=0)
-					weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-				else
-					weightGuider = 0;
-
-				////WEIGHTS IN THE RANGE OF minWeight to midWeight
-				// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
-				////WEIGHTS IN THE RANGE OF lowMidWeight to highMidWeight
-				// float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
-				////WEIGHTS IN THE RANGE OF minWeight to maxWeight
-				// float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
-				////WEIGHTS IN THE RANGE OF lowHighMidWeight to highLowMidWeight
-				float TheNextWeight = lowHighMidWeight + (highLowMidWeight-lowHighMidWeight)*weightGuider;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 
