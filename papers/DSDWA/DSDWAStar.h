@@ -822,8 +822,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 	if (fgreater(maxSlope, 0))
 	{
 		// TODO: handle edge cases
-		if (openClosedList.OpenSize() != 0 || openClosedList.OpenSize() == 0)
-		// if (openClosedList.OpenSize() != 0)
+		// if (openClosedList.OpenSize() != 0 || openClosedList.OpenSize() == 0)
+		if (openClosedList.OpenSize() != 0)
 		{
 			if (policy == kGreedy)
 			{
