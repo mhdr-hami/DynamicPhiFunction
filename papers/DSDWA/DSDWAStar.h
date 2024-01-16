@@ -22,11 +22,13 @@ enum tExpansionPriority {
 	kGreedy=6,
 	kHalfEdgeDrop=7,
 	kTheOne2=8,
-	kTheOne3=9,
-	kPathSuboptDouble=10,
-	kXDP90=11,
-	kFullEdgeDrop=12,
-    kDSDPolicyCount=13,
+	kTheOne3=9, 
+	fixedkHalfEdgeDrop=10,
+	kPathSuboptDouble=11, 
+	kXDP90=12,
+	kFullEdgeDrop=13,
+	fixedkFullEdgeDrop=14,
+    kDSDPolicyCount=15,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -832,10 +834,10 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f);
 			}
 			else if (policy == kHalfEdgeDrop) {
-				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f-edgeCosts[which]*(1-weight)/2.0);
+				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f+edgeCosts[which]*(1-weight)/(2.0*weight));
 			}
 			else if (policy == kFullEdgeDrop) {
-				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f-edgeCosts[which]*(1-weight));
+				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f+edgeCosts[which]*(1-weight)/weight);
 			}
 			else if (policy == kPathSuboptDouble)
 			{
@@ -1061,6 +1063,12 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					firstLast = 0;
 				}
 
+			}
+			else if (policy == fixedkHalfEdgeDrop) {
+				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f-edgeCosts[which]*(weight-1)/(2.0*weight));
+			}
+			else if (policy == fixedkFullEdgeDrop) {
+				SetNextPriority(maxSlopeH, maxSlopeG, openClosedList.Lookup(openClosedList.Peek()).f-edgeCosts[which]*(weight-1)/weight);
 			}
 			else {
 				// last argument will be }ignored

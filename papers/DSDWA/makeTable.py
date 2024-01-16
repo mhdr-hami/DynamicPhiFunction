@@ -5,7 +5,7 @@ import sys
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-int_to_alg = {0:'TheOne', 1:'WA*', 2:'pwXDP', 3:'pwXUP', 4:'XDP', 5:'XUP', 6:'Greedy', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3'}
+int_to_alg = {0:'TheOne', 1:'WA*', 2:'pwXDP', 3:'pwXUP', 4:'XDP', 5:'XUP', 6:'Greedy', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp':
@@ -42,7 +42,7 @@ if sys.argv[1] == '-stp':
         print('_________________' * 7)
 
         for cnt in range(len(table)):
-            print(str(cnt+1)+' Best Algorithm|', end="")
+            print(str(cnt)+' Best Algorithm|', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
