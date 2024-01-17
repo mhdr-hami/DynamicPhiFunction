@@ -17,6 +17,7 @@
 #include "SVGUtil.h"
 #include "DSDWAStar.h"
 #include "MapGenerators.h"
+#include "DynamicPotentialSearch.h"
 
 int stepsPerFrame = 1;
 float bound = 2;
@@ -55,6 +56,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-map", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
 
 	InstallWindowHandler(MyWindowHandler);
@@ -234,6 +236,24 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-DPstp") == 0)
+	{
+		assert(maxNumArgs >= 3);
+		
+		DynamicPotentialSearch<MNPuzzleState<4, 4>, slideDir, MNPuzzle<4, 4>> dsd_mnp;
+		std::vector<MNPuzzleState<4, 4>> path;
+		MNPuzzle<4, 4> mnp;
+		MNPuzzleState<4, 4> start = STP::GetKorfInstance(atoi(argument[1]));
+		MNPuzzleState<4, 4> goal;
+		// dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
+		// dsd_mnp.SetWeight(atof(argument[3]));
+		dsd_mnp.SetOptimalityBound(atof(argument[2]));
+		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[2]));
+		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
+		dsd_mnp.GetPath(&mnp, start, goal, path);
+		printf("STP %d dummy %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), 0, atof(argument[2]), dsd_mnp.GetNodesExpanded(), path.size());
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-map") == 0)

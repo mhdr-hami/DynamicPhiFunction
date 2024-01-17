@@ -5,7 +5,7 @@ import sys
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-int_to_alg = {0:'TheOne', 1:'WA*', 2:'pwXDP', 3:'pwXUP', 4:'XDP', 5:'XUP', 6:'Greedy', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
+int_to_alg = {0:'DPS', 1:'WA*', 2:'pwXDP', 3:'pwXUP', 4:'XDP', 5:'XUP', 6:'Greedy', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp' or sys.argv[1] == '-DPstp':
