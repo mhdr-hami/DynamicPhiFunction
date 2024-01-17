@@ -1,0 +1,35 @@
+#!/bin/tcsh
+cd ./build/SFML
+make
+cd ../..
+# rm STP1-results.txt
+echo "============================================================================================"
+
+
+
+foreach problem (`seq 0 99`)
+
+echo "------------------"
+
+# foreach alg (`seq 8 9`)
+# set alg = `echo 10`
+
+# foreach weight ( 1.25 1.50 2.0 3.00 5.00 9.00 )
+foreach weight ( 2.0 3.00 5.00 9.00 )
+
+echo " Problem " $problem " weight " $weight
+./bin/release/DSDWA -DPstp $problem $weight >> DP_STP_SquareRoot-results.txt
+
+end
+# end
+end
+
+mv DP_STP_SquareRoot-results.txt ./papers/DSDWA
+# rm ./papers/DSDWA/results/STP-results.txt
+# rm ./papers/DSDWA/results/STP1-results.txt
+mv ./papers/DSDWA/DP_STP_SquareRoot-results.txt ./papers/DSDWA/results 
+# cd ./papers/DSDWA/results
+# cat tmp2_STP_SquareRoot-results.txt F2_STP_SquareRoot-results.txt > F3_STP_SquareRoot-results.txt
+# cd ../../..
+
+python3 ./papers/DSDWA/makeTable.py -DPstp 1 1 2 DP_STP_SquareRoot
