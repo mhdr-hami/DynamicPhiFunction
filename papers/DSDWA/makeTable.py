@@ -4,11 +4,12 @@ import sys
 # plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
-weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
-int_to_alg = {0:'DPS', 1:'WA*', 2:'pwXDP', 3:'pwXUP', 4:'XDP', 5:'XUP', 6:'Greedy', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
+weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5, '1.00':0}
+# int_to_alg = {0:'TheOne', 1:'WA*', 2:'pwXDP', 3:'pwXUP', 4:'XDP', 5:'XUP', 6:'Greedy', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
+int_to_alg = {0:'TheOne', 1:'A*'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
-if sys.argv[1] == '-stp' or sys.argv[1] == '-DPstp':
+if sys.argv[1] == '-stp':
     if sys.argv[2] == '1':
 
         ##Experiment 1: Creates a table from average of runs of different problems over different weights
@@ -18,10 +19,13 @@ if sys.argv[1] == '-stp' or sys.argv[1] == '-DPstp':
             for line in f:
                 data = line.split()
                 if data[0] == "STP" : #and data[3]!='0' and data[3]!='1' and data[3]!='6' and data[3]!='8': # and data[9]!='0':
-                    table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
+                    table[int(data[3])][weight_to_int[data[5]]] += float(data[7])
                     count_table[int(data[3])][weight_to_int[data[5]]] += 1
+                    print(float(data[7]), count_table[int(data[3])][weight_to_int[data[5]]], sep=" ")
 
-        result = np.divide(table, count_table)
+        result = np.divide(table, 100)
+        # divisor=np.array([2,3,4])
+        # table/(divisor[:,np.newaxis])
         print()
         print('============================================== Average Expansions Table ==============================================')
         print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
@@ -34,8 +38,8 @@ if sys.argv[1] == '-stp' or sys.argv[1] == '-DPstp':
                     print(' ',end="")
                 print('|', end="")
                 for j in range(len(table[i])):
-                    print(round(result[i][j], 2), end="")
-                    for k in range(16-len(str(round(result[i][j], 2)))):
+                    print(round(result[i][j], 4), end="")
+                    for k in range(16-len(str(round(result[i][j], 4)))):
                         print(' ',end="")
                     print('|', end="")
                 print()
