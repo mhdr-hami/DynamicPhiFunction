@@ -10,21 +10,26 @@
 #define DSDWAStar_h
 
 #include "TemplateAStar.h" // to get state definitions
+#include "MNPuzzle.h" // to get the STP state
 
+MNPuzzle<4, 4> mnp;
+MNPuzzleState<4, 4> mnpState;
 
 enum tExpansionPriority {
-	kMAP=0,
-	kWA=1,
-	kpwXDP=2,
-	kpwXUP=3,
-	kXDP=4,
-	kXUP=5,
-	kGreedy=6,
-	kHalfEdgeDrop=7,
-	kFullEdgeDrop=8,
-	kPathSuboptDouble=9, 
-	kXDP90=10,
-    kDSDPolicyCount=11,
+	kWA=0,
+	kpwXDP=1,
+	kpwXUP=2,
+	kXDP=3,
+	kXUP=4,
+	kUgly=5,
+	kUgly2=6,
+	kMAP=7,
+	kGreedy=7,
+	kHalfEdgeDrop=8,
+	kFullEdgeDrop=9,
+	kPathSuboptDouble=10,
+	kXDP90=11,
+    kDSDPolicyCount=12,
 };
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
@@ -926,7 +931,27 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					secondLast = firstLast;
 					firstLast = 0;
 				}
+			}
+			else if (policy == kUgly)
+			{
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				mnp.GetStateFromHash(mnpState, nodeid);
+				double buckerScore = mnp.GetBuckerScore(mnpState);
+				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
+				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+			}
+			else if (policy == kUgly2)
+			{
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				mnp.GetStateFromHash(mnpState, nodeid);
+				double buckerScore = mnp.GetBuckerScore(mnpState);
+				if(buckerScore)
+				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
+
+				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
 			else {
 				// last argument will be }ignored
@@ -1113,7 +1138,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float Hb = theHeuristic->HCost(start, neighbors[which]);
 				SetNextWeight(maxSlopeH, maxSlopeG, weight - maxSlopeG/Hb + 1, true);
 			}
-			else if (policy == kTheOne) 
+			else if (policy == kMAP) 
 			{
 				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH SECTION IT WAS FROM.
 				//ADD ONE TO THE NUMBER OF THAT SECTION.
