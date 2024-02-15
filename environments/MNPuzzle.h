@@ -139,6 +139,7 @@ public:
 	MNPuzzle();
 	MNPuzzle(const std::vector<slideDir> op_order); // used to set action order
 	~MNPuzzle();
+	double GetBuckerScore(MNPuzzleState<width, height> &s) const;
 	void SetWeighted(puzzleWeight w) { weight = w; }
 	puzzleWeight GetWeighted() const { return weight; }
 	void GetSuccessors(const MNPuzzleState<width, height> &stateID, std::vector<MNPuzzleState<width, height>> &neighbors) const;
@@ -272,8 +273,8 @@ template <int width, int height>
 MNPuzzle<width, height>::MNPuzzle()
 {
 	// weight = kUnitWeight;
-	weight = kSquareRoot;
-	// weight = kSquared;
+	// weight = kSquareRoot;
+	weight = kSquared;
 	// weight = kUnitPlusFrac;
 	// weight = kSquarePlusOneRoot;
 
@@ -290,8 +291,8 @@ MNPuzzle<width, height>::MNPuzzle(const std::vector<slideDir> op_order)
 	goal_stored = false;
 	use_manhattan = true;
 	// weight = kUnitWeight;
-	weight = kSquareRoot;
-	// weight = kSquared;
+	// weight = kSquareRoot;
+	weight = kSquared;
 	// weight = kUnitPlusFrac;
 	// weight = kSquarePlusOneRoot;
 
@@ -421,6 +422,199 @@ const std::string MNPuzzle<width, height>::GetName(){
 //	}
 //	name << ops_in_order.back();
 //	return name.str();
+}
+
+template <int width, int height>
+double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) const
+{
+	// we actually do the swap to maintain consistency when using abstract states
+	// (these contain -1 in some positions, including possibly the blank position.)
+	double buckerScore = 0;
+	int numNeighbours = 0;
+	switch (weight)
+	{
+		case kUnitWeight:
+			double minBuckerScore = 1.5;
+			double maxBuckerScore = 8.5;
+			//UP
+			if (s.blank >= width)
+			{
+				int tile = s.puzzle[s.blank-width];
+				buckerScore += tile;
+				numNeighbours += 1;
+			}
+			//DOWN
+			if (s.blank < s.size() - width)
+			{
+				int tile = s.puzzle[s.blank+width];
+				buckerScore += tile;
+				numNeighbours += 1;
+			}
+			//RIGHT
+			if ((s.blank%width) < width-1)
+			{
+				int tile = s.puzzle[s.blank+1];
+				buckerScore += tile;
+				numNeighbours += 1;
+			}
+			//LEFT
+			if ((s.blank%width) > 0)
+			{
+				int tile = s.puzzle[s.blank-1];
+				buckerScore += tile;
+				numNeighbours += 1;
+			}
+			buckerScore /= numNeighbours;
+			buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
+
+			break;
+		case kSquared:
+			double minBuckerScore = 2.5;
+			double maxBuckerScore = 72.5;
+			//UP
+			if (s.blank >= width)
+			{
+				int tile = s.puzzle[s.blank-width];
+				buckerScore += tile*tile;
+				numNeighbours += 1;
+			}
+			//DOWN
+			if (s.blank < s.size() - width)
+			{
+				int tile = s.puzzle[s.blank+width];
+				buckerScore += tile*tile;
+				numNeighbours += 1;
+			}
+			//RIGHT
+			if ((s.blank%width) < width-1)
+			{
+				int tile = s.puzzle[s.blank+1];
+				buckerScore += tile*tile;
+				numNeighbours += 1;
+			}
+			//LEFT
+			if ((s.blank%width) > 0)
+			{
+				int tile = s.puzzle[s.blank-1];
+				buckerScore += tile*tile;
+				numNeighbours += 1;
+			}
+			buckerScore /= numNeighbours;
+			buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
+			
+			break;
+		case kSquareRoot:
+			double minBuckerScore = 0;
+			double maxBuckerScore = 0;
+			//UP
+			if (s.blank >= width)
+			{
+				int tile = s.puzzle[s.blank-width];
+				buckerScore += sqrt(tile);
+				numNeighbours += 1;
+			}
+			//DOWN
+			if (s.blank < s.size() - width)
+			{
+				int tile = s.puzzle[s.blank+width];
+				buckerScore += sqrt(tile);
+				numNeighbours += 1;
+			}
+			//RIGHT
+			if ((s.blank%width) < width-1)
+			{
+				int tile = s.puzzle[s.blank+1];
+				buckerScore += sqrt(tile);
+				numNeighbours += 1;
+			}
+			//LEFT
+			if ((s.blank%width) > 0)
+			{
+				int tile = s.puzzle[s.blank-1];
+				buckerScore += sqrt(tile);
+				numNeighbours += 1;
+			}
+			buckerScore /= numNeighbours;
+			buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
+			
+			break;
+		case kSquarePlusOneRoot:
+			double minBuckerScore = 0;
+			double maxBuckerScore = 0;
+			//UP
+			if (s.blank >= width)
+			{
+				int tile = s.puzzle[s.blank-width];
+				buckerScore += sqrt(1+tile*tile);
+				numNeighbours += 1;
+			}
+			//DOWN
+			if (s.blank < s.size() - width)
+			{
+				int tile = s.puzzle[s.blank+width];
+				buckerScore += sqrt(1+tile*tile);
+				numNeighbours += 1;
+			}
+			//RIGHT
+			if ((s.blank%width) < width-1)
+			{
+				int tile = s.puzzle[s.blank+1];
+				buckerScore += sqrt(1+tile*tile);
+				numNeighbours += 1;
+			}
+			//LEFT
+			if ((s.blank%width) > 0)
+			{
+				int tile = s.puzzle[s.blank-1];
+				buckerScore += sqrt(1+tile*tile);
+				numNeighbours += 1;
+			}
+			buckerScore /= numNeighbours;
+			buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
+			
+			break;
+			
+			break;
+		case kUnitPlusFrac:
+			double minBuckerScore = 0;
+			double maxBuckerScore = 0;
+			//UP
+			if (s.blank >= width)
+			{
+				int tile = s.puzzle[s.blank-width];
+				buckerScore += 1.0+1.0/(1.0+tile);
+				numNeighbours += 1;
+			}
+			//DOWN
+			if (s.blank < s.size() - width)
+			{
+				int tile = s.puzzle[s.blank+width];
+				buckerScore += 1.0+1.0/(1.0+tile);
+				numNeighbours += 1;
+			}
+			//RIGHT
+			if ((s.blank%width) < width-1)
+			{
+				int tile = s.puzzle[s.blank+1];
+				buckerScore += 1.0+1.0/(1.0+tile);
+				numNeighbours += 1;
+			}
+			//LEFT
+			if ((s.blank%width) > 0)
+			{
+				int tile = s.puzzle[s.blank-1];
+				buckerScore += 1.0+1.0/(1.0+tile);
+				numNeighbours += 1;
+			}
+			buckerScore /= numNeighbours;
+			buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
+			
+			break;
+			
+			break;
+	}
+
+	return buckerScore;
 }
 
 template <int width, int height>
