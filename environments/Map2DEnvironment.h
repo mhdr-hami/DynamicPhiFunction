@@ -133,6 +133,18 @@ public:
 class MapEnvironment : public SearchEnvironment<xyLoc, tDirection>
 {
 public:
+	double GetBuckerScore(xyLoc &s) const
+	{
+		Map * theMap = GetMap();
+		if(theMap->GetTerrainType(s.x, s.y) == kSwamp)
+			return 1.0;
+		// Map * theMap = GetMap();
+		// for(uint16_t i=s.x-1; i<=s.x+1; i++)
+		// 	for(uint16_t j=s.y-1; j<=s.y+1; j++)
+		// 		if(theMap->GetTerrainType(i, j) == kSwamp)
+		// 			return 1;
+		return 0.0;
+	}
 	MapEnvironment(Map *m, bool useOccupancy = false);
 	MapEnvironment(MapEnvironment *);
 	virtual ~MapEnvironment();
