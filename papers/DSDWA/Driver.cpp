@@ -18,6 +18,9 @@
 #include "DSDWAStar.h"
 #include "MapGenerators.h"
 #include "DynamicPotentialSearch.h"
+#include <ctime>
+#include <cmath>
+#include "DynamicWeightedGrid.h"
 
 int stepsPerFrame = 1;
 float bound = 2;
@@ -28,10 +31,13 @@ float GetPriority(float h, float g);
 float ChooseWeightForTargetPriority(point3d point, float priority, float minWeight, float maxWeight, point3d last, float &K);
 bool showPlane = false;
 DSDWAStar<xyLoc, tDirection, MapEnvironment> dsd;
+TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal;
+
+DWG::DynamicWeightedGridEnvironment *dwg_env;
 
 int main(int argc, char* argv[])
 {
@@ -56,9 +62,12 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize", "Test grid <map> on <scenario> with <algorithm> <weight> and <TerrainSize>");
+	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-timeDSWA", "-DSDWA* stp problem weight", "Test STP <problem> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-map", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
-
+	
 	InstallWindowHandler(MyWindowHandler);
 	
 	InstallMouseClickHandler(MyClickHandler);
@@ -233,9 +242,65 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
+
 		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		dsd_mnp.GetPath(&mnp, start, goal, path);
+
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-DSMAP") == 0)
+	{// Arguments: -DSMAP mapAddress $scen $alg $weight $TerrainSize
+
+		//Thie is Prior Knowledge Map.
+		//The knoeledge we have prior to the search about the domain, is it's a dynamic weighted grid map.
+		//Some Terrain Types exist that makes action costs different in different parts of the map.
+		assert(maxNumArgs >= 6);
+		me = new MapEnvironment(new Map(argument[1]));
+		ScenarioLoader sl(argument[2]);
+		for (int x = 0; x < sl.GetNumExperiments(); x++)
+		{
+			Experiment exp = sl.GetNthExperiment(x);
+			start.x = exp.GetStartX();
+			start.y = exp.GetStartY();
+			goal.x = exp.GetGoalX();
+			goal.y = exp.GetGoalY();
+			dsd.policy = (tExpansionPriority)atoi(argument[3]);
+			dsd.SetWeight(atof(argument[4]));
+
+			//Add (2TS+1)x(2TS+1) square of obstacles
+			int ts = atoi(argument[5]);
+			int exper=1;
+			if(exper==1) {//Only change the Terrain Type of the states near the start.
+				for(uint16_t i=start.x-ts; i<=start.x+ts; i++)
+					for(uint16_t j=start.y-ts; j<=start.y+ts; j++)
+						me->GetMap()->SetTerrainType(i, j, kSwamp);
+			}
+			else if(exper==2){//Only change the Terrain Type of the states near the goal.
+				for(uint16_t i=goal.x-ts; i<=goal.x+ts; i++)
+					for(uint16_t j=goal.y-ts; j<=goal.y+ts; j++)
+						me->GetMap()->SetTerrainType(i, j, kSwamp);
+			}
+			else if(exper==3){//Change the Terrain Type of the states near the start, goal, and middle of the grid.
+				uint16_t middle_x = floor((start.x+goal.x)/2), middle_y = floor((start.y+goal.y)/2);
+
+				for(uint16_t i=start.x-ts; i<=start.x+ts; i++)
+					for(uint16_t j=start.y-ts; j<=start.y+ts; j++)
+						me->GetMap()->SetTerrainType(i, j, kSwamp);
+
+				for(uint16_t i=middle_x-ts; i<=middle_x+ts; i++)
+					for(uint16_t j=middle_y-ts; j<=middle_y+ts; j++)
+						me->GetMap()->SetTerrainType(i, j, kSwamp);
+
+				for(uint16_t i=goal.x-ts; i<=goal.x+ts; i++)
+					for(uint16_t j=goal.y-ts; j<=goal.y+ts; j++)
+						me->GetMap()->SetTerrainType(i, j, kSwamp);
+			}
+
+			// dsd.GetPath(me, start, goal, solution, true);
+			dsd.GetPath(me, start, goal, solution);
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+		}
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-DPstp") == 0)
@@ -256,13 +321,62 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		printf("STP %d dummy %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), 0, atof(argument[2]), dsd_mnp.GetNodesExpanded(), path.size());
 		exit(0);
 	}
+	else if (strcmp(argument[0], "-timeDSWA") == 0)
+	{
+		assert(maxNumArgs >= 4);
+		
+		DSDWAStar<MNPuzzleState<4, 4>, slideDir, MNPuzzle<4, 4>> dsd_mnp;
+		std::vector<MNPuzzleState<4, 4>> path;
+		MNPuzzle<4, 4> mnp;
+		MNPuzzleState<4, 4> start = STP::GetKorfInstance(atoi(argument[1]));
+		MNPuzzleState<4, 4> goal;
+		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
+		dsd_mnp.SetWeight(atof(argument[3]));
+		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
+		
+		clock_t start_time, end_time;
+    	start_time = clock();
+
+		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
+		dsd_mnp.GetPath(&mnp, start, goal, path);
+
+		end_time = clock();
+		float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+
+		printf("STP %d ALG %d weight %1.2f nodePERsec %f path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded()/runningTime, path.size());
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-stpAstar") == 0)
+	{
+		assert(maxNumArgs >= 4);
+		
+		TemplateAStar<MNPuzzleState<4, 4>, slideDir, MNPuzzle<4, 4>> dsd_mnp;
+		std::vector<MNPuzzleState<4, 4>> path;
+		MNPuzzle<4, 4> mnp;
+		MNPuzzleState<4, 4> start = STP::GetKorfInstance(atoi(argument[1]));
+		MNPuzzleState<4, 4> goal;
+		// dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
+		dsd_mnp.SetWeight(atof(argument[3]));
+		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
+
+		clock_t start_time, end_time;
+    	start_time = clock();
+
+		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
+		dsd_mnp.GetPath(&mnp, start, goal, path);
+
+		end_time = clock();
+		float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+
+		printf("STP %d ALG %d weight %1.2f nodePERsec %f path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded()/runningTime, path.size());
+		exit(0);
+	}
 	else if (strcmp(argument[0], "-map") == 0)
 	{
 		assert(maxNumArgs >= 5);
 		me = new MapEnvironment(new Map(argument[1]));
 		ScenarioLoader sl(argument[2]);
-		std::cout<<"number of experiments is "<<sl.GetNumExperiments()<<std::endl;
-		// for (int x = 0; x < std::min(sl.GetNumExperiments(), 100); x++)
+		// std::cout<<"number of experiments is "<<sl.GetNumExperiments()<<std::endl;
 		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
 			Experiment exp = sl.GetNthExperiment(x);
@@ -278,6 +392,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		}
 		exit(0);
 	}
+	
 	return 0;
 }
 

@@ -21,8 +21,8 @@ enum tExpansionPriority {
 	kpwXUP=2,
 	kXDP=3,
 	kXUP=4,
-	kUgly=5,
-	kUgly2=6,
+	kDSMAP=5,
+	kDSMAP2=6,
 	kMAP=7,
 	kGreedy=7,
 	kHalfEdgeDrop=8,
@@ -932,24 +932,36 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					firstLast = 0;
 				}
 			}
-			else if (policy == kUgly)
+			else if (policy == kDSMAP)
 			{
-				float minWeight, maxWeight;
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				mnp.GetStateFromHash(mnpState, nodeid);
-				double buckerScore = mnp.GetBuckerScore(mnpState);
-				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
+				midWeight = (maxWeight + minWeight)/2;
+				lowMidWeight = (midWeight + minWeight)/2;
+				highMidWeight = (maxWeight + midWeight)/2;
+				// mnp.GetStateFromHash(mnpState, nodeid);
+				// std::cout<<"nodeid is "<<nodeid<<std::endl;
+				// mnpState.printState();
+				// openClosedList.Lookup(nodeid).data.printState();
+				double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				// std::cout<<"buckerScore is "<<buckerScore<<std::endl;
+				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
-			else if (policy == kUgly2)
+			else if (policy == kDSMAP2)
 			{
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				mnp.GetStateFromHash(mnpState, nodeid);
-				double buckerScore = mnp.GetBuckerScore(mnpState);
-				if(buckerScore)
-				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
+				// mnp.GetStateFromHash(mnpState, nodeid);
+				// std::cout<<"nodeid is "<<nodeid<<std::endl;
+				// mnpState.printState();
+				// openClosedList.Lookup(nodeid).data.printState();
+				double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				// std::cout<<"buckerScore is "<<buckerScore<<std::endl;
+				float TheNextWeight;
+				if(buckerScore>0.5) TheNextWeight = maxWeight;
+				else TheNextWeight = minWeight;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
