@@ -1108,7 +1108,7 @@ long Map::GetTerrainType(long x, long y, tEdge side) const
 void Map::SetTerrainType(long x, long y, tTerrain type, tSplitSide split)
 {
 	if ((x >= width)||(x<0)) return;
-	if ((y >= height)||(x<0)) return;
+	if ((y >= height)||(y<0)) return;
 	revision++;
 	updated = true;
 	map_name[0] = 0;
