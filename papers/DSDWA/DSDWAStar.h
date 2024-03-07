@@ -12,8 +12,6 @@
 #include "TemplateAStar.h" // to get state definitions
 #include "MNPuzzle.h" // to get the STP state
 
-MNPuzzle<4, 4> mnp;
-MNPuzzleState<4, 4> mnpState;
 
 enum tExpansionPriority {
 	kWA=0,
@@ -939,29 +937,26 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				midWeight = (maxWeight + minWeight)/2;
 				lowMidWeight = (midWeight + minWeight)/2;
 				highMidWeight = (maxWeight + midWeight)/2;
-				// mnp.GetStateFromHash(mnpState, nodeid);
-				// std::cout<<"nodeid is "<<nodeid<<std::endl;
-				// mnpState.printState();
-				// openClosedList.Lookup(nodeid).data.printState();
-				double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				double buckerScore = env->GetBuckerScore(neighbors[which]);
 				// std::cout<<"buckerScore is "<<buckerScore<<std::endl;
 				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
+				// float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
 			else if (policy == kDSMAP2)
 			{
-				float minWeight, maxWeight;
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				// mnp.GetStateFromHash(mnpState, nodeid);
-				// std::cout<<"nodeid is "<<nodeid<<std::endl;
-				// mnpState.printState();
-				// openClosedList.Lookup(nodeid).data.printState();
-				double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				midWeight = (maxWeight + minWeight)/2;
+				lowMidWeight = (midWeight + minWeight)/2;
+				highMidWeight = (maxWeight + midWeight)/2;
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				double buckerScore = env->GetBuckerScore(neighbors[which]);
 				// std::cout<<"buckerScore is "<<buckerScore<<std::endl;
-				float TheNextWeight;
-				if(buckerScore>0.5) TheNextWeight = maxWeight;
-				else TheNextWeight = minWeight;
+				// float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
+				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
