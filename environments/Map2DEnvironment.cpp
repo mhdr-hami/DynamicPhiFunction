@@ -674,7 +674,6 @@ void MapEnvironment::GLDrawLine(const xyLoc &a, const xyLoc &b) const
 //	glVertex3f(xx1-xoff, yy1-yoff, zz1-rad/2);
 //	glVertex3f(xx2-xoff, yy2-yoff, zz2-rad/2);
 //	glEnd();
-
 	//	glDisable(GL_POLYGON_SMOOTH);
 	//
 //	glBegin(GL_LINES);
