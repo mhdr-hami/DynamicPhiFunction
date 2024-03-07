@@ -37,7 +37,7 @@ bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc;
 int exper=2;
-float a, b, tspp=30,ts;
+float a, b, tspp=30,ts=10;
 
 DWG::DynamicWeightedGridEnvironment *dwg_env;
 
@@ -272,7 +272,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
 					if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 						me->GetMap()->SetTerrainType(i, j, kGround);
-						
+
 			Experiment exp = sl.GetNthExperiment(x);
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
@@ -281,6 +281,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd.SetWeight(atof(argument[4]));
 
+			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
 			//Change a square of ground states to swamp type.
 			if(exper==0){
