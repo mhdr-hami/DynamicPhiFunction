@@ -313,11 +313,18 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			else if(exper==2){
 				//Set the square around a random state on the start-goal line.
-				std::cout<<goal.x<<" "<<start.x<<std::endl;
-				swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
-				a = float(goal.y - start.y)/(goal.x-start.x);
-				b = goal.y - a * goal.x;
-				swampedloc.y = uint16_t(a * swampedloc.x + b);
+				// std::cout<<goal.x<<" "<<start.x<<std::endl;
+				if(goal.x == start.x){
+					swampedloc.x = start.x;
+					swampedloc.y = uint16_t(random()%abs(goal.y-start.y) + min(goal.y, start.y));
+				}
+				else{
+					swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+					a = float(goal.y - start.y)/(goal.x-start.x);
+					b = goal.y - a * goal.x;
+					swampedloc.y = uint16_t(a * swampedloc.x + b);
+				}
+				
 				
 				for(int i=swampedloc.x-int(ts/2); i<=swampedloc.x+int(ts/2); i++)
 					for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
