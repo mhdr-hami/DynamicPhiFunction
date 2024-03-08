@@ -35,7 +35,7 @@ TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
-xyLoc start, goal, swampedloc;
+xyLoc start, goal, swampedloc, swampedloc2;
 int exper=2;
 float a, b, tspp=30,ts=10;
 
@@ -101,6 +101,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		goal = {198, 198};
 
 		swampedloc = {1,1};
+		swampedloc2 = {1,1};
 
 		dsd.SetWeight(bound);
 		dsd.InitializeSearch(me, start, goal, solution);
@@ -265,11 +266,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		me = new MapEnvironment(new Map(argument[1]));
 		ScenarioLoader sl(argument[2]);
 		swampedloc = {1,1};
+		swampedloc2 = {1,1};
 		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
 			//Reset the last problem's swamped states.
 			for(int i=swampedloc.x-int(ts/2); i<=swampedloc.x+int(ts/2); i++)
 				for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
+					if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
+						me->GetMap()->SetTerrainType(i, j, kGround);
+			for(int i=swampedloc2.x-int(ts/4); i<=swampedloc2.x+int(ts/4); i++)
+				for(int j=swampedloc2.y-int(ts/4); j<=swampedloc2.y+int(ts/4); j++)
 					if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
@@ -312,6 +318,31 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				
 				for(int i=swampedloc.x-int(ts/2); i<=swampedloc.x+int(ts/2); i++)
 					for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
+						if(me->GetMap()->GetTerrainType(i, j) == kGround)
+							me->GetMap()->SetTerrainType(i, j, kSwamp);
+			}
+			else if(exper==3){
+				//Set two squares around two random states on the start-goal line.
+				// swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+				swampedloc.x = random()%(abs(goal.x-start.x)/2) + min(goal.x, start.x);
+				a = float(goal.y - start.y)/(goal.x-start.x);
+				b = goal.y - a * goal.x;
+				swampedloc.y = uint16_t(a * swampedloc.x + b);
+				// do{
+				// 	swampedloc2.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+				// } while(abs(swampedloc.x - swampedloc2.x)<ts/5);
+				swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
+
+				// a = float(goal.y - start.y)/(goal.x-start.x);
+				// b = goal.y - a * goal.x;
+				swampedloc2.y = uint16_t(a * swampedloc2.x + b);
+
+				for(int i=swampedloc.x-int(ts/4); i<=swampedloc.x+int(ts/4); i++)
+					for(int j=swampedloc.y-int(ts/4); j<=swampedloc.y+int(ts/4); j++)
+						if(me->GetMap()->GetTerrainType(i, j) == kGround)
+							me->GetMap()->SetTerrainType(i, j, kSwamp);
+				for(int i=swampedloc2.x-int(ts/4); i<=swampedloc2.x+int(ts/4); i++)
+					for(int j=swampedloc2.y-int(ts/4); j<=swampedloc2.y+int(ts/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
@@ -425,6 +456,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
 					if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 						me->GetMap()->SetTerrainType(i, j, kGround);
+			for(int i=swampedloc2.x-int(ts/4); i<=swampedloc2.x+int(ts/4); i++)
+				for(int j=swampedloc2.y-int(ts/4); j<=swampedloc2.y+int(ts/4); j++)
+					if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
+						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			do {
 				start.x = random()%me->GetMap()->GetMapWidth();
@@ -437,7 +472,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
 
-			//Change a square of ground states to swamp type.
+			//Change one or two squares of ground states to swamp type.
 			if(exper==0){
 				//Set the square around the start state.
 				swampedloc.x = start.x;
@@ -466,6 +501,31 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				
 				for(int i=swampedloc.x-int(ts/2); i<=swampedloc.x+int(ts/2); i++)
 					for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
+						if(me->GetMap()->GetTerrainType(i, j) == kGround)
+							me->GetMap()->SetTerrainType(i, j, kSwamp);
+			}
+			else if(exper==3){
+				//Set two squares around two random states on the start-goal line.
+				// swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+				swampedloc.x = random()%(abs(goal.x-start.x)/2) + min(goal.x, start.x);
+				a = float(goal.y - start.y)/(goal.x-start.x);
+				b = goal.y - a * goal.x;
+				swampedloc.y = uint16_t(a * swampedloc.x + b);
+				// do{
+				// 	swampedloc2.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+				// } while(abs(swampedloc.x - swampedloc2.x)<ts/5);
+				swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
+
+				a = float(goal.y - start.y)/(goal.x-start.x);
+				b = goal.y - a * goal.x;
+				swampedloc2.y = uint16_t(a * swampedloc2.x + b);
+
+				for(int i=swampedloc.x-int(ts/4); i<=swampedloc.x+int(ts/4); i++)
+					for(int j=swampedloc.y-int(ts/4); j<=swampedloc.y+int(ts/4); j++)
+						if(me->GetMap()->GetTerrainType(i, j) == kGround)
+							me->GetMap()->SetTerrainType(i, j, kSwamp);
+				for(int i=swampedloc2.x-int(ts/4); i<=swampedloc2.x+int(ts/4); i++)
+					for(int j=swampedloc2.y-int(ts/4); j<=swampedloc2.y+int(ts/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
