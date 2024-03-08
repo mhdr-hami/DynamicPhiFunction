@@ -281,7 +281,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			Experiment exp = sl.GetNthExperiment(x);
 			if(exp.GetDistance()<100) continue;
-			
+
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
@@ -313,6 +313,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			else if(exper==2){
 				//Set the square around a random state on the start-goal line.
+				std::cout<<goal.x<<" "<<start.x<<std::endl;
 				swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
