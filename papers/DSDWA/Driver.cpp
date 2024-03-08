@@ -280,6 +280,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			Experiment exp = sl.GetNthExperiment(x);
+			if(exp.GetDistance()<100) continue;
+			
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
