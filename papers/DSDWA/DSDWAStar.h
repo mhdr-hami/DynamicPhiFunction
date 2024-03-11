@@ -601,12 +601,11 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 	}
 	while (!DoSingleSearchStep(thePath))
 	{
-		if (10000000 == nodesExpanded)
-			{
-				//Terminate the search after 10 million node expansions.
-				printf("%" PRId64 " nodes expanded, %" PRId64 " generated => Terminated.\n", nodesExpanded, nodesTouched);
-				break;
-			}
+		if (10000000 == nodesExpanded){
+			//Terminate the search after 10 million node expansions.
+			printf("%" PRId64 " nodes expanded, %" PRId64 " generated => Terminated.\n", nodesExpanded, nodesTouched);
+			break;
+		}
 	}
 }
 
