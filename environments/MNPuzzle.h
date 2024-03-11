@@ -292,37 +292,64 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 	// for(int i=0; i<16; i++) std::cout<<s.puzzle[i]<<" ";
 	// std::cout<<std::endl;
 
-	double buckerScore = 0;
-	int numNeighbours = 0;
-    double minBuckerScore = 1.5;
-    double maxBuckerScore = 14.5;
 	if (s.blank >= width)
 	//UP
 	{
-		buckerScore += s.puzzle[s.blank-width];
-		numNeighbours += 1;
+		if(s.puzzle[s.blank-width]>10);
+			return 0;
 	}
 	//DOWN
 	if (s.blank < s.size() - width)
 	{
-		buckerScore += s.puzzle[s.blank+width];
-		numNeighbours += 1;
+		if(s.puzzle[s.blank+width]>10);
+			return 0;
 	}
 	//RIGHT
 	if ((s.blank%width) < width-1)
 	{
-		buckerScore += s.puzzle[s.blank+1];
-		numNeighbours += 1;
+		if(s.puzzle[s.blank+1]>10);
+			return 0;
 	}
 	//LEFT
 	if ((s.blank%width) > 0)
 	{
-		buckerScore += s.puzzle[s.blank-1];
-		numNeighbours += 1;
+		if(s.puzzle[s.blank-1]>10);
+			return 0;
 	}
-	buckerScore /= numNeighbours;
-	buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
-	return buckerScore;
+
+	return 1.0;
+
+	// double buckerScore = 0;
+	// int numNeighbours = 0;
+    // double minBuckerScore = 1.5;
+    // double maxBuckerScore = 14.5;
+	// if (s.blank >= width)
+	// //UP
+	// {
+	// 	buckerScore += s.puzzle[s.blank-width];
+	// 	numNeighbours += 1;
+	// }
+	// //DOWN
+	// if (s.blank < s.size() - width)
+	// {
+	// 	buckerScore += s.puzzle[s.blank+width];
+	// 	numNeighbours += 1;
+	// }
+	// //RIGHT
+	// if ((s.blank%width) < width-1)
+	// {
+	// 	buckerScore += s.puzzle[s.blank+1];
+	// 	numNeighbours += 1;
+	// }
+	// //LEFT
+	// if ((s.blank%width) > 0)
+	// {
+	// 	buckerScore += s.puzzle[s.blank-1];
+	// 	numNeighbours += 1;
+	// }
+	// buckerScore /= numNeighbours;
+	// buckerScore = (buckerScore - minBuckerScore)/(maxBuckerScore - minBuckerScore);
+	// return buckerScore;
 
 	// switch (weight)
 //	{
@@ -1049,12 +1076,22 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 	// tile itself
 	switch (weight)
 	{
-		case kUnitWeight: return 1;
+		case kUnitWeight:
+			if(a.puzzle[b.blank]>10) return 5;
+			else return 1;
 		case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
 		case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
 		case kSquareRoot: return sqrt(a.puzzle[b.blank]);
 		case kSquarePlusOneRoot: return sqrt(1+a.puzzle[b.blank]*a.puzzle[b.blank]);
 	}
+	// switch (weight)
+	// {
+	// 	case kUnitWeight: return 1;
+	// 	case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
+	// 	case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
+	// 	case kSquareRoot: return sqrt(a.puzzle[b.blank]);
+	// 	case kSquarePlusOneRoot: return sqrt(1+a.puzzle[b.blank]*a.puzzle[b.blank]);
+	// }
 //	if (weighted)
 //		return a.puzzle[b.blank]*a.puzzle[b.blank];
 ////		return costs[a.blank];

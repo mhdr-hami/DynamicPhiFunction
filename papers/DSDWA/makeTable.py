@@ -4,10 +4,9 @@ import sys
 # plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
-# weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5, '1.00':0}
-weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3}
+# weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
+weight_to_int = {'1.50':0, '2.00':1, '3.00':2, '5.00':3}
 int_to_alg = {0:'WA*', 1:'pwXDP', 2:'pwXUP', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP2', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
-# int_to_alg = {0:'TheOne', 1:'A*'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp':
@@ -28,8 +27,10 @@ if sys.argv[1] == '-stp':
         # divisor=np.array([2,3,4])
         # table/(divisor[:,np.newaxis])
         print()
-        print('============================================== Average Expansions Table ==============================================')
-        print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
+        # print('============================================== Average Expansions Table ==============================================')
+        # print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
+        print('================================== Average Expansions Table ========================')
+        print('Algorithm/Weight|      1.50      |      2.00      |      3.00      |      5.00      |')
         print('_________________' * 7)
         for i in range(len(table)):
             # if i!=0 and i!=1 and i!=6 and i!=8:
@@ -154,7 +155,7 @@ elif sys.argv[1] == '-map':
         # print('============================================== Average Expansions Table ==============================================')
         # print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('============================= Average Expansions Table ==============================')
-        print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |')
+        print('Algorithm/Weight|      1.50      |      2.00      |      3.00      |      8.00      |')
         print('_________________' * 7)
         for i in range(len(table)):
             # if i!=0 and i!=1 and i!=6 and i!=8:
