@@ -541,6 +541,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			
 			problemNumber +=1;
+			printf("==============\n");
 			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
 			printf("Bound: %.2f\n", bound);
@@ -603,6 +604,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 
 			problemNumber +=1;
+			printf("==============\n");
 			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
 			printf("Bound: %.2f\n", bound);
