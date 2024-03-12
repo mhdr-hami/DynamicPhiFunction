@@ -38,7 +38,7 @@ MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
 int exper=3;
 float a, b, tspp=40,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
-bool saveSVG = true;
+bool saveSVG = false;
 
 DWG::DynamicWeightedGridEnvironment *dwg_env;
 
