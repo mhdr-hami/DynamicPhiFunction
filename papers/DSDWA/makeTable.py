@@ -154,41 +154,41 @@ elif sys.argv[1] == '-map':
         print()
         # print('============================================== Average Expansions Table ==============================================')
         # print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
-        print('============================= Average Expansions Table ==============================')
-        print('Algorithm/Weight|      1.50      |      2.00      |      3.00      |      8.00      |')
+        print('==================================================  Average Expansions Table  ===================================================')
+        print('Alg / Weight|    2.00    |    3.00    |    4.00    |    5.00    |    6.00    |    7.00    |    8.00    |    9.00    |    10.0    |')
         print('_________________' * 7)
         for i in range(len(table)):
             # if i!=0 and i!=1 and i!=6 and i!=8:
             if i!=-1:
                 print(int_to_alg[i],end="")
-                for k in range(16-len(int_to_alg[i])):
+                for k in range(12-len(int_to_alg[i])):
                     print(' ',end="")
                 print('|', end="")
                 for j in range(len(table[i])):
                     print(round(result[i][j], 2), end="")
-                    for k in range(16-len(str(round(result[i][j], 2)))):
+                    for k in range(12-len(str(round(result[i][j], 2)))):
                         print(' ',end="")
                     print('|', end="")
                 print()
-        print('_________________' * 7)
+        print('__________________' * 7)
         for cnt in range(len(table)):
-            print(str(cnt)+' Best Algorithm|', end="")
+            print(str(cnt+1)+' place Alg |', end="")
             for i in range(len(table[0])):
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
                 # print(int_to_alg[np.argmin(col)], end="")
-                for k in range(16-len(int_to_alg[np.argsort(col)[cnt]])):
+                for k in range(12-len(int_to_alg[np.argsort(col)[cnt]])):
                     print(' ',end="")
                 print('|', end="")
             print()
         
-        print('==============================================',end='')
+        print('=====================================================',end='')
         for _ in range((26 - len(sys.argv[5]))//2):
             print(' ', end='')
         print(sys.argv[5], end='')
         for _ in range((26 - len(sys.argv[5]))//2):
             print(' ', end='')
-        print('==============================================')
+        print('====================================================')
         print()
 
     ############################################################################################
