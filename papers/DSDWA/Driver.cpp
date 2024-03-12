@@ -23,7 +23,7 @@
 #include "DynamicWeightedGrid.h"
 
 int stepsPerFrame = 1;
-float bound = 2;
+float bound = 9;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -37,7 +37,7 @@ bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
 int exper=3;
-float a, b, tspp=75,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
+float a, b, tspp=40,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
 
 DWG::DynamicWeightedGridEnvironment *dwg_env;
 
@@ -92,8 +92,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		Map *m = new Map(200, 200);
 		srandom(20221228);
 		//BuildRandomRoomMap(m, 30);
-		//MakeRandomMap(m, 30);
-		MakeMaze(m, 10);
+		MakeRandomMap(m, 10);
+		// MakeMaze(m, 10);
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
 		dsd.policy = kWA;
@@ -280,7 +280,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<100) continue;
+			if(exp.GetDistance()<50) continue;
 
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
@@ -295,6 +295,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			lasty=ts;
 			tsx = max(tspp/100*abs(goal.x-start.x), 1);
 			tsy = max(tspp/100*abs(goal.y-start.y), 1);
+			
+			// tsx = max(tsx, tsy);
+			// tsy = tsx;
 			
 			//Change a square of ground states to swamp type.
 			if(exper==0){
@@ -337,6 +340,10 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 				tsx = max(tsx, 10);
 				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+				
 				lastx=tsx;
 				lasty=tsy;
 				
@@ -541,6 +548,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 
 				tsx = max(tsx, 10);
 				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
 				lastx=tsx;
 				lasty=tsy;
 				
