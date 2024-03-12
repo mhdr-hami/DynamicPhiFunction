@@ -23,7 +23,7 @@
 #include "DynamicWeightedGrid.h"
 
 int stepsPerFrame = 1;
-float bound = 9;
+float bound = 8;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -38,6 +38,7 @@ MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
 int exper=3;
 float a, b, tspp=40,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
+bool saveSVG = true;
 
 DWG::DynamicWeightedGridEnvironment *dwg_env;
 
@@ -93,7 +94,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 		//BuildRandomRoomMap(m, 30);
 		MakeRandomMap(m, 10);
-		// MakeMaze(m, 10);
+//		 MakeMaze(m, 10);
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
 		dsd.policy = kWA;
@@ -253,6 +254,14 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 
+		if(saveSVG && (dsd_mnp.policy==5 || dsd_mnp.policy==6)){
+			Graphics::Display d;
+			dsd_mnp.DrawPriorityGraph(d);
+			std::string s = "stp="+ string(argument[1])+"_p="+string(argument[2])+"_w="+string(argument[3])+".svg";
+			MakeSVG(d, s.c_str(), 750,750,0);
+		}
+		
+
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
 		exit(0);
 	}
@@ -280,7 +289,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<50) continue;
+			if(exp.GetDistance()<20) continue;
 
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
@@ -295,9 +304,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			lasty=ts;
 			tsx = max(tspp/100*abs(goal.x-start.x), 1);
 			tsy = max(tspp/100*abs(goal.y-start.y), 1);
-			
-			// tsx = max(tsx, tsy);
-			// tsy = tsx;
 			
 			//Change a square of ground states to swamp type.
 			if(exper==0){
