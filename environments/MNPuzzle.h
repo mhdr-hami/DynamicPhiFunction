@@ -295,29 +295,29 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 	if (s.blank >= width)
 	//UP
 	{
-		if(s.puzzle[s.blank-width]==15);
-			return 1.0;
+		if(s.puzzle[s.blank-width]==1)
+			return 0.0;
 	}
 	//DOWN
 	if (s.blank < s.size() - width)
 	{
-		if(s.puzzle[s.blank+width]==15);
-			return 1.0;
+		if(s.puzzle[s.blank+width]==1)
+			return 0.0;
 	}
 	//RIGHT
 	if ((s.blank%width) < width-1)
 	{
-		if(s.puzzle[s.blank+1]==15);
-			return 1.0;
+		if(s.puzzle[s.blank+1]==1)
+			return 0.0;
 	}
 	//LEFT
 	if ((s.blank%width) > 0)
 	{
-		if(s.puzzle[s.blank-1]==15);
-			return 1.0;
+		if(s.puzzle[s.blank-1]==1)
+			return 0.0;
 	}
 
-	return 0.0;
+	return 1.0;
 
 	// double buckerScore = 0;
 	// int numNeighbours = 0;
@@ -1077,7 +1077,7 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 	switch (weight)
 	{
 		case kUnitWeight:
-			if(a.puzzle[b.blank]==15) return 10;
+			if(a.puzzle[b.blank]==1) return 10;
 			else return 1;
 		case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
 		case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];

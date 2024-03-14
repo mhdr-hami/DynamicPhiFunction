@@ -938,9 +938,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				highMidWeight = (maxWeight + midWeight)/2;
 				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
 				double buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<"buckerScore is "<<buckerScore<<std::endl;
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
 				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
-				// float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
@@ -953,8 +952,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				highMidWeight = (maxWeight + midWeight)/2;
 				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
 				double buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<"buckerScore is "<<buckerScore<<std::endl;
-				// float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
 				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
