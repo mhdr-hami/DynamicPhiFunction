@@ -296,28 +296,28 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 	//UP
 	{
 		if(s.puzzle[s.blank-width]==1)
-			return 0.0;
+			return 1.0;
 	}
 	//DOWN
 	if (s.blank < s.size() - width)
 	{
 		if(s.puzzle[s.blank+width]==1)
-			return 0.0;
+			return 1.0;
 	}
 	//RIGHT
 	if ((s.blank%width) < width-1)
 	{
 		if(s.puzzle[s.blank+1]==1)
-			return 0.0;
+			return 1.0;
 	}
 	//LEFT
 	if ((s.blank%width) > 0)
 	{
 		if(s.puzzle[s.blank-1]==1)
-			return 0.0;
+			return 1.0;
 	}
 
-	return 1.0;
+	return 0.0;
 
 	// double buckerScore = 0;
 	// int numNeighbours = 0;
