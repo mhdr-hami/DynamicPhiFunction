@@ -292,32 +292,43 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 	// for(int i=0; i<16; i++) std::cout<<s.puzzle[i]<<" ";
 	// std::cout<<std::endl;
 
-	if (s.blank >= width)
-	//UP
-	{
-		if(s.puzzle[s.blank-width]==1)
-			return 1.0;
-	}
-	//DOWN
-	if (s.blank < s.size() - width)
-	{
-		if(s.puzzle[s.blank+width]==1)
-			return 1.0;
-	}
-	//RIGHT
-	if ((s.blank%width) < width-1)
-	{
-		if(s.puzzle[s.blank+1]==1)
-			return 1.0;
-	}
-	//LEFT
-	if ((s.blank%width) > 0)
-	{
-		if(s.puzzle[s.blank-1]==1)
-			return 1.0;
-	}
+	if(s.blank==5)
+		return 1.0;
+	if(s.blank==6)
+		return 1.0;
+	if(s.blank==9)
+		return 1.0;
+	if(s.blank==10)
+		return 1.0;
 
 	return 0.0;
+
+	// if (s.blank >= width)
+	// //UP
+	// {
+	// 	if(s.puzzle[s.blank-width]==1)
+	// 		return 1.0;
+	// }
+	// //DOWN
+	// if (s.blank < s.size() - width)
+	// {
+	// 	if(s.puzzle[s.blank+width]==1)
+	// 		return 1.0;
+	// }
+	// //RIGHT
+	// if ((s.blank%width) < width-1)
+	// {
+	// 	if(s.puzzle[s.blank+1]==1)
+	// 		return 1.0;
+	// }
+	// //LEFT
+	// if ((s.blank%width) > 0)
+	// {
+	// 	if(s.puzzle[s.blank-1]==1)
+	// 		return 1.0;
+	// }
+
+	// return 0.0;
 
 	// double buckerScore = 0;
 	// int numNeighbours = 0;
@@ -1077,13 +1088,25 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 	switch (weight)
 	{
 		case kUnitWeight:
-			if(a.puzzle[b.blank]==1) return 10;
+			if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 10;
 			else return 1;
 		case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
 		case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
 		case kSquareRoot: return sqrt(a.puzzle[b.blank]);
 		case kSquarePlusOneRoot: return sqrt(1+a.puzzle[b.blank]*a.puzzle[b.blank]);
 	}
+
+	// switch (weight)
+	// {
+	// 	case kUnitWeight:
+	// 		if(a.puzzle[b.blank]==1) return 10;
+	// 		else return 1;
+	// 	case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
+	// 	case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
+	// 	case kSquareRoot: return sqrt(a.puzzle[b.blank]);
+	// 	case kSquarePlusOneRoot: return sqrt(1+a.puzzle[b.blank]*a.puzzle[b.blank]);
+	// }
+
 	// switch (weight)
 	// {
 	// 	case kUnitWeight: return 1;

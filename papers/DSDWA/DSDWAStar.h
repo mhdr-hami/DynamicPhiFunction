@@ -21,8 +21,9 @@ enum tExpansionPriority {
 	kXUP=4,
 	kDSMAP=5,
 	kDSMAP2=6,
-	kMAP=7,
-	kGreedy=7,
+	kDSMAP3=7,
+	kMAP=8,
+	kGreedy=8,
 	kHalfEdgeDrop=8,
 	kFullEdgeDrop=9,
 	kPathSuboptDouble=10,
@@ -649,7 +650,6 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 		return;
 	}
 	path.resize(0);
-	std::cout<<"or this one???"<<std::endl;
 	// float maxRegion = 0;
 	while (!DoSingleSearchStep(thePath)){}
 	for (size_t x = 0; x < thePath.size()-1; x++)
@@ -955,6 +955,24 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
 				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
+				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+			}
+			else if (policy == kDSMAP3)
+			{
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				
+				point3d theLast;
+				if (data.size() == 0) theLast = point3d(1, 0);
+				else theLast = data.back().crossPoint;
+
+				midWeight = -(weight-theLast.y)/(0-theLast.x);
+				lowMidWeight = (midWeight + minWeight)/2;
+				highMidWeight = (maxWeight + midWeight)/2;
+				
+				double buckerScore = env->GetBuckerScore(neighbors[which]);
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
+				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 			}
 			else {

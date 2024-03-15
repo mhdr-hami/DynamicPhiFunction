@@ -36,7 +36,7 @@ std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
-int exper=4;
+int exper=2;
 float a, b, tspp=50,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
 bool saveSVG = false;
 
@@ -62,7 +62,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Policy", "Increment policy", kAnyModifier, '}');
 	InstallKeyboardHandler(MyDisplayHandler, "Policy", "Decrement policy", kAnyModifier, '{');
 	InstallKeyboardHandler(MyDisplayHandler, "Problem", "Increment problem", kAnyModifier, '.');
-	InstallKeyboardHandler(MyDisplayHandler, "Swamped Problem", "Increment swamped problem", kAnyModifier, 's');
+	InstallKeyboardHandler(MyDisplayHandler, "Swamped Problems", "Increment swamped problem", kAnyModifier, 's');
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
@@ -289,7 +289,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<20) continue;
+			if(exp.GetDistance()<100) continue;
 
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
@@ -300,18 +300,24 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-			lastx=ts;
-			lasty=ts;
 			tsx = max(tspp/100*abs(goal.x-start.x), 1);
 			tsy = max(tspp/100*abs(goal.y-start.y), 1);
 			
-			//Change a square of ground states to swamp type.
+			//Change one or two squares of ground states to swamp type.
 			if(exper==0){
 				//Set the square around the start state.
 				swampedloc.x = start.x;
 				swampedloc.y = start.y;
-				for(uint16_t i=start.x-int(tspp/2); i<=start.x+int(tspp/2); i++)
-					for(uint16_t j=start.y-int(tspp/2); j<=start.y+int(tspp/2); j++)
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+				for(int i=start.x-int(tsx/2); i<=start.x+int(tsx/2); i++)
+					for(int j=start.y-int(tsy/2); j<=start.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
@@ -319,8 +325,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				//Set the square around the goal state.
 				swampedloc.x = goal.x;
 				swampedloc.y = goal.y;
-				for(uint16_t i=goal.x-int(ts/2); i<=goal.x+int(ts/2); i++)
-					for(uint16_t j=goal.y-int(ts/2); j<=goal.y+int(ts/2); j++)
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+				for(int i=goal.x-int(tsx/2); i<=goal.x+int(tsx/2); i++)
+					for(int j=goal.y-int(tsy/2); j<=goal.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 
@@ -331,9 +345,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
-				
-				for(int i=swampedloc.x-int(ts/2); i<=swampedloc.x+int(ts/2); i++)
-					for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+				for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+					for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
@@ -343,16 +364,14 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
-
 				tsx = max(tsx, 10);
 				tsy = max(tsy, 10);
 
 				tsx = max(tsx, tsy);
 				tsy = tsx;
-				
+
 				lastx=tsx;
 				lasty=tsy;
-				
 				for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 					for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
@@ -370,16 +389,24 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				// } while(abs(swampedloc.x - swampedloc2.x)<ts/5);
 				swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
 
-				// a = float(goal.y - start.y)/(goal.x-start.x);
-				// b = goal.y - a * goal.x;
+				a = float(goal.y - start.y)/(goal.x-start.x);
+				b = goal.y - a * goal.x;
 				swampedloc2.y = uint16_t(a * swampedloc2.x + b);
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
 
-				for(int i=swampedloc.x-int(ts/4); i<=swampedloc.x+int(ts/4); i++)
-					for(int j=swampedloc.y-int(ts/4); j<=swampedloc.y+int(ts/4); j++)
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+
+				for(int i=swampedloc.x-int(tsx/4); i<=swampedloc.x+int(tsx/4); i++)
+					for(int j=swampedloc.y-int(tsy/4); j<=swampedloc.y+int(tsy/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
-				for(int i=swampedloc2.x-int(ts/4); i<=swampedloc2.x+int(ts/4); i++)
-					for(int j=swampedloc2.y-int(ts/4); j<=swampedloc2.y+int(ts/4); j++)
+				for(int i=swampedloc2.x-int(tsx/4); i<=swampedloc2.x+int(tsx/4); i++)
+					for(int j=swampedloc2.y-int(tsy/4); j<=swampedloc2.y+int(tsy/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
