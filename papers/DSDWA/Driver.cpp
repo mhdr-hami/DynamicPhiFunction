@@ -23,7 +23,7 @@
 #include "DynamicWeightedGrid.h"
 
 int stepsPerFrame = 1;
-float bound = 8;
+float bound = 2;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -36,8 +36,8 @@ std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
-int exper=3;
-float a, b, tspp=40,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
+int exper=4;
+float a, b, tspp=50,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
 bool saveSVG = false;
 
 DWG::DynamicWeightedGridEnvironment *dwg_env;
@@ -508,8 +508,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-			lastx=ts;
-			lasty=ts;
 			tsx = max(tspp/100*abs(goal.x-start.x), 1);
 			tsy = max(tspp/100*abs(goal.y-start.y), 1);
 
@@ -518,8 +516,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				//Set the square around the start state.
 				swampedloc.x = start.x;
 				swampedloc.y = start.y;
-				for(uint16_t i=start.x-int(tspp/2); i<=start.x+int(tspp/2); i++)
-					for(uint16_t j=start.y-int(tspp/2); j<=start.y+int(tspp/2); j++)
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+				for(int i=start.x-int(tsx/2); i<=start.x+int(tsx/2); i++)
+					for(int j=start.y-int(tsy/2); j<=start.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
@@ -527,8 +533,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				//Set the square around the goal state.
 				swampedloc.x = goal.x;
 				swampedloc.y = goal.y;
-				for(uint16_t i=goal.x-int(ts/2); i<=goal.x+int(ts/2); i++)
-					for(uint16_t j=goal.y-int(ts/2); j<=goal.y+int(ts/2); j++)
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+				for(int i=goal.x-int(tsx/2); i<=goal.x+int(tsx/2); i++)
+					for(int j=goal.y-int(tsy/2); j<=goal.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 
@@ -539,9 +553,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
-				
-				for(int i=swampedloc.x-int(ts/2); i<=swampedloc.x+int(ts/2); i++)
-					for(int j=swampedloc.y-int(ts/2); j<=swampedloc.y+int(ts/2); j++)
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
+
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+				for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+					for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
@@ -551,7 +572,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
-
 				tsx = max(tsx, 10);
 				tsy = max(tsy, 10);
 
@@ -560,7 +580,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 
 				lastx=tsx;
 				lasty=tsy;
-				
 				for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 					for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
@@ -581,13 +600,21 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc2.y = uint16_t(a * swampedloc2.x + b);
+				tsx = max(tsx, 10);
+				tsy = max(tsy, 10);
 
-				for(int i=swampedloc.x-int(ts/4); i<=swampedloc.x+int(ts/4); i++)
-					for(int j=swampedloc.y-int(ts/4); j<=swampedloc.y+int(ts/4); j++)
+				tsx = max(tsx, tsy);
+				tsy = tsx;
+
+				lastx=tsx;
+				lasty=tsy;
+
+				for(int i=swampedloc.x-int(tsx/4); i<=swampedloc.x+int(tsx/4); i++)
+					for(int j=swampedloc.y-int(tsy/4); j<=swampedloc.y+int(tsy/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
-				for(int i=swampedloc2.x-int(ts/4); i<=swampedloc2.x+int(ts/4); i++)
-					for(int j=swampedloc2.y-int(ts/4); j<=swampedloc2.y+int(ts/4); j++)
+				for(int i=swampedloc2.x-int(tsx/4); i<=swampedloc2.x+int(tsx/4); i++)
+					for(int j=swampedloc2.y-int(tsy/4); j<=swampedloc2.y+int(tsy/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
