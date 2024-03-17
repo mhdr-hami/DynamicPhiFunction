@@ -300,8 +300,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-			tsx = max(tspp/100*abs(goal.x-start.x), 1);
-			tsy = max(tspp/100*abs(goal.y-start.y), 1);
+			tsx = max(tspp/100*abs(goal.x-start.x), 4); //4 Because tx/2=2 and if start.x==goal.x >= no exception
+			tsy = max(tspp/100*abs(goal.y-start.y), 4);
 			
 			//Change one or two squares of ground states to swamp type.
 			if(exper==0){
