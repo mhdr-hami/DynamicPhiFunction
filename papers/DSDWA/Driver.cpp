@@ -289,7 +289,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<100) continue;
+			if(exp.GetDistance()<50) continue;
 
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
@@ -300,8 +300,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-			tsx = max(tspp/100*abs(goal.x-start.x), 4); //4 Because tx/2=2 and if start.x==goal.x >= no exception
-			tsy = max(tspp/100*abs(goal.y-start.y), 4);
+			tsx = max(tspp/100*abs(goal.x-start.x), 1);
+			tsy = max(tspp/100*abs(goal.y-start.y), 1);
 			
 			//Change one or two squares of ground states to swamp type.
 			if(exper==0){
@@ -341,7 +341,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			else if(exper==2){
 				//Set the square around a random state with a center on the [start-goal] line.
-				swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
@@ -360,7 +361,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			else if(exper==3){
 				//Set the square around a random state with a center on the (start+10%)-(goal-10%) line.
-				swampedloc.x = random()%(abs(goal.x-start.x) - 2*(int(0.1*abs(goal.x-start.x))+int(tsx/2))) + min(goal.x, start.x) +int(0.1*abs(goal.x-start.x))+int(tsx/2);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.x = random()%(abs(goal.x-start.x) - 2*(int(0.1*abs(goal.x-start.x))+int(tsx/2))) + min(goal.x, start.x) +int(0.1*abs(goal.x-start.x))+int(tsx/2);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
@@ -380,14 +382,14 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			else if(exper==4){
 				//Set two squares around two random states on the start-goal line.
 				// swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
-				swampedloc.x = random()%(abs(goal.x-start.x)/2) + min(goal.x, start.x);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.x = random()%(abs(goal.x-start.x)/2) + min(goal.x, start.x);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
-				// do{
-				// 	swampedloc2.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
-				// } while(abs(swampedloc.x - swampedloc2.x)<ts/5);
-				swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
+
+				if(goal.x == start.x) swampedloc2.x = start.x;
+				else swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
 
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
@@ -576,7 +578,8 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(exper==2){
 				//Set the square around a random state with a center on the [start-goal] line.
-				swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
@@ -595,7 +598,8 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(exper==3){
 				//Set the square around a random state with a center on the (start+10%)-(goal-10%) line.
-				swampedloc.x = random()%(abs(goal.x-start.x) - 2*(int(0.1*abs(goal.x-start.x))+int(tsx/2))) + min(goal.x, start.x) +int(0.1*abs(goal.x-start.x))+int(tsx/2);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.x = random()%(abs(goal.x-start.x) - 2*(int(0.1*abs(goal.x-start.x))+int(tsx/2))) + min(goal.x, start.x) +int(0.1*abs(goal.x-start.x))+int(tsx/2);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
 				swampedloc.y = uint16_t(a * swampedloc.x + b);
@@ -615,14 +619,17 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			else if(exper==4){
 				//Set two squares around two random states on the start-goal line.
 				// swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
-				swampedloc.x = random()%(abs(goal.x-start.x)/2) + min(goal.x, start.x);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.x = random()%(abs(goal.x-start.x)/2) + min(goal.x, start.x);
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
-				swampedloc.y = uint16_t(a * swampedloc.x + b);
+				if(goal.x == start.x) swampedloc.x = start.x;
+				else swampedloc.y = uint16_t(a * swampedloc.x + b);
 				// do{
 				// 	swampedloc2.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
 				// } while(abs(swampedloc.x - swampedloc2.x)<ts/5);
-				swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
+				if(goal.x = start.x) swampedloc2.x = start.x;
+				else swampedloc2.x = max(goal.x, start.x) - random()%(abs(goal.x-start.x)/2);
 
 				a = float(goal.y - start.y)/(goal.x-start.x);
 				b = goal.y - a * goal.x;
