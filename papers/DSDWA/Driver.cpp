@@ -36,7 +36,7 @@ std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
-int exper=2;
+int exper=3;
 float a, b, tspp=50,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
 bool saveSVG = false;
 
