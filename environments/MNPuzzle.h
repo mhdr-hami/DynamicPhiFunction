@@ -293,15 +293,15 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 	// std::cout<<std::endl;
 
 	if(s.blank==5)
-		return 1.0;
+		return 0.0;
 	if(s.blank==6)
-		return 1.0;
-	if(s.blank==9)
-		return 1.0;
-	if(s.blank==10)
-		return 1.0;
+		return 0.0;
+	if(s.blank==4)
+		return 0.0;
+	// if(s.blank==10)
+	// 	return 1.0;
 
-	return 0.0;
+	return 1.0;
 
 	// if (s.blank >= width)
 	// //UP
@@ -327,7 +327,6 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 	// 	if(s.puzzle[s.blank-1]==1)
 	// 		return 1.0;
 	// }
-
 	// return 0.0;
 
 	// double buckerScore = 0;
@@ -1088,7 +1087,8 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 	switch (weight)
 	{
 		case kUnitWeight:
-			if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 10;
+			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 10;
+			if(b.blank==4 ||b.blank==5 || b.blank==6) return 10;
 			else return 1;
 		case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
 		case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
