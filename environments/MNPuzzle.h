@@ -22,6 +22,7 @@
 #include <array>
 
 enum puzzleWeight {
+	kSwampedMode,
 	kUnitWeight,
 	kSquared,
 	kSquareRoot,
@@ -66,19 +67,6 @@ public:
 	std::array<int, width*height> puzzle;
 
 	puzzleWeight weight;
-
-	void printState()
-	{
-		std::cout<<"Printing State..."<<std::endl;
-		// for(int i=0; i<4; i++)
-			// {
-				// for(int j=0; j<4; j++)
-				// 	std::cout<<puzzle[i*4+j]<<" ";
-				// std::cout<<std::endl;
-			// }
-		for(int i=0; i<16; i++) std::cout<<puzzle[i]<<" ";
-		std::cout<<std::endl;
-	}
 
 //	int puzzle[width*height];
 };
@@ -156,6 +144,9 @@ public:
 	MNPuzzle(const std::vector<slideDir> op_order); // used to set action order
 	~MNPuzzle();
 	double GetBuckerScore(MNPuzzleState<width, height> &s) const;
+	void PrintState(MNPuzzleState<width, height> &s) const;
+	void SetMiddleState(MNPuzzleState<width, height> &s);
+	void SetTerrainSize(double s);
 	void SetWeighted(puzzleWeight w) { weight = w; }
 	puzzleWeight GetWeighted() const { return weight; }
 	void GetSuccessors(const MNPuzzleState<width, height> &stateID, std::vector<MNPuzzleState<width, height>> &neighbors) const;
@@ -272,6 +263,12 @@ private:
 	// stores the heuristic value of each tile-position pair indexed by the tile value (0th index is empty)
 	std::vector<std::vector<unsigned> > h_increment;
 	MNPuzzleState<width, height> goal;
+
+	// stores a random state on the WA* solution path, to create a swamp area on the path using heuristic
+	MNPuzzleState<width, height> middleState;
+
+	// Stores the terrain size of the swamped area.
+	double swampedTerrainSize;
 };
 
 template <int width, int height>
@@ -286,22 +283,25 @@ private:
 //typedef UnitSimulation<MNPuzzleState, slideDir, MNPuzzle> PuzzleSimulation;
 
 template <int width, int height>
+void MNPuzzle<width, height>::PrintState(MNPuzzleState<width, height> &s) const
+{
+	std::cout<<"Printing State..."<<std::endl;
+	for(int i=0; i<width*height; i++) std::cout<<s.puzzle[i]<<" ";
+	std::cout<<std::endl;
+
+}
+
+template <int width, int height>
 double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) const
 {
-	// std::cout<<"Printing the State"<<std::endl;
-	// for(int i=0; i<16; i++) std::cout<<s.puzzle[i]<<" ";
-	// std::cout<<std::endl;
+	if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.0;
+	else return 0.0;
 
-	if(s.blank==5)
-		return 0.0;
-	if(s.blank==6)
-		return 0.0;
-	if(s.blank==4)
-		return 0.0;
-	// if(s.blank==10)
+	// if(s.blank==5)
 	// 	return 1.0;
-
-	return 1.0;
+	// if(s.blank==6)
+	// 	return 1.0;
+	// return 0.0;
 
 	// if (s.blank >= width)
 	// //UP
@@ -541,10 +541,32 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 //	}
 }
 
+/*
+sets the middleState to the random state s on the WA* solution path.
+middleState is used to create a swamp area.
+*/
+template <int width, int height>
+void MNPuzzle<width, height>::SetMiddleState(MNPuzzleState<width, height> &s)
+{
+	for(int i=0; i<width*height; i++) middleState.puzzle[i]=s.puzzle[i];
+	middleState.blank = s.blank;
+	middleState.weight = s.weight;
+}
+
+/*
+sets the swampedTerrainSize to be used later.
+*/
+template <int width, int height>
+void MNPuzzle<width, height>::SetTerrainSize(double s)
+{
+	swampedTerrainSize=s;
+}
+
 template <int width, int height>
 MNPuzzle<width, height>::MNPuzzle()
 {
-	weight = kUnitWeight;
+	// weight = kUnitWeight;
+	weight = kSwampedMode;
 	// weight = kSquareRoot;
 	// weight = kSquared;
 	// weight = kUnitPlusFrac;
@@ -563,8 +585,9 @@ MNPuzzle<width, height>::MNPuzzle(const std::vector<slideDir> op_order)
 	goal_stored = false;
 	use_manhattan = true;
 	// weight = kUnitWeight;
+	weight = kSwampedMode;
 	// weight = kSquareRoot;
-	weight = kSquared;
+	// weight = kSquared;
 	// weight = kUnitPlusFrac;
 	// weight = kSquarePlusOneRoot;
 
@@ -1006,6 +1029,7 @@ double MNPuzzle<width, height>::HCost(const MNPuzzleState<width, height> &state1
 					double movingTile = state1.puzzle[x + y*width];
 					switch (weight)
 					{
+						case kSwampedMode:man_dist += absDist; break;
 						case kUnitWeight: man_dist += absDist; break;
 						case kUnitPlusFrac: man_dist += absDist*(1.0+1.0/(1.0+movingTile)); break;
 						case kSquared: man_dist += absDist*(movingTile)*(movingTile); break;
@@ -1086,10 +1110,16 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 	// tile itself
 	switch (weight)
 	{
-		case kUnitWeight:
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 10;
-			if(b.blank==4 ||b.blank==5 || b.blank==6) return 10;
-			else return 1;
+		case kSwampedMode:
+			//1 random indexes weighted
+			// if(b.blank==5 || b.blank==6) return 10;
+			// else return 1;
+			
+			//2 middleState involved
+			if(flesseq(HCost(b, middleState), swampedTerrainSize)) return 10.0;
+			else return 1.0;
+
+		case kUnitWeight: return 1.0;
 		case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
 		case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
 		case kSquareRoot: return sqrt(a.puzzle[b.blank]);
@@ -1157,6 +1187,9 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &s, con
 {
 	switch (weight)
 	{
+		case kSwampedMode: //TODO: check swampedMode applies here.
+			if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 10.0;
+			else return 1.0;
 		case kUnitWeight: return 1;
 		case kUnitPlusFrac:
 		{

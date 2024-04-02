@@ -40,7 +40,8 @@ int exper=4;
 float a, b, tspp=50,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
 bool saveSVG = false;
 int randomIndex;
-xyLoc randomState;
+xyLoc xyLocRandomState;
+MNPuzzleState<4, 4> mnpRandomState;
 tExpansionPriority prevPolicy;
 
 DWG::DynamicWeightedGridEnvironment *dwg_env;
@@ -243,24 +244,51 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 {
 	if (strcmp(argument[0], "-stp") == 0)
 	{
-		assert(maxNumArgs >= 4);
+		assert(maxNumArgs >= 5);
 		
 		DSDWAStar<MNPuzzleState<4, 4>, slideDir, MNPuzzle<4, 4>> dsd_mnp;
 		std::vector<MNPuzzleState<4, 4>> path;
 		MNPuzzle<4, 4> mnp;
 		MNPuzzleState<4, 4> start = STP::GetKorfInstance(atoi(argument[1]));
 		MNPuzzleState<4, 4> goal;
+		dsd_mnp.InitializeSearch(&mnp, start, goal, path);
 		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
+		if(exper==4){
+			//Run the search once using WA* to find the solution path, and place the swamp area on that.
+			//The terrainSize is a proportion of the solution length.
+			prevPolicy = dsd_mnp.policy;
+			dsd_mnp.policy = kWA;
+			dsd_mnp.InitializeSearch(&mnp, start, goal, path);
+			dsd_mnp.GetPath(&mnp, start, goal, path);
+			if(path.size()){
+				randomIndex = random()%path.size();
+				mnp.SetMiddleState(path[randomIndex]);
+				// std::cout<<"Swamped Region Created\n";
+				// std::cout<<"Path size is: "<<path.size()<<"\n";
+				// std::cout<<"Middle State at index "<<randomIndex<<" is:\n";
+				// mnp.PrintState(path[randomIndex]);
+				mnp.SetTerrainSize(path.size()*atof(argument[4])/100/2);
+			}
+			// else{
+			// 	mnp.SetMiddleState(start);
+			// 	mnp.SetTerrainSize(20);
+			// }
+			dsd_mnp.policy = prevPolicy;
+		}
+
+		dsd_mnp.InitializeSearch(&mnp, start, goal, path);
+
 		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 
+		//Save the SVG of the isoloines plots
 		if(saveSVG && (dsd_mnp.policy==5 || dsd_mnp.policy==6)){
 			Graphics::Display d;
 			dsd_mnp.DrawPriorityGraph(d);
-			std::string s = "stp="+ string(argument[1])+"_p="+string(argument[2])+"_w="+string(argument[3])+".svg";
+			std::string s = "stp="+ string(argument[1])+"_alg="+string(argument[2])+"_w="+string(argument[3])+".svg";
 			MakeSVG(d, s.c_str(), 750,750,0);
 		}
 		
@@ -272,7 +300,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 	{// Arguments: -DSMAP mapAddress $scen $alg $weight $TerrainSize
 
 		//Thie is Prior Knowledge Map.
-		//The knoeledge we have prior to the search about the domain, is it's a dynamic weighted grid map.
+		//The knowledge we have prior to the search about the domain, is it's a dynamic weighted grid map.
 		//Some Terrain Types exist that makes action costs different in different parts of the map.
 		assert(maxNumArgs >= 6);
 		me = new MapEnvironment(new Map(argument[1]));
@@ -389,12 +417,12 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				dsd.InitializeSearch(me, start, goal, solution);
 				dsd.GetPath(me, start, goal, solution);
 				randomIndex = random()%solution.size();
-				randomState = solution[randomIndex];
+				xyLocRandomState = solution[randomIndex];
 				dsd.policy = prevPolicy;
 
 				//Set the square around a random state with a center on the solution path.
-				swampedloc.x = randomState.x;
-				swampedloc.y = randomState.y;
+				swampedloc.x = xyLocRandomState.x;
+				swampedloc.y = xyLocRandomState.y;
 				tsx = max(tsx, 10);
 				tsy = max(tsy, 10);
 
@@ -419,17 +447,18 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				lasty=tsy;
 
 				//Run the search once, to find the solution path using WA*, and place the swamp area on that.
+				//It leaves a margin between the start state and the goal state of the solution.
 				prevPolicy = dsd.policy;
 				dsd.policy = kWA;
 				dsd.InitializeSearch(me, start, goal, solution);
 				dsd.GetPath(me, start, goal, solution);
 				randomIndex = random()%(int(solution.size()-tsx))+tsx/2;
-				randomState = solution[randomIndex];
+				xyLocRandomState = solution[randomIndex];
 				dsd.policy = prevPolicy;
 
 				//Set the square around a random state with a center on the solution path.
-				swampedloc.x = randomState.x;
-				swampedloc.y = randomState.y;
+				swampedloc.x = xyLocRandomState.x;
+				swampedloc.y = xyLocRandomState.y;
 				for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 					for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
@@ -683,12 +712,12 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				dsd.InitializeSearch(me, start, goal, solution);
 				dsd.GetPath(me, start, goal, solution);
 				randomIndex = random()%solution.size();
-				randomState = solution[randomIndex];
+				xyLocRandomState = solution[randomIndex];
 				dsd.policy = prevPolicy;
 
 				//Set the square around a random state with a center on the solution path.
-				swampedloc.x = randomState.x;
-				swampedloc.y = randomState.y;
+				swampedloc.x = xyLocRandomState.x;
+				swampedloc.y = xyLocRandomState.y;
 				tsx = max(tsx, 10);
 				tsy = max(tsy, 10);
 
@@ -718,12 +747,12 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				dsd.InitializeSearch(me, start, goal, solution);
 				dsd.GetPath(me, start, goal, solution);
 				randomIndex = random()%(int(solution.size()-tsx))+tsx/2;
-				randomState = solution[randomIndex];
+				xyLocRandomState = solution[randomIndex];
 				dsd.policy = prevPolicy;
 
 				//Set the square around a random state with a center on the solution path.
-				swampedloc.x = randomState.x;
-				swampedloc.y = randomState.y;
+				swampedloc.x = xyLocRandomState.x;
+				swampedloc.y = xyLocRandomState.y;
 				for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 					for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)

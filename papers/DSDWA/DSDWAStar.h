@@ -31,6 +31,8 @@ enum tExpansionPriority {
     kDSDPolicyCount=12,
 };
 
+int lastExpansions=0;
+
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
 public:
@@ -604,7 +606,8 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 	{
 		if (10000000 == nodesExpanded){
 			//Terminate the search after 10 million node expansions.
-			printf("%" PRId64 " nodes expanded, %" PRId64 " generated => Terminated.\n", nodesExpanded, nodesTouched);
+			printf("%" PRId64 " nodes expanded, %" PRId64 " generated. ", nodesExpanded, nodesTouched);
+			std::cout<<"Policy "<<policy<<" => Terminated.\n";
 			break;
 		}
 	}
@@ -635,8 +638,8 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 		if (10000000 == nodesExpanded)
 			{
 				//Terminate the search after 10 million node expansions.
-				printf("%" PRId64 " nodes expanded, %" PRId64 " generated => Terminated.\n", nodesExpanded, nodesTouched);
-				break;
+				printf("%" PRId64 " nodes expanded, %" PRId64 " generated. ", nodesExpanded, nodesTouched);
+				std::cout<<"Policy "<<policy<<" => Terminated.\n";
 			}
 	}
 }
@@ -940,8 +943,17 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				double buckerScore = env->GetBuckerScore(neighbors[which]);
 				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
 				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
-
+				
+				int lastSize = data.size();
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
+				// }
 			}
 			else if (policy == kDSMAP2)
 			{
@@ -955,7 +967,16 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
 				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
 
+				int lastSize = data.size();
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
+				// }
 			}
 			else if (policy == kDSMAP3)
 			{
@@ -983,7 +1004,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		else {
 			// Unsure if this is the right setting - can use lowest possible weight
 			// or perhaps use same weight as parent?
-			// std::cout<<"oh my god I found it!!";
 			SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
 		}
 	}
