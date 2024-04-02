@@ -133,6 +133,11 @@ public:
 class MapEnvironment : public SearchEnvironment<xyLoc, tDirection>
 {
 public:
+	void PrintState(xyLoc &s) const
+	{
+		std::cout<<"Printing State..."<<std::endl;
+		std::cout<<"x="<<s.x<<", y="<<s.y<<std::endl;
+	}
 	double GetBuckerScore(xyLoc &s) const
 	{
 		Map * theMap = GetMap();
