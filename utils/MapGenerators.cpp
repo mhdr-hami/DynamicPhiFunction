@@ -293,6 +293,50 @@ void MakeRandomMap(Map *map, int obstacles)
 	}
 }
 
+void MakeDesignedMap(Map *map, int type)
+{
+	int xloc, yloc;
+	switch (type)
+	{
+	case 0:
+		/* Only cosists 1 obstacle in the center of empty map */
+		xloc = map->GetMapWidth()/2;
+		yloc = map->GetMapHeight()/2;
+		map->SetTerrainType(xloc, yloc, kOutOfBounds);
+		break;
+	
+	case 1:
+		/* Only cosists 1 swamp state in the center of empty map */
+		xloc = map->GetMapWidth()/2;
+		yloc = map->GetMapHeight()/2;
+		map->SetTerrainType(xloc, yloc, kSwamp);
+		break;
+
+	case 2:
+		/* Only cosists 4 obstacles in the center of empty map */
+		xloc = map->GetMapWidth()/2;
+		yloc = map->GetMapHeight()/2;
+		map->SetTerrainType(xloc, yloc, kOutOfBounds);
+		map->SetTerrainType(xloc, yloc+1, kOutOfBounds);
+		map->SetTerrainType(xloc+1, yloc, kOutOfBounds);
+		map->SetTerrainType(xloc+1, yloc+1, kOutOfBounds);
+		break;
+	
+	case 3:
+		/* Only cosists 4 swamp states in the center of empty map */
+		xloc = map->GetMapWidth()/2;
+		yloc = map->GetMapHeight()/2;
+		map->SetTerrainType(xloc, yloc, kSwamp);
+		map->SetTerrainType(xloc, yloc+1, kSwamp);
+		map->SetTerrainType(xloc+1, yloc, kSwamp);
+		map->SetTerrainType(xloc+1, yloc+1, kSwamp);
+		break;
+	
+	default:
+		break;
+	}
+}
+
 struct loc { int x; int y; };
 
 void StraightDir(Map *m, loc l, std::vector<loc> &dirs)
