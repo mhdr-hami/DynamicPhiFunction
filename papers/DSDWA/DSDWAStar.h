@@ -978,24 +978,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
 				// }
 			}
-			else if (policy == kDSMAP3)
-			{
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				
-				point3d theLast;
-				if (data.size() == 0) theLast = point3d(1, 0);
-				else theLast = data.back().crossPoint;
-
-				midWeight = -(weight-theLast.y)/(0-theLast.x);
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
-				
-				double buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
-				float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*buckerScore;
-				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
-			}
 			else {
 				// last argument will be }ignored
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
