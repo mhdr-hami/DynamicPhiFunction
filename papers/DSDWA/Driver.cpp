@@ -257,7 +257,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
 		mnp.SetInputWeight(atof(argument[3]));
-		
+
 		if(exper==44444){
 			//Run the search once using WA* to find the solution path, and place the swamp area on that.
 			//The terrainSize is a proportion of the solution length.
@@ -324,6 +324,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			Experiment exp = sl.GetNthExperiment(x);
 			if(exp.GetDistance()<40) continue;
 
+			//Set the start and goal states, weight and policy of the search. 
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
@@ -332,8 +333,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			dsd.SetWeight(atof(argument[4]));
 
 			me->SetInputWeight(atof(argument[4]));
-			std::cout<<"input weight is "<<me->GetInputWeight()<<std::endl;
 
+			//Set the size of the swamp area using the tspp argument.
 			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
 			tsx = max(tspp/100*abs(goal.x-start.x), 1);
@@ -621,7 +622,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					for(int j=swampedloc2.y-int(lasty/4); j<=swampedloc2.y+int(lasty/4); j++)
 						if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 							me->GetMap()->SetTerrainType(i, j, kGround);
-
+				//Set the start and goal states of the search.
 				do {
 					start.x = random()%me->GetMap()->GetMapWidth();
 					start.y = random()%me->GetMap()->GetMapHeight();
@@ -631,12 +632,12 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					goal.y = random()%me->GetMap()->GetMapHeight();
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 
+				//Set the size of the swamp area using the tspp argument.
 				ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
 				tsx = max(tspp/100*abs(goal.x-start.x), 1);
 				tsy = max(tspp/100*abs(goal.y-start.y), 1);
 
 				me->SetInputWeight(bound);
-				std::cout<<"input weight is "<<me->GetInputWeight()<<std::endl;
 
 				//Change one or two squares of ground states to swamp type.
 				if(exper==0){
@@ -829,6 +830,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				if(bound==9) bound=1.25;
 				else bound = (bound-1)*2+1;
 
+				//Set the input weight to the new bound
 				me->SetInputWeight(bound);
 
 				MyWindowHandler(windowID, kWindowDestroyed);
