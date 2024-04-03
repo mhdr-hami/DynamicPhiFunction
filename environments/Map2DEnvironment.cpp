@@ -509,9 +509,7 @@ double MapEnvironment::GCost(const xyLoc &l1, const xyLoc &l2) const
 	double multiplier = 1.0;
 	if (map->GetTerrainType(l1.x, l1.y) == kSwamp)
 	{
-		// multiplier = 3.0;
-		multiplier = 10.0;
-		// multiplier = 15.0;
+		multiplier = 1.5*inputWeight-0.5;
 	}
 	if (l1 == l2) return 0.0;
 	if (l1.x == l2.x) return 1.0*multiplier;
