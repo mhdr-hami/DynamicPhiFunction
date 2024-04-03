@@ -150,6 +150,17 @@ public:
 		// 			return 1;
 		return 0.0;
 	}
+	/*
+	sets the input weight of the search.
+	*/
+	void SetInputWeight(double w)
+	{
+		inputWeight=w;
+	}
+	double GetInputWeight()
+	{
+		return inputWeight;
+	}
 	MapEnvironment(Map *m, bool useOccupancy = false);
 	MapEnvironment(MapEnvironment *);
 	virtual ~MapEnvironment();
@@ -231,6 +242,7 @@ public:
 	//virtual xyLoc GetNextState(xyLoc &s, tDirection dir);
 //	double GetPathLength(std::vector<xyLoc> &neighbors);
 private:
+	double inputWeight;
 	void GetMaxRect(long terrain, int x, int y, int endx, int endy, std::vector<bool> &drawn, Graphics::rect &r) const;
 	void DrawSingleTerrain(long terrain, Graphics::Display &disp, std::vector<bool> &drawn) const;
 protected:
