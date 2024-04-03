@@ -6,7 +6,7 @@ import sys
 
 # weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
 weight_to_int = {'2.00':0, '3.00':1, '4.00':2, '5.00':3, '6.00':4, '7.00':5, '8.00':6, '9.00':7, '10.00':8}
-int_to_alg = {0:'WA*', 1:'pwXDP', 2:'pwXUP', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP2', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
+int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP2', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp':
@@ -30,7 +30,7 @@ if sys.argv[1] == '-stp':
         # print('============================================== Average Expansions Table ==============================================')
         # print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
         print('==================================================  Average Expansions Table  ===================================================')
-        print('Alg / Weight|    1.50    |    2.00    |    3.00    |    5.00    |    6.00    |    7.00    |    8.00    |    9.00    |    10.0    |')
+        print('Alg / Weight|    2.00    |    3.00    |    4.00    |    5.00    |    6.00    |    7.00    |    8.00    |    9.00    |    10.0    |')
         print('_________________' * 7)
         for i in range(len(table)):
             # if i!=0 and i!=1 and i!=6 and i!=8:
