@@ -256,7 +256,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
-		if(exper==4){
+		mnp.SetInputWeight(atof(argument[3]));
+		
+		if(exper==44444){
 			//Run the search once using WA* to find the solution path, and place the swamp area on that.
 			//The terrainSize is a proportion of the solution length.
 			prevPolicy = dsd_mnp.policy;
