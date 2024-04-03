@@ -1197,7 +1197,7 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &s, con
 		case kSwampedMode: //TODO: check swampedMode applies here.
 		{
 			//1 random locations weighted
-			if(b.blank==5 || b.blank==6) return 1.5*inputWeight-0.5;
+			if(s.blank==5 || s.blank==6) return 1.5*inputWeight-0.5;
 			else return 1;
 
 			//2 middleState involved
