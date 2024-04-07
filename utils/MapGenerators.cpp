@@ -293,43 +293,39 @@ void MakeRandomMap(Map *map, int obstacles)
 	}
 }
 
-void MakeDesignedMap(Map *map, int type)
+void MakeDesignedMap(Map *map, int obstacleSize, int type)
 {
-	int xloc, yloc;
+	int xloc, yloc, tmp;
+	xloc = map->GetMapWidth()/2;
+	yloc = map->GetMapHeight()/2;
 	switch (type)
 	{
 	case 0:
-		/* Only cosists 1 obstacle in the center of empty map */
-		xloc = map->GetMapWidth()/2;
-		yloc = map->GetMapHeight()/2;
-		map->SetTerrainType(xloc, yloc, kOutOfBounds);
+		/* Only cosists a square of obstacles in the center of empty map */
+		for(int i=xloc-obstacleSize; i<=xloc+obstacleSize; i++)
+			for(int j=yloc-obstacleSize; j<=yloc+obstacleSize; j++)
+				map->SetTerrainType(i, j, kOutOfBounds);
 		break;
 	
 	case 1:
-		/* Only cosists 1 swamp state in the center of empty map */
-		xloc = map->GetMapWidth()/2;
-		yloc = map->GetMapHeight()/2;
-		map->SetTerrainType(xloc, yloc, kSwamp);
+		/* Only cosists a square of swamp states in the center of empty map */
+		for(int i=xloc-obstacleSize; i<=xloc+obstacleSize; i++)
+			for(int j=yloc-obstacleSize; j<=yloc+obstacleSize; j++)
+				map->SetTerrainType(i, j, kSwamp);
 		break;
 
 	case 2:
-		/* Only cosists 4 obstacles in the center of empty map */
-		xloc = map->GetMapWidth()/2;
-		yloc = map->GetMapHeight()/2;
-		map->SetTerrainType(xloc, yloc, kOutOfBounds);
-		map->SetTerrainType(xloc, yloc+1, kOutOfBounds);
-		map->SetTerrainType(xloc+1, yloc, kOutOfBounds);
-		map->SetTerrainType(xloc+1, yloc+1, kOutOfBounds);
+		/* Only cosists a diamond of obstacles in the center of empty map */
+		for(int i=xloc-obstacleSize; i<=xloc+obstacleSize; i++)
+			for(int j=yloc-obstacleSize; j<=yloc+obstacleSize; j++)
+				map->SetTerrainType(i, j, kOutOfBounds);
 		break;
 	
 	case 3:
-		/* Only cosists 4 swamp states in the center of empty map */
+		/* Only cosists a diamond of swamp states in the center of empty map */
 		xloc = map->GetMapWidth()/2;
 		yloc = map->GetMapHeight()/2;
 		map->SetTerrainType(xloc, yloc, kSwamp);
-		map->SetTerrainType(xloc, yloc+1, kSwamp);
-		map->SetTerrainType(xloc+1, yloc, kSwamp);
-		map->SetTerrainType(xloc+1, yloc+1, kSwamp);
 		break;
 	
 	default:
