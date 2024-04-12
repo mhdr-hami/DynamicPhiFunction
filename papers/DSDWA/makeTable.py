@@ -1,12 +1,22 @@
 import numpy as np 
 import sys
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # plt.rcParams["figure.figsize"] = [9.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 # weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
 weight_to_int = {'2.00':0, '3.00':1, '4.00':2, '5.00':3, '6.00':4, '7.00':5, '8.00':6, '9.00':7, '10.00':8}
+# weight_to_int = {'2.0':0, '3.0':1, '4.0':2, '5.0':3, '6.0':4, '7.0':5, '8.0':6, '9.0':7, '10.0':8}
+# weight_to_int = {"1.001":0, "1.002":1, "1.004":2, "1.008":3, "1.016":4, "1.032":5, "1.064":6, "1.128":7, "1.256":8, "1.512":9, "2.024":10, "3.048":11, "5.096":12}
+# weight_to_int = {"1.01":0, "1.02":1, "1.04":2, "1.08":3, "1.16":4, "1.32":5, "1.64":6, "2.28":7, "3.56":8, "6.12":9, "11.24":10}
+# weight_to_int = {"1.01":0, "1.02":1, "1.04":2, "1.08":3, "1.16":4, "1.32":5, "1.64":6, "2.28":7, "3.56":8, "6.12":9}
+# weight_to_int = {"1.01":0, "1.02":1, "1.03":2, "1.04":3, "1.05":4, "1.06":5, "1.07":6, "1.08":7, "1.09":8, "1.10":9, "1.20":10, "1.30":11, "1.40":12, "1.50":13, "1.60":14, "1.70":15, "1.80":16, "1.90":17, "2.00":18, "2.10":19, "2.20":20, "2.30":21, "2.40":22, "2.50":23, "2.60":24, "2.70":25, "2.80":26, "2.90":27, "3.00":28, "3.10":29, "3.20":30, "3.30":31, "3.40":32, "3.50":33, "3.60":34, "3.70":35, "3.80":36, "3.90":37, "4.00":38, "4.10":39, "4.20":40, "4.30":41, "4.40":42, "4.50":43, "4.60":44, "4.70":45, "4.80":46, "4.90":47, "5.00":48}
+# weight_to_int = {"1.10":0, "1.20":1, "1.30":2, "1.40":3, "1.50":4, "1.60":5, "1.70":6, "1.80":7, "1.90":8, "2.00":9, "2.10":10, "2.20":11, "2.30":12, "2.40":13, "2.50":14, "2.60":15, "2.70":16, "2.80":17, "2.90":18, "3.00":19, "3.10":20, "3.20":21, "3.30":22, "3.40":23, "3.50":24, "3.60":25, "3.70":26, "3.80":27, "3.90":28, "4.00":29, "4.10":30, "4.20":31, "4.30":32, "4.40":33, "4.50":34, "4.60":35, "4.70":36, "4.80":37, "4.90":38, "5.00":39}
+
 int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP2', 7:'HalfEdgeDrop', 8:'TheOne2', 9:'TheOne3', 10:'fixedHEDP', 11:'newMAP'}
+# int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP2', 3:'Greedy'}
+cost='3.5'
+mapType = {'1':'Swamped Square Cost='+cost, '0':'Obstacle Square', '2':'Obstacle Diamond', '3':'Swamped Diamond Cost='+cost, '5':'Swamped Circle Cost='+cost, '4':'Obstacle Circle'}
 markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
 
 if sys.argv[1] == '-stp':
@@ -288,3 +298,50 @@ elif sys.argv[1] == '-map':
                 # plt.ylabel('Node Expansions')
                 # plt.title('MAP Problem '+str(problem))
                 # plt.show()
+    
+    ############################################################################################
+    elif sys.argv[2] == '4':
+
+        ##Experiment 4: arg[3] is the number of algs and arg[4] is the number of weights
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if data[0] == "MAP" : #and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
+                    table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
+                    count_table[int(data[5])][weight_to_int[data[7]]] += 1
+
+        result = np.divide(table, count_table)
+        # Weights = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        # Weights = [1.001, 1.002, 1.004, 1.008, 1.016, 1.032, 1.064, 1.128, 1.256, 1.512, 2.024, 3.048, 5.096]
+        # Weights = [1.01, 1.02, 1.04, 1.08, 1.16, 1.32, 1.64, 2.28, 3.56, 6.12, 11.24]
+        # Weights = [1.01, 1.02, 1.04, 1.08, 1.16, 1.32, 1.64, 2.28, 3.56, 6.12]
+        # Weights = ["1.01", "1.02", "1.03", "1.04", "1.05", "1.06", "1.07", "1.08", "1.09", "1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
+        Weights = ["1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
+        xpoints = np.array(Weights)
+        works = []
+        for policy in int_to_alg:
+            work_i = []
+            for w in Weights:
+                work_i.append(result[policy][weight_to_int[str(w)]])
+            works.append(work_i)
+        for policy in int_to_alg:
+            ypoints = []
+            for i in works[policy]:
+                ypoints.append(i)
+            ypoints = np.array(ypoints)
+            plt.plot(xpoints, ypoints, markers[policy], ms = 5, label=int_to_alg[policy])
+        
+        font = {'family':'serif','color':'darkred','size':12}
+        plt.ylabel("Work", fontdict=font)
+        plt.xlabel("Weights", fontdict=font)
+        plt.title(mapType[sys.argv[7]]+" Size="+str(sys.argv[6]))
+        plt.legend()
+        plt.xticks(xpoints, rotation=90) 
+        # plt.yscale('log')
+        # plt.xscale('log')
+        plt.show()
+    
+    ############################################################################################
+    
