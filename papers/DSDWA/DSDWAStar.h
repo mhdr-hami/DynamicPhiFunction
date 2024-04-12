@@ -15,23 +15,42 @@
 
 enum tExpansionPriority {
 	kWA=0,
-	kpwXDP=1,
-	kpwXUP=2,
+	kpwXD=1,
+	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
 	kDSMAP=5,
 	kDSMAP2=6,
-	kDSMAP3=7,
+	kGreedy=7,
+	kDSMAP3=8,
 	kMAP=8,
-	kGreedy=8,
 	kHalfEdgeDrop=8,
 	kFullEdgeDrop=9,
 	kPathSuboptDouble=10,
 	kXDP90=11,
-    kDSDPolicyCount=12,
+ 	kDSDPolicyCount=12,
 };
 
+// enum tExpansionPriority {
+// 	kWA=0,
+// 	kDSMAP=1,
+// 	kDSMAP2=2,
+// 	kGreedy=3,
+// 	kXUP=4,
+// 	kpwXD=5,
+// 	kpwXU=6,
+// 	kXDP=7,
+// 	kDSMAP3=8,
+// 	kMAP=8,
+// 	kHalfEdgeDrop=8,
+// 	kFullEdgeDrop=9,
+// 	kPathSuboptDouble=10,
+// 	kXDP90=11,
+//     kDSDPolicyCount=12,
+// };
+
 int lastExpansions=0;
+double tolerance=0.0001; //It is ALSO embedded in TemplateAStar.h, AStarCompareWithF.
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
@@ -133,13 +152,13 @@ public:
 	{
 		if (data.size() == 0)
 		{
-			if (fequal(g, 0))
+			if (fequal(g, 0, tolerance))
 				return h;
 			printf("WARNING: Invalid priority lookups %s line %d\n", __FILE__, __LINE__);
 			return INFINITY;
 		}
 		float slope = g/h;
-		if (fgreater(slope, data.back().slope))
+		if (fgreater(slope, data.back().slope, tolerance))
 		{
 			printf("WARNING: Invalid priority lookups %s line %d\n", __FILE__, __LINE__);
 			return INFINITY;
@@ -147,7 +166,7 @@ public:
 		// dumb/slow but correct
 		// TODO: create a helper binary search function
 		for (int x = 0; x < data.size(); x++)
-			if (flesseq(slope, data[x].slope))
+			if (flesseq(slope, data[x].slope, tolerance))
 				return data[x].K*(g + data[x].weight * h);
 		return INFINITY;
 	}
@@ -155,13 +174,13 @@ public:
 	{
 		if (data.size() == 0)
 		{
-			if (fequal(g, 0))
+			if (fequal(g, 0, tolerance))
 				return h;
 			printf("WARNING: Invalid priority lookups %s line %d\n", __FILE__, __LINE__);
 			return INFINITY;
 		}
 		float maxRegion = floor(atan(data.back().slope) * 180 / PI)+1;
-		if (fgreater(region, maxRegion))
+		if (fgreater(region, maxRegion, tolerance))
 		{
 			printf("WARNING: Invalid priority lookups %s line %d\n", __FILE__, __LINE__);
 			return INFINITY;
@@ -171,14 +190,14 @@ public:
 		for (int x = 0; x < data.size(); x++)
 			{
 				float theRegion = floor(atan(data[x].slope) * 180 / PI)+1;
-				if (flesseq(region, theRegion))
+				if (flesseq(region, theRegion, tolerance))
 					return data[x].K*(g + data[x].weight * h);
 			}
 		return INFINITY;
 
 		// for (int x = 0; x < data.size(); x++)
 		// 	{
-		// 		if (flesseq(region, data[x].slope))
+		// 		if (flesseq(region, data[x].slope, tolerance))
 		// 			return data[x].K*(g + data[x].weight * h);
 		// 	}
 		// return INFINITY;
@@ -197,7 +216,7 @@ public:
 		{
 			float slope = g/h;
 			for (int x = 0; x < data.size(); x++)
-				if (flesseq(slope, data[x].slope))
+				if (flesseq(slope, data[x].slope, tolerance))
 					{
 						// std::cout<<"really here??";
 						return data[x].weight;
@@ -228,7 +247,7 @@ public:
 			for (int x = 0; x < data.size(); x++)
 			{
 				float theRegion = floor(atan(data[x].slope) * 180 / PI)+1;
-				if (flesseq(region, theRegion))
+				if (flesseq(region, theRegion, tolerance))
 					return data[x].weight;
 			}
 		return data.back().weight;
@@ -243,7 +262,7 @@ public:
 	// directly target next suboptimality
 	void SetNextWeight(float h, float g, float targetWeight) // const Graphics::point &loc
 	{
-		if (fequal(h, 0))
+		if (fequal(h, 0, tolerance))
 		{
 			float w;
 			point3d last;
@@ -256,7 +275,7 @@ public:
 			float K = 1/(last.y+w*last.x);
 			data.push_back({INFINITY, w, K, {static_cast<float>(weight), 0.0f}});
 		}
-		if (fgreater(h, 0) && fgreater(g, 0))
+		if (fgreater(h, 0, tolerance) && fgreater(g, 0, tolerance))
 		{
 			float slope = g/h;
 			if (data.size() == 0 || data.back().slope < slope)
@@ -302,7 +321,7 @@ public:
 **/ 
 	void SetNextWeight(float h, float g, float targetWeight, bool dummy) // const Graphics::point &loc
 	{
-		if (fequal(h, 0))
+		if (fequal(h, 0, tolerance))
 		{
 			float w;
 			point3d last;
@@ -315,7 +334,7 @@ public:
 			float K = 1/(last.y+w*last.x);
 			data.push_back({INFINITY, w, K, {static_cast<float>(weight), 0.0f}});
 		}
-		if (fgreater(h, 0) && fgreater(g, 0))
+		if (fgreater(h, 0, tolerance) && fgreater(g, 0, tolerance))
 		{
 			float slope = g/h;
 			float region = floor(atan(slope) * 180 / PI)+1;
@@ -355,7 +374,7 @@ public:
 	
 	void SetNextPriority(float h, float g, float target) // const Graphics::point &loc
 	{
-		if (fequal(h, 0))
+		if (fequal(h, 0, tolerance))
 		{
 			float w;
 			point3d last;
@@ -368,7 +387,7 @@ public:
 			float K = 1/(last.y+w*last.x);
 			data.push_back({INFINITY, w, K, {static_cast<float>(weight), 0.0f}});
 		}
-		if (fgreater(h, 0) && fgreater(g, 0))
+		if (fgreater(h, 0, tolerance) && fgreater(g, 0, tolerance))
 		{
 			float slope = g/h;
 			if (data.size() == 0 || data.back().slope < slope)
@@ -400,13 +419,13 @@ public:
 						nextWeight = weight;
 						break;
 					}
-					case kpwXUP: // PWXUP
+					case kpwXU: // PWXUP
 					{
 						nextWeight = maxWeight;
 						K = 1/(last.y+nextWeight*last.x);
 						break;
 					}
-					case kpwXDP: // PWXDP
+					case kpwXD: // PWXDP
 					{
 						nextWeight = minWeight;
 						K = 1/(last.y+nextWeight*last.x);
@@ -503,7 +522,7 @@ public:
 		// 2. FYI: loc is the point on the new line that we want to have the desired priority
 		// 3. Find the slope between the last point and our new point.
 		//    Which is delta y / delta x
-		if (flesseq(loc.y, projectedPoint.y))
+		if (flesseq(loc.y, projectedPoint.y, tolerance))
 		{
 			//printf("Ill defined case (new y < old y); defaulting to min\n");
 
@@ -511,7 +530,7 @@ public:
 			K = 1/(last.y+minWeight*last.x);
 			return minWeight;
 		}
-		if (fgreatereq(loc.x, projectedPoint.x))
+		if (fgreatereq(loc.x, projectedPoint.x, tolerance))
 		{
 //			printf("Ill defined case (new x > old x); defaulting to max\n");
 			
@@ -816,7 +835,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		if (neighborLoc[x] == kOpenList)
 			continue;
 		float slope = (openClosedList.Lookup(nodeid).g+edgeCosts[x])/heuristicCosts[x];
-		if (fgreater(slope, maxSlope))
+		if (fgreater(slope, maxSlope, tolerance))
 		{
 			maxSlope = slope;
 			maxSlopeG = openClosedList.Lookup(nodeid).g+edgeCosts[x];
@@ -824,7 +843,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			which = x;
 		}
 	}
-	if (fgreater(maxSlope, 0))
+	if (fgreater(maxSlope, 0, tolerance))
 	{
 		// TODO: handle edge cases
 		// if (openClosedList.OpenSize() != 0 || openClosedList.OpenSize() == 0)
@@ -924,7 +943,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 
-				if (fgreater(maxSlope, data.back().slope))
+				if (fgreater(maxSlope, data.back().slope, tolerance))
 				{
 					// maxRegion = lastRegion;
 					thirdLast = secondLast;
@@ -1006,7 +1025,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// TODO: Can update parent pointers when shorter paths are found to improve solution quality
 				if (reopenNodes)
 				{
-					if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g))
+					if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g, tolerance))
 					{
 						auto &i = openClosedList.Lookup(neighborID[x]);
 						i.parentID = nodeid;
@@ -1021,7 +1040,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				}
 				break;
 			case kOpenList:
-				if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g))
+				if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g, tolerance))
 				{
 					auto &i = openClosedList.Lookup(neighborID[x]);
 					i.parentID = nodeid;
@@ -1119,7 +1138,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		if (neighborLoc[x] == kOpenList)
 			continue;
 		float slope = (openClosedList.Lookup(nodeid).g+edgeCosts[x])/heuristicCosts[x];
-		if (fgreater(slope, maxSlope))
+		if (fgreater(slope, maxSlope, tolerance))
 		{
 			maxSlope = slope;
 			maxSlopeG = openClosedList.Lookup(nodeid).g+edgeCosts[x];
@@ -1128,7 +1147,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		}
 	}
 
-	if (fgreater(maxSlope, 0))
+	if (fgreater(maxSlope, 0, tolerance))
 	{
 		float lastRegion = nodesExpanded - lastRegionExpanded;
 		lastRegionExpanded = nodesExpanded;
@@ -1211,7 +1230,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight, true);
 
-				if (fgreater(lastRegion, maxRegion))
+				if (fgreater(lastRegion, maxRegion, tolerance))
 				{
 					maxRegion = lastRegion;
 					thirdLast = secondLast;
@@ -1250,7 +1269,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// TODO: Can update parent pointers when shorter paths are found to improve solution quality
 				if (reopenNodes)
 				{
-					if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g))
+					if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g, tolerance))
 					{
 						auto &i = openClosedList.Lookup(neighborID[x]);
 						i.parentID = nodeid;
@@ -1265,7 +1284,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				}
 				break;
 			case kOpenList:
-				if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g))
+				if (fless(openClosedList.Lookup(nodeid).g+edgeCosts[x], openClosedList.Lookup(neighborID[x]).g, tolerance))
 				{
 					auto &i = openClosedList.Lookup(neighborID[x]);
 					i.parentID = nodeid;
@@ -1350,7 +1369,7 @@ uint64_t DSDWAStar<state, action,environment,openList>::GetNecessaryExpansions()
 	for (unsigned int x = 0; x < openClosedList.size(); x++)
 	{
 		const auto &data = openClosedList.Lookat(x);
-		if (fless(data.g + data.h, goalFCost))
+		if (fless(data.g + data.h, goalFCost, tolerance))
 			n++;
 	}
 	return n;

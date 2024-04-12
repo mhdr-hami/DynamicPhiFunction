@@ -40,16 +40,18 @@
 // note, this should be consteval when C++20 is widespread
 //constexpr auto phi_astar = [](double h, double g) -> double { return g+h; };
 
+// double tolerance=0.0001;
+
 template <class state>
 struct AStarCompareWithF {
 	// returns true if i2 is preferred over i1
 	bool operator()(const AStarOpenClosedDataWithF<state> &i1, const AStarOpenClosedDataWithF<state> &i2) const
 	{
-		if (fequal(i1.f, i2.f))
+		if (fequal(i1.f, i2.f, 0.0001))
 		{
-			return (fless(i1.g, i2.g));
+			return (fless(i1.g, i2.g, 0.0001));
 		}
-		return fgreater(i1.f, i2.f);
+		return fgreater(i1.f, i2.f, 0.0001);
 	}
 };
 
