@@ -485,10 +485,11 @@ double MapEnvironment::HCost(const xyLoc &l1, const xyLoc &l2) const
 double MapEnvironment::GCost(const xyLoc &l, const tDirection &act) const
 {
 	double multiplier = 1.0;
-//	if (map->GetTerrainType(l.x, l.y) == kSwamp)
-//	{
-//		multiplier = 3.0;
-//	}
+	if (map->GetTerrainType(l.x, l.y) == kSwamp)
+	{
+		multiplier = 1.5*inputWeight-0.5;
+		// multiplier = 3.0;
+	}
 	switch (act)
 	{
 		case kN: return 1.0*multiplier;
@@ -510,6 +511,7 @@ double MapEnvironment::GCost(const xyLoc &l1, const xyLoc &l2) const
 	if (map->GetTerrainType(l1.x, l1.y) == kSwamp)
 	{
 		multiplier = 1.5*inputWeight-0.5;
+		// multiplier = 3.0;
 	}
 	if (l1 == l2) return 0.0;
 	if (l1.x == l2.x) return 1.0*multiplier;

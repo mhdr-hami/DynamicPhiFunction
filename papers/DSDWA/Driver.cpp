@@ -23,7 +23,8 @@
 #include "DynamicWeightedGrid.h"
 
 int stepsPerFrame = 1;
-float bound = 2;
+//  float bound = 2;
+float bound = 1.3;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -70,6 +71,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize", "Test grid <map> on <scenario> with <algorithm> <weight> and <TerrainSize>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
@@ -96,17 +98,21 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		AddViewport(windowID, {0, -1, 1, 1}, kScaleToSquare);
 		Map *m = new Map(200, 200);
 		srandom(20221228);
-		//BuildRandomRoomMap(m, 30);
-		MakeRandomMap(m, 10);
-		//  MakeMaze(m, 10);
+		// BuildRandomRoomMap(m, 30);
+		// MakeRandomMap(m, 10);
+        MakeDesignedMap(m, 25, 3);
+		// MakeMaze(m, 10);
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
+        me->SetDiagonalCost(1.5);
 		dsd.policy = kWA;
 		start = {1,1};
 		goal = {198, 198};
 
 		swampedloc = {1,1};
 		swampedloc2 = {1,1};
+
+		me->SetInputWeight(bound);
 
 		dsd.SetWeight(bound);
 		dsd.InitializeSearch(me, start, goal, solution);
@@ -514,6 +520,23 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		}
 		exit(0);
 	}
+	else if (strcmp(argument[0], "-exp0") == 0)
+	{
+		Map *m = new Map(200, 200);
+		MakeDesignedMap(m, atoi(argument[4]), atoi(argument[5]));
+		// std::string filename = argument[1];
+		// m->Save(filename.c_str());
+		assert(maxNumArgs >= 5);
+		me = new MapEnvironment(m);
+
+		start = {1,1};
+		goal = {198, 198};
+		dsd.policy = (tExpansionPriority)atoi(argument[2]);
+		dsd.SetWeight(atof(argument[3]));
+		dsd.GetPath(me, start, goal, solution);
+		printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], "dummy", 0.0, atoi(argument[2]), atof(argument[3]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+		exit(0);
+	}
 	else if (strcmp(argument[0], "-DPstp") == 0)
 	{
 		assert(maxNumArgs >= 3);
@@ -807,7 +830,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				printf("==============\n");
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
-				printf("Bound: %.2f\n", bound);
+				printf("Bound: %f\n", bound);
 				data.resize(0);
 				dsd.InitializeSearch(me, start, goal, solution);
 				searchRunning = true;
@@ -819,7 +842,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				dsd.policy = (tExpansionPriority)((dsd.policy)%kDSDPolicyCount);
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
-				printf("Bound: %.2f\n", bound);
+				printf("Bound: %f\n", bound);
 				dsd.InitializeSearch(me, start, goal, solution);
 				searchRunning = true;
 				break;
@@ -829,17 +852,20 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				data.resize(0);
 				if(bound==9) bound=1.25;
 				else bound = (bound-1)*2+1;
+				// else bound = (bound-2)*2+2;
 
-				//Set the input weight to the new bound
-				me->SetInputWeight(bound);
 
 				MyWindowHandler(windowID, kWindowDestroyed);
 				MyWindowHandler(windowID, kWindowCreated);
+				
+				//Set the input weight to the new bound
+				me->SetInputWeight(bound);
+
 				problemNumber = 0;
 				dsd.policy = (tExpansionPriority)((dsd.policy)%kDSDPolicyCount);
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
-				printf("Bound: %.2f\n", bound);
+				printf("Bound: %f\n", bound);
 				dsd.InitializeSearch(me, start, goal, solution);
 				searchRunning = true;
 				break;
@@ -853,7 +879,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				dsd.policy = (tExpansionPriority)((dsd.policy+1)%kDSDPolicyCount);
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
-				printf("Bound: %.2f\n", bound);
+				printf("Bound: %f\n", bound);
 				dsd.InitializeSearch(me, start, goal, solution);
 				searchRunning = true;
 				break;
@@ -864,7 +890,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				dsd.policy = (tExpansionPriority)((dsd.policy-1)%kDSDPolicyCount);
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
-				printf("Bound: %.2f\n", bound);
+				printf("Bound: %f\n", bound);
 				dsd.InitializeSearch(me, start, goal, solution);
 				searchRunning = true;
 				break;
@@ -884,7 +910,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			printf("==============\n");
 			printf("Problem: %d\n", problemNumber);
 			printf("Policy: %d\n", dsd.policy);
-			printf("Bound: %.2f\n", bound);
+			printf("Bound: %f\n", bound);
 			data.resize(0);
 			dsd.InitializeSearch(me, start, goal, solution);
 			searchRunning = true;
@@ -979,13 +1005,13 @@ float GetPriority(float h, float g)
 	if (data.size() == 0)
 		return INFINITY;
 	float slope = g/h;
-	if (fgreater(slope, data.back().slope))
+	if (fgreater(slope, data.back().slope, tolerance))
 		return INFINITY;
 	// range includes low but not high
 //	int low = 0, high = data.size();
 	// dumb/slow but correct
 	for (int x = 0; x < data.size(); x++)
-		if (flesseq(slope, data[x].slope))
+		if (flesseq(slope, data[x].slope, tolerance))
 			return data[x].K*(g + data[x].weight * h);
 //	while (true)
 //	{
@@ -1055,13 +1081,13 @@ float ChooseWeightForTargetPriority(point3d loc, float priority, float minWeight
 	// 2. FYI: loc is the point on the new line that we want to have the desired priority
 	// 3. Find the slope between the last point and our new point.
 	//    Which is delta y / delta x
-	if (flesseq(loc.y, projectedPoint.y))
+	if (flesseq(loc.y, projectedPoint.y, tolerance))
 	{
 		printf("Ill defined case (new y < old y); defaulting to min\n");
 		K = 1/(last.y+minWeight*last.x);
 		return minWeight;
 	}
-	if (fgreatereq(loc.x, projectedPoint.x))
+	if (fgreatereq(loc.x, projectedPoint.x, tolerance))
 	{
 		printf("Ill defined case (new x > old x); defaulting to max\n");
 		K = 1/(last.y+maxWeight*last.x);

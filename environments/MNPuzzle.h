@@ -298,14 +298,14 @@ void MNPuzzle<width, height>::PrintState(MNPuzzleState<width, height> &s) const
 template <int width, int height>
 double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) const
 {
-	if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.0;
-	else return 0.0;
+	// if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.0;
+	// else return 0.0;
 
-	// if(s.blank==5)
-	// 	return 1.0;
-	// if(s.blank==6)
-	// 	return 1.0;
-	// return 0.0;
+	// if(s.blank==5 || s.blank==6 || s.blank==9 || s.blank==10) return 1.0;
+	// if(s.blank==10 || s.blank==11 || s.blank==14 || s.blank==15) return 1.0;
+	if(s.blank==0 || s.blank==1 || s.blank==4 || s.blank==5) return 1.0;
+
+	else return 0;
 
 	// if (s.blank >= width)
 	// //UP
@@ -1126,7 +1126,11 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 		case kSwampedMode:
 		{
 			//1 random locations weighted
-			if(b.blank==5 || b.blank==6) return 1.5*inputWeight-0.5;
+			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 10;
+			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 1.5*inputWeight-0.5;
+			// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) return 1.5*inputWeight-0.5;
+			if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) return 1.5*inputWeight-0.5;
+			// if(b.blank==0 || b.blank==1) return 1.5*inputWeight-0.5;
 			else return 1;
 			
 			//2 middleState involved
@@ -1197,7 +1201,9 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &s, con
 		case kSwampedMode: //TODO: check swampedMode applies here.
 		{
 			//1 random locations weighted
-			if(s.blank==5 || s.blank==6) return 1.5*inputWeight-0.5;
+			// if(s.blank==5 || s.blank==6 || s.blank==9 || s.blank==10) return 1.5*inputWeight-0.5;
+			// if(s.blank==10 || s.blank==11 || s.blank==14 || s.blank==15) return 1.5*inputWeight-0.5;
+			if(s.blank==0 || s.blank==1 || s.blank==4 || s.blank==5) return 1.5*inputWeight-0.5;
 			else return 1;
 
 			//2 middleState involved
