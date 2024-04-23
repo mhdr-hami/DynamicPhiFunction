@@ -21,10 +21,11 @@ enum tExpansionPriority {
 	kXUP=4,
 	kDSMAP=5,
 	kDSMAP2=6,
-	kGreedy=7,
-	kDSMAP3=8,
-	kMAP=8,
-	kHalfEdgeDrop=8,
+	kDSMAP3=7,
+	kDSMAP4=8,
+	kGreedy=9,
+	kMAP=9,
+	kHalfEdgeDrop=9,
 	kFullEdgeDrop=9,
 	kPathSuboptDouble=10,
 	kXDP90=11,
@@ -35,22 +36,24 @@ enum tExpansionPriority {
 // 	kWA=0,
 // 	kDSMAP=1,
 // 	kDSMAP2=2,
-// 	kGreedy=3,
-// 	kXUP=4,
-// 	kpwXD=5,
-// 	kpwXU=6,
-// 	kXDP=7,
-// 	kDSMAP3=8,
-// 	kMAP=8,
-// 	kHalfEdgeDrop=8,
-// 	kFullEdgeDrop=9,
-// 	kPathSuboptDouble=10,
-// 	kXDP90=11,
-//     kDSDPolicyCount=12,
+// 	kDSMAP3=3,
+// 	kDSMAP4=4,
+// 	kXDP=5,
+// 	kGreedy=6,
+// 	kHalfEdgeDrop=7,
+// 	kpwXD=8,
+// 	kXUP=9,
+// 	kMAP=19,
+// 	kpwXU=11,
+// 	kFullEdgeDrop=12,
+// 	kPathSuboptDouble=13,
+// 	kXDP90=14,
+//     kDSDPolicyCount=15,
 // };
 
 int lastExpansions=0;
 double tolerance=0.0001; //It is ALSO embedded in TemplateAStar.h, AStarCompareWithF.
+double globalMaxG=-1, globalMaxH=-1;
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
@@ -66,6 +69,8 @@ public:
 	
 	openList openClosedList;
 	state goal, start;
+
+	state globalMaxState;
 	
 	bool InitializeSearch(environment *env, const state& from, const state& to, std::vector<state> &thePath);
 	bool InitializeSearch(environment *env, const state& from, const state& to, std::vector<state> &thePath, bool dummy);
@@ -303,6 +308,8 @@ public:
 				point3d crossPoint1;
 				crossPoint1.x = 1.0f/(K*(slope+nextWeight));
 				crossPoint1.y = crossPoint1.x*slope;
+
+				// std::cout<<"Stored weight2: "<<nextWeight<<"\n";
 				
 				data.push_back({slope, nextWeight, K, crossPoint1});
 			}
@@ -432,12 +439,11 @@ public:
 						break;
 					}
 					default:
-					case kGreedy:
+					// case kGreedy:
 					{
 						// K (g + [w] * h) = 1 at previous point
 						// returns nextWeight and K
 						nextWeight = ChooseWeightForTargetPriority({h, g}, target, minWeight, maxWeight, last, K);
-						// std::cout<<"say wow??"<< nextWeight;
 					}
 				}
 				
@@ -446,6 +452,8 @@ public:
 				point3d crossPoint1;
 				crossPoint1.x = 1.0f/(K*(slope+nextWeight));
 				crossPoint1.y = crossPoint1.x*slope;
+
+				// std::cout<<"Stored weight: "<<nextWeight<<"\n";
 				
 				data.push_back({slope, nextWeight, K, crossPoint1});
 				
@@ -504,6 +512,7 @@ public:
 						   nextSlope*weight / (nextSlope + 2*weight-1));
 		// get (negative) slopes to upper and lower points
 		minWeight = std::max(minWeight, (lowerPoint.y-currPoint.y)/(currPoint.x-lowerPoint.x));
+		// std::cout<<" inside NextRangefunc minWeight:"<<(lowerPoint.y-currPoint.y)/(currPoint.x-lowerPoint.x)<<"\n";
 		if (upperPoint.x < currPoint.x)
 			maxWeight = std::min(maxWeight, (upperPoint.y-currPoint.y)/(currPoint.x-upperPoint.x));
 	//	printf("Weight needs to be [%f, %f]\n", minWeight, maxWeight);
@@ -543,6 +552,7 @@ public:
 		// and bound by min/max weight
 		weight = std::max(std::min(weight, maxWeight), minWeight);
 		K = 1/(last.y+weight*last.x);
+		// std::cout<<"inside chooseWeightFunc "<<weight;
 		return weight;
 	}
 	tExpansionPriority policy = kFullEdgeDrop;//kHalfEdgeDrop;
@@ -988,6 +998,94 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 				int lastSize = data.size();
 				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
+				// }
+			}
+			else if (policy == kDSMAP3)
+			{
+				double buckerScore;
+				float TheNextWeight;
+				if(fless(maxSlope, data.back().slope))
+				{
+					globalMaxG = maxSlopeG;
+					globalMaxH = maxSlopeH;
+				}
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				midWeight = (maxWeight + minWeight)/2;
+				lowMidWeight = (midWeight + minWeight)/2;
+				highMidWeight = (maxWeight + midWeight)/2;
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				buckerScore = env->GetBuckerScore(neighbors[which]);
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
+
+				if(buckerScore==0){
+					// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
+					// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+					// if(fgreater(maxWeight, minWeight))
+					// 	std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
+					// assert(fgreater(maxWeight, minWeight));
+					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+					assert(angle>=0 && angle<=90);
+                	SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle/90));
+				}
+				else{					
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+					// std::cout<<2<<std::endl;
+				}
+
+				// int lastSize = data.size();
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
+				// }
+			}
+			else if (policy == kDSMAP4)
+			{
+				double buckerScore;
+				float TheNextWeight;
+				if(fless(maxSlope, data.back().slope))
+				{
+					globalMaxG = maxSlopeG;
+					globalMaxH = maxSlopeH;
+				}
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				midWeight = (maxWeight + minWeight)/2;
+				lowMidWeight = (midWeight + minWeight)/2;
+				highMidWeight = (maxWeight + midWeight)/2;
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				buckerScore = env->GetBuckerScore(neighbors[which]);
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;	
+
+				if(buckerScore==1 && edgeCosts[which]>maxWeight){
+					
+					SetNextPriority(maxSlopeH, maxSlopeG, weight);
+
+					// std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
+				}
+				else if(buckerScore==1 && edgeCosts[which]<=maxWeight){
+					
+					SetNextPriority(maxSlopeH, maxSlopeG, maxWeight);
+
+					// std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
+				}
+				else{					
+					SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
+					// std::cout<<2<<std::endl;
+				}
+
+				// int lastSize = data.size();
 				// if(data.size() > lastSize)
 				// {
 				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
