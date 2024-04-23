@@ -24,7 +24,7 @@
 
 int stepsPerFrame = 1;
 //  float bound = 2;
-float bound = 1.3;
+float bound = 2.1;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -38,7 +38,7 @@ bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2;
 int exper=4;
-float a, b, tspp=50,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
+float a, b, tspp=30,ts=10, tsx=10, tsy=10, lastx=10, lasty=10;
 bool saveSVG = false;
 int randomIndex;
 xyLoc xyLocRandomState;
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 {
 	setvbuf(stdout, NULL, _IONBF, 0);
 	InstallHandlers();
-	RunHOGGUI(argc, argv, 1000, 1000);
+	RunHOGGUI(argc, argv, 1500, 1500);
 	return 0;
 }
 
@@ -99,12 +99,13 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		Map *m = new Map(200, 200);
 		srandom(20221228);
 		// BuildRandomRoomMap(m, 30);
-		// MakeRandomMap(m, 10);
-        MakeDesignedMap(m, 25, 3);
+		MakeRandomMap(m, 10);
+      	// MakeDesignedMap(m, 20, 3);
 		// MakeMaze(m, 10);
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
-        me->SetDiagonalCost(1.5);
+        // me->SetDiagonalCost(1.41);
+		me->SetDiagonalCost(1.5);
 		dsd.policy = kWA;
 		start = {1,1};
 		goal = {198, 198};
@@ -312,6 +313,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		//Some Terrain Types exist that makes action costs different in different parts of the map.
 		assert(maxNumArgs >= 6);
 		me = new MapEnvironment(new Map(argument[1]));
+
+		me->SetDiagonalCost(1.5);
+
 		ScenarioLoader sl(argument[2]);
 		swampedloc = {1,1};
 		swampedloc2 = {1,1};
@@ -328,7 +332,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						me->GetMap()->SetTerrainType(i, j, kGround);
 
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<40) continue;
+			if(exp.GetDistance()<30) continue;
 
 			//Set the start and goal states, weight and policy of the search. 
 			start.x = exp.GetStartX();
@@ -850,9 +854,9 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 		case 'w': 
 			{
 				data.resize(0);
-				if(bound==9) bound=1.25;
-				else bound = (bound-1)*2+1;
-				// else bound = (bound-2)*2+2;
+				if(bound>=9) bound=1.25;
+				// else bound = (bound-1)*1.1+1;
+				else bound = (bound-2)*2+2;
 
 
 				MyWindowHandler(windowID, kWindowDestroyed);
