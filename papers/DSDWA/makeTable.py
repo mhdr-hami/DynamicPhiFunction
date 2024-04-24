@@ -179,7 +179,7 @@ elif sys.argv[1] == '-map':
                 print('|', end="")
                 for j in range(len(table[i])):
                     print(round(result[i][j], 2), end="")
-                    for k in range(12-len(str(round(result[i][j], 2)))):
+                    for k in range(9-len(str(round(result[i][j], 2)))):
                         print(' ',end="")
                     print('|', end="")
                 print()
@@ -190,7 +190,7 @@ elif sys.argv[1] == '-map':
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
                 # print(int_to_alg[np.argmin(col)], end="")
-                for k in range(12-len(int_to_alg[np.argsort(col)[cnt]])):
+                for k in range(9-len(int_to_alg[np.argsort(col)[cnt]])):
                     print(' ',end="")
                 print('|', end="")
             print()
