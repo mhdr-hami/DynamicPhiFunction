@@ -13,47 +13,48 @@
 #include "MNPuzzle.h" // to get the STP state
 
 
-enum tExpansionPriority {
-	kWA=0,
-	kpwXD=1,
-	kpwXU=2,
-	kXDP=3,
-	kXUP=4,
-	kDSMAP=5,
-	kDSMAP2=6,
-	kDSMAP3=7,
-	kDSMAP4=8,
-	kGreedy=9,
-	kMAP=9,
-	kHalfEdgeDrop=9,
-	kFullEdgeDrop=9,
-	kPathSuboptDouble=10,
-	kXDP90=11,
- 	kDSDPolicyCount=12,
-};
-
 // enum tExpansionPriority {
 // 	kWA=0,
-// 	kDSMAP=1,
-// 	kDSMAP2=2,
-// 	kDSMAP3=3,
-// 	kDSMAP4=4,
-// 	kXDP=5,
-// 	kGreedy=6,
-// 	kHalfEdgeDrop=7,
-// 	kpwXD=8,
-// 	kXUP=9,
-// 	kMAP=19,
-// 	kpwXU=11,
-// 	kFullEdgeDrop=12,
-// 	kPathSuboptDouble=13,
-// 	kXDP90=14,
-//     kDSDPolicyCount=15,
+// 	kpwXD=1,
+// 	kpwXU=2,
+// 	kXDP=3,
+// 	kXUP=4,
+// 	kDSMAP=5,
+// 	kDSMAP2=6,
+// 	kDSMAP3=7,
+// 	kDSMAP4=8,
+// 	kGreedy=9,
+// 	kMAP=9,
+// 	kHalfEdgeDrop=9,
+// 	kFullEdgeDrop=9,
+// 	kPathSuboptDouble=10,
+// 	kXDP90=11,
+//  	kDSDPolicyCount=12,
 // };
+
+enum tExpansionPriority {
+	kWA=0,
+	kDSMAP=1,
+	kDSMAP2=2,
+	kDSMAP3=3,
+	kDSMAP4=4,
+	kDSMAP5=5,
+	kXDP=6,
+	kGreedy=7,
+	kHalfEdgeDrop=8,
+	kpwXD=9,
+	kXUP=10,
+	kMAP=19,
+	kpwXU=11,
+	kFullEdgeDrop=12,
+	kPathSuboptDouble=13,
+	kXDP90=14,
+    kDSDPolicyCount=15,
+};
 
 int lastExpansions=0;
 double tolerance=0.0001; //It is ALSO embedded in TemplateAStar.h, AStarCompareWithF.
-double globalMaxG=-1, globalMaxH=-1;
+double globalMaxG=0, globalMaxH=-1;
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
@@ -823,6 +824,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 	neighborID.resize(0);
 	neighborLoc.resize(0);
 	heuristicCosts.resize(0);
+
+	if(globalMaxH == -1) globalMaxH = theHeuristic->HCost(start, goal);
 	
 	//std::cout << "Expanding: " << env->GetStateHash(openClosedList.Lookup(nodeid).data) << " with f:";
 	//std::cout << openClosedList.Lookup(nodeid).g+openClosedList.Lookup(nodeid).h << std::endl;
@@ -1011,11 +1014,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			{
 				double buckerScore;
 				float TheNextWeight;
-				if(fless(maxSlope, data.back().slope))
-				{
-					globalMaxG = maxSlopeG;
-					globalMaxH = maxSlopeH;
-				}
 				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				midWeight = (maxWeight + minWeight)/2;
@@ -1054,11 +1052,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			{
 				double buckerScore;
 				float TheNextWeight;
-				if(fless(maxSlope, data.back().slope))
-				{
-					globalMaxG = maxSlopeG;
-					globalMaxH = maxSlopeH;
-				}
 				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				midWeight = (maxWeight + minWeight)/2;
@@ -1082,6 +1075,50 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				}
 				else{					
 					SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
+					// std::cout<<2<<std::endl;
+				}
+
+				// int lastSize = data.size();
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
+				// }
+			}
+			else if (policy == kDSMAP5)
+			{
+				double buckerScore;
+				float TheNextWeight;
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				midWeight = (maxWeight + minWeight)/2;
+				lowMidWeight = (midWeight + minWeight)/2;
+				highMidWeight = (maxWeight + midWeight)/2;
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				buckerScore = env->GetBuckerScore(neighbors[which]);
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
+
+				if(buckerScore==0){
+					// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
+					// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+					// if(fgreater(maxWeight, minWeight))
+					// 	std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
+					// assert(fgreater(maxWeight, minWeight));
+					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+					float prevAngle = atan2f(globalMaxG,globalMaxH)/PID180;
+					// assert(angle-prevAngle>=0 && angle-prevAngle<=90);
+                	SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*((angle-prevAngle)/90));
+					if(fless(maxSlope, data.back().slope))
+					{
+						globalMaxG = maxSlopeG;
+						globalMaxH = maxSlopeH;
+					}
+				}
+				else{					
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 					// std::cout<<2<<std::endl;
 				}
 
