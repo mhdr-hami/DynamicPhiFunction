@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 # weight_to_int = {"1.10":0, "1.20":1, "1.30":2, "1.40":3, "1.50":4, "1.60":5, "1.70":6, "1.80":7, "1.90":8, "2.00":9, "2.10":10, "2.20":11, "2.30":12, "2.40":13, "2.50":14, "2.60":15, "2.70":16, "2.80":17, "2.90":18, "3.00":19, "3.10":20, "3.20":21, "3.30":22, "3.40":23, "3.50":24, "3.60":25, "3.70":26, "3.80":27, "3.90":28, "4.00":29, "4.10":30, "4.20":31, "4.30":32, "4.40":33, "4.50":34, "4.60":35, "4.70":36, "4.80":37, "4.90":38, "5.00":39}
 weight_to_int = {"1.12":0, "1.25":1, "1.50":2, "2.00":3, '3.00':4, '4.00':5, '5.00':6, '6.00':7, '7.00':8, '8.00':9, '9.00':10, '10.00':11}
 
-int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP2', 7:'DSMAP3', 8:'DSMAP4'}
-# int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP2', 3:'DSMAP3', 4:'DSMAP4', 5:'XDP', 6:'Greedy'}
+# int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP2', 7:'DSMAP3', 8:'DSMAP4'}
+int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP2', 3:'DSMAP3', 4:'DSMAP4', 5:'DSMAP5'}
 # int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP2', 3:'DSMAP3'}
 cost='5.0'
 mapType = {'1':'Swamped Square Cost='+cost, '0':'Obstacle Square', '2':'Obstacle Diamond', '3':'Swamped Diamond Cost='+cost, '5':'Swamped Circle Cost='+cost, '4':'Obstacle Circle'}
@@ -36,13 +36,14 @@ if sys.argv[1] == '-stp':
                     # print(float(data[7]), count_table[int(data[3])][weight_to_int[data[5]]], sep=" ")
 
         result = np.divide(table, count_table)
+
         # divisor=np.array([2,3,4])
         # table/(divisor[:,np.newaxis])
         print()
         # print('============================================== Average Expansions Table ==============================================')
         # print('Algorithm/Weight|      1.25      |      1.50      |      2.00      |      3.00      |      5.00      |      9.00      |')
-        print('==================================================  Average Expansions Table  ===================================================')
-        print('Alg / Weight|    2.00    |    3.00    |    4.00    |    5.00    |    6.00    |    7.00    |    8.00    |    9.00    |    10.0    |')
+        print('====================================================  Average Expansions Table  =====================================================')
+        print('Alg / Weight|  1.12   |  1.25   |  1.50   |  2.00   |  3.00   |  4.00   |  5.00   |  6.00   |  7.00   |  8.00   |  9.00   |  10.0   |')
         print('_________________' * 7)
         for i in range(len(table)):
             # if i!=0 and i!=1 and i!=6 and i!=8:
@@ -52,8 +53,8 @@ if sys.argv[1] == '-stp':
                     print(' ',end="")
                 print('|', end="")
                 for j in range(len(table[i])):
-                    print(round(result[i][j], 2), end="")
-                    for k in range(12-len(str(round(result[i][j], 2)))):
+                    print(round(result[i][j]/100, 2), end="")
+                    for k in range(9-len(str(round(result[i][j]/100, 2)))):
                         print(' ',end="")
                     print('|', end="")
                 print()
@@ -64,7 +65,7 @@ if sys.argv[1] == '-stp':
                 col = table[:,i]
                 print(int_to_alg[np.argsort(col)[cnt]], end="")
                 # print(int_to_alg[np.argmin(col)], end="")
-                for k in range(12-len(int_to_alg[np.argsort(col)[cnt]])):
+                for k in range(9-len(int_to_alg[np.argsort(col)[cnt]])):
                     print(' ',end="")
                 print('|', end="")
             print()
