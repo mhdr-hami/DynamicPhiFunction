@@ -485,12 +485,40 @@ double MapEnvironment::HCost(const xyLoc &l1, const xyLoc &l2) const
 double MapEnvironment::GCost(const xyLoc &l, const tDirection &act) const
 {
 	double multiplier = 1.0;
-	if (map->GetTerrainType(l.x, l.y) == kSwamp)
-	{
-		multiplier = 1.5*inputWeight-0.5;
-		// std::cout<<inputWeight<<std::endl;
-		// multiplier = 4.0;
+	if(map->GetTerrainType(l.x, l.y) != kGround){
+		if (map->GetTerrainType(l.x, l.y) == kSwamp)
+			multiplier = TerrainCosts[0];
+		if (map->GetTerrainType(l.x, l.y) == kWater)
+			multiplier = TerrainCosts[1];
+		if (map->GetTerrainType(l.x, l.y) == kGrass)
+			multiplier = TerrainCosts[2];
+		if (map->GetTerrainType(l.x, l.y) == kTrees)
+			multiplier = TerrainCosts[3];
 	}
+	// if (map->GetTerrainType(l.x, l.y) == kSwamp)
+	// {
+	// 	multiplier = 1.5*inputWeight-0.5;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
+	// if (map->GetTerrainType(l.x, l.y) == kWater)
+	// {
+	// 	multiplier = 1.95*inputWeight-0.95;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
+	// if (map->GetTerrainType(l.x, l.y) == kGrass)
+	// {
+	// 	multiplier = 1.05*inputWeight-0.05;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
+	// if (map->GetTerrainType(l.x, l.y) == kTrees)
+	// {
+	// 	multiplier = 1.25*inputWeight-0.25;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
 	switch (act)
 	{
 		case kN: return 1.0*multiplier;
@@ -509,12 +537,40 @@ double MapEnvironment::GCost(const xyLoc &l, const tDirection &act) const
 double MapEnvironment::GCost(const xyLoc &l1, const xyLoc &l2) const
 {
 	double multiplier = 1.0;
-	if (map->GetTerrainType(l1.x, l1.y) == kSwamp)
-	{
-		multiplier = 1.5*inputWeight-0.5;
-		// std::cout<<inputWeight<<std::endl;
-		// multiplier = 4.0;
+	if(map->GetTerrainType(l1.x, l1.y) != kGround){
+		if (map->GetTerrainType(l1.x, l1.y) == kSwamp)
+			multiplier = TerrainCosts[0];
+		if (map->GetTerrainType(l1.x, l1.y) == kWater)
+			multiplier = TerrainCosts[1];
+		if (map->GetTerrainType(l1.x, l1.y) == kGrass)
+			multiplier = TerrainCosts[2];
+		if (map->GetTerrainType(l1.x, l1.y) == kTrees)
+			multiplier = TerrainCosts[3];
 	}
+	// if (map->GetTerrainType(l1.x, l1.y) == kSwamp)
+	// {
+	// 	multiplier = 1.5*inputWeight-0.5;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
+	// if (map->GetTerrainType(l1.x, l1.y) == kWater)
+	// {
+	// 	multiplier = 1.95*inputWeight-0.95;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
+	// if (map->GetTerrainType(l1.x, l1.y) == kGrass)
+	// {
+	// 	multiplier = 1.05*inputWeight-0.05;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
+	// if (map->GetTerrainType(l1.x, l1.y) == kTrees)
+	// {
+	// 	multiplier = 1.25*inputWeight-0.25;
+	// 	// std::cout<<inputWeight<<std::endl;
+	// 	// multiplier = 5.0;
+	// }
 	if (l1 == l2) return 0.0;
 	if (l1.x == l2.x) return 1.0*multiplier;
 	if (l1.y == l2.y) return 1.0*multiplier;

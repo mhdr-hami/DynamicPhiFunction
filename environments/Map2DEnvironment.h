@@ -140,8 +140,7 @@ public:
 	}
 	double GetBuckerScore(xyLoc &s) const
 	{
-		Map * theMap = GetMap();
-		if(theMap->GetTerrainType(s.x, s.y) == kSwamp)
+		if(map->GetTerrainType(s.x, s.y) == kSwamp || map->GetTerrainType(s.x, s.y) == kWater || map->GetTerrainType(s.x, s.y) == kGrass || map->GetTerrainType(s.x, s.y) == kTrees)
 			return 1.0;
 		// Map * theMap = GetMap();
 		// for(uint16_t i=s.x-1; i<=s.x+1; i++)
@@ -149,6 +148,12 @@ public:
 		// 		if(theMap->GetTerrainType(i, j) == kSwamp)
 		// 			return 1;
 		return 0.0;
+	}
+	void SetTerrainCost(double costs[])
+	{
+		//[0]=kSwamp, [1]=kWater,[2]=kGrass, [3]=kTrees
+		for(int i=0; i<4; i++)
+			TerrainCosts[i] = costs[i];
 	}
 	/*
 	sets the input weight of the search.
@@ -243,6 +248,7 @@ public:
 //	double GetPathLength(std::vector<xyLoc> &neighbors);
 private:
 	double inputWeight;
+	double TerrainCosts[4]; //[0]=kWater,[1]kSwamp,[2]kGrass,[3]kTrees
 	void GetMaxRect(long terrain, int x, int y, int endx, int endy, std::vector<bool> &drawn, Graphics::rect &r) const;
 	void DrawSingleTerrain(long terrain, Graphics::Display &disp, std::vector<bool> &drawn) const;
 protected:
