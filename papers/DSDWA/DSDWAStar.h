@@ -13,48 +13,51 @@
 #include "MNPuzzle.h" // to get the STP state
 
 
-// enum tExpansionPriority {
-// 	kWA=0,
-// 	kpwXD=1,
-// 	kpwXU=2,
-// 	kXDP=3,
-// 	kXUP=4,
-// 	kDSMAP=5,
-// 	kDSMAP2=6,
-// 	kDSMAP3=7,
-// 	kDSMAP4=8,
-// 	kGreedy=9,
-// 	kMAP=9,
-// 	kHalfEdgeDrop=9,
-// 	kFullEdgeDrop=9,
-// 	kPathSuboptDouble=10,
-// 	kXDP90=11,
-//  	kDSDPolicyCount=12,
-// };
-
 enum tExpansionPriority {
 	kWA=0,
-	kDSMAP=1,
-	kDSMAP2=2,
-	kDSMAP3=3,
-	kDSMAP4=4,
-	kDSMAP5=5,
-	kXDP=6,
-	kGreedy=7,
-	kHalfEdgeDrop=8,
-	kpwXD=9,
-	kXUP=10,
-	kMAP=19,
-	kpwXU=11,
-	kFullEdgeDrop=12,
-	kPathSuboptDouble=13,
-	kXDP90=14,
-    kDSDPolicyCount=15,
+	kpwXD=1,
+	kpwXU=2,
+	kXDP=3,
+	kXUP=4,
+	kDSMAP=5,
+	kDSMAP5=6,
+	kDSMAP3=7,
+	kDSMAP4=8,
+	kDSMAP2=9,
+	kGreedy=10,
+	kMAP=11,
+	kHalfEdgeDrop=11,
+	kFullEdgeDrop=11,
+	kDSMAP6=11,
+	kPathSuboptDouble=10,
+	kXDP90=11,
+ 	kDSDPolicyCount=12,
 };
+
+// enum tExpansionPriority {
+// 	kWA=0,
+// 	kDSMAP=1,
+// 	kDSMAP5=2,
+// 	kDSMAP2=3,
+// 	kDSMAP4=4,
+// 	kDSMAP3=5,
+// 	kDSMAP6=6,
+// 	kXDP90=15,
+// 	kXDP=7,
+// 	kGreedy=8,
+// 	kHalfEdgeDrop=8,
+// 	kpwXD=9,
+// 	kXUP=10,
+// 	kMAP=19,
+// 	kpwXU=11,
+// 	kFullEdgeDrop=12,
+// 	kPathSuboptDouble=13,
+//     kDSDPolicyCount=15,
+// };
 
 int lastExpansions=0;
 double tolerance=0.0001; //It is ALSO embedded in TemplateAStar.h, AStarCompareWithF.
-double globalMaxG=0, globalMaxH=-1;
+double globalMaxG=0, globalMaxH=-1, globalAngle=-1,prevBuckerAngle=0;
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
@@ -94,7 +97,7 @@ public:
 	
 	void PrintStats();
 	uint64_t GetUniqueNodesExpanded() { return uniqueNodesExpanded; }
-	void ResetNodeCount() { nodesExpanded = nodesTouched = 0; uniqueNodesExpanded = 0; lastRegionExpanded=0; minH=MAXFLOAT; maxH=FLT_MIN; easyProblem=true; prevH=0; guider=1; firstLast=0; secondLast=0; thirdLast=0;}
+	void ResetNodeCount() { nodesExpanded = nodesTouched = 0; uniqueNodesExpanded = 0; lastRegionExpanded=0; minH=MAXFLOAT; maxH=FLT_MIN; easyProblem=true; prevH=0; guider=1; firstLast=0; secondLast=0; thirdLast=0; globalMaxG=0; globalMaxH=-1; globalAngle=-1;prevBuckerAngle=0;}
 	int GetMemoryUsage();
 	
 	bool GetClosedListGCost(const state &val, double &gCost) const;
@@ -1064,73 +1067,53 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if(buckerScore==1 && edgeCosts[which]>maxWeight){
 					
 					SetNextPriority(maxSlopeH, maxSlopeG, weight);
-
-					// std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
 				}
 				else if(buckerScore==1 && edgeCosts[which]<=maxWeight){
-					
 					SetNextPriority(maxSlopeH, maxSlopeG, maxWeight);
-
-					// std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
 				}
 				else{					
 					SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
-					// std::cout<<2<<std::endl;
 				}
-
-				// int lastSize = data.size();
-				// if(data.size() > lastSize)
-				// {
-				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
-				// 	lastExpansions = nodesExpanded;
-				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
-				// 	env->PrintState(neighbors[which]);
-				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
-				// }
 			}
 			else if (policy == kDSMAP5)
 			{
 				double buckerScore;
-				float TheNextWeight;
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				midWeight = (maxWeight + minWeight)/2;
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
 				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
 				buckerScore = env->GetBuckerScore(neighbors[which]);
 				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
 
 				if(buckerScore==0){
-					// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
-					// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-					// if(fgreater(maxWeight, minWeight))
-					// 	std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
-					// assert(fgreater(maxWeight, minWeight));
-					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-					float prevAngle = atan2f(globalMaxG,globalMaxH)/PID180;
-					// assert(angle-prevAngle>=0 && angle-prevAngle<=90);
-                	SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*((angle-prevAngle)/90));
-					if(fless(maxSlope, data.back().slope))
-					{
-						globalMaxG = maxSlopeG;
-						globalMaxH = maxSlopeH;
-					}
-				}
-				else{					
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-					// std::cout<<2<<std::endl;
-				}
 
-				// int lastSize = data.size();
-				// if(data.size() > lastSize)
-				// {
-				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
-				// 	lastExpansions = nodesExpanded;
-				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
-				// 	env->PrintState(neighbors[which]);
-				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
-				// }
+					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+                	SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*sqrt(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), 3.5)));
+					// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle-prevBuckerAngle)/(90-prevBuckerAngle));
+				}
+				else{
+					prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);			
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+				}
+			}
+			else if (policy == kDSMAP6)
+			{
+				double buckerScore;
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				buckerScore = env->GetBuckerScore(neighbors[which]);
+				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
+
+				if(buckerScore==0){
+
+					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+                	// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*sqrt(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), 3.5)));
+					SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle-prevBuckerAngle)/(90-prevBuckerAngle));
+				}
+				else{
+					prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);			
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+				}
 			}
 			else {
 				// last argument will be }ignored
