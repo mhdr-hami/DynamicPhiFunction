@@ -23,6 +23,7 @@ enum tExpansionPriority {
 	kDSMAP5=6,
 	kDSMAP3=7,
 	kDSMAP4=8,
+	kDSMAP7=14,
 	kDSMAP2=9,
 	kGreedy=10,
 	kMAP=11,
@@ -36,20 +37,21 @@ enum tExpansionPriority {
 
 // enum tExpansionPriority {
 // 	kWA=0,
-// 	kDSMAP=1,
-// 	kDSMAP5=2,
-// 	kDSMAP2=3,
-// 	kDSMAP4=4,
-// 	kDSMAP3=5,
-// 	kDSMAP6=6,
+// 	kpwXD=1,
+// 	kDSMAP7=2,
+// 	kXDP=3,
+// 	kpwXU=4,
+// 	kDSMAP=21,
+// 	kDSMAP5=22,
+// 	kDSMAP2=23,
+// 	kDSMAP4=24,
+// 	kDSMAP3=25,
+// 	kDSMAP6=26,
 // 	kXDP90=15,
-// 	kXDP=7,
-// 	kGreedy=8,
+// 	kGreedy=9,
 // 	kHalfEdgeDrop=8,
-// 	kpwXD=9,
 // 	kXUP=10,
 // 	kMAP=19,
-// 	kpwXU=11,
 // 	kFullEdgeDrop=12,
 // 	kPathSuboptDouble=13,
 //     kDSDPolicyCount=15,
@@ -1114,6 +1116,14 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);			
 					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 				}
+			}
+			else if (policy == kDSMAP7)
+			{
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+				double ADVANCE = (edgeCosts[which]/(env->GetMaxTileCost())+(angle/90))/2;
+				SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*ADVANCE);
 			}
 			else {
 				// last argument will be }ignored

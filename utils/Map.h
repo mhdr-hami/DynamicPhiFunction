@@ -48,15 +48,27 @@ enum tDisplay {
 
 const int terrainBits = 4;
 
+// enum tTerrain {
+// 	kOutOfBounds =0x0, // not part of map
+// 	kOutOfBounds2=0x1, // not part of map - different color
+// 	kWater=0x10,     // water
+// 	kGround=0x20,     // ground
+// 	kSwamp=0x21,
+// 	kGrass=0x22,
+// 	kBlight=0x23,
+// 	kTrees=0x30,
+// 	kUndefined=0x40 // mixed type due to split tile
+// };
+
 enum tTerrain {
 	kOutOfBounds =0x0, // not part of map
 	kOutOfBounds2=0x1, // not part of map - different color
-	kWater=0x10,     // water
+	kWater=0x24,     // water
 	kGround=0x20,     // ground
 	kSwamp=0x21,
 	kGrass=0x22,
 	kBlight=0x23,
-	kTrees=0x30,
+	kTrees=0x25,
 	kUndefined=0x40 // mixed type due to split tile
 };
 

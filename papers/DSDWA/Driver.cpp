@@ -37,8 +37,8 @@ std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=4;
-float a, b, tspp=40,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
+int exper=7;
+float a, b, tspp=70,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4];
 double rdm, hardness[4];
 bool saveSVG = false;
@@ -286,8 +286,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
 		mnp.SetInputWeight(atof(argument[3]));
+		mnp.SetMaxTileCost(start);
 
-		if(exper==44444){
+		if(exper==10){
 			//Run the search once using WA* to find the solution path, and place the swamp area on that.
 			//The terrainSize is a proportion of the solution length.
 			prevPolicy = dsd_mnp.policy;
@@ -297,11 +298,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			if(path.size()){
 				randomIndex = random()%path.size();
 				mnp.SetMiddleState(path[randomIndex]);
+				mnp.SetTerrainSize(path.size()*atof(argument[4])/100/2);
 				std::cout<<"Swamped Region Created\n";
 				std::cout<<"Path size is: "<<path.size()<<"\n";
 				std::cout<<"Middle State at index "<<randomIndex<<" is:\n";
-				mnp.PrintState(path[randomIndex]);
-				mnp.SetTerrainSize(path.size()*atof(argument[4])/100/2);
+				// mnp.PrintState(path[randomIndex]);
 			}
 			else{
 				mnp.SetMiddleState(start);
@@ -316,7 +317,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 
 		//Save the SVG of the isoloines plots
-		if(saveSVG && (dsd_mnp.policy==5 || dsd_mnp.policy==6)){
+		if(saveSVG && (dsd_mnp.policy==6)){
 			Graphics::Display d;
 			dsd_mnp.DrawPriorityGraph(d);
 			std::string s = "stp="+ string(argument[1])+"_alg="+string(argument[2])+"_w="+string(argument[3])+".svg";
@@ -381,10 +382,10 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			for(int i=0; i<4; i++){
 				//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
 
-				// rdm = random()%101;
-				// hardness[i] = rdm/101+1;
+				rdm = random()%101;
+				hardness[i] = rdm/101+1;
 				//Or
-				hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+				// hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 
 				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				string type;

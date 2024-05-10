@@ -155,6 +155,10 @@ public:
 		for(int i=0; i<4; i++)
 			TerrainCosts[i] = costs[i];
 	}
+	double GetMaxTileCost() const
+	{
+		return 1;
+	}
 	/*
 	sets the input weight of the search.
 	*/
