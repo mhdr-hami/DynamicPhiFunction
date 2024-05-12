@@ -19,30 +19,31 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	kDSMAP=5,
-	kDSMAP5=6,
-	kDSMAP3=7,
-	kDSMAP4=8,
-	kDSMAP7=14,
+	kDSMAP8=5,
+	kGreedy=6,
+	kHalfEdgeDrop=7,
+	kDSMAP=8,
+	kDSMAP3=17,
+	kDSMAP4=19,
 	kDSMAP2=9,
-	kGreedy=10,
-	kMAP=11,
-	kHalfEdgeDrop=11,
-	kFullEdgeDrop=11,
-	kDSMAP6=11,
-	kPathSuboptDouble=10,
-	kXDP90=11,
+	kDSMAP5=10,
+	kMAP=21,
+	kDSMAP7=31,
+	kFullEdgeDrop=41,
+	kDSMAP6=51,
+	kPathSuboptDouble=70,
+	kXDP90=61,
  	kDSDPolicyCount=12,
 };
 
 // enum tExpansionPriority {
-// 	kWA=0,
-// 	kpwXD=1,
-// 	kDSMAP7=2,
+// 	kDSMAP5=0,
+// 	kDSMAP7=1,
+// 	kpwXD=2,
 // 	kXDP=3,
 // 	kpwXU=4,
 // 	kDSMAP=21,
-// 	kDSMAP5=22,
+// 	kWA=22,
 // 	kDSMAP2=23,
 // 	kDSMAP4=24,
 // 	kDSMAP3=25,
@@ -1066,12 +1067,23 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				buckerScore = env->GetBuckerScore(neighbors[which]);
 				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;	
 
+				// if(buckerScore==1 && edgeCosts[which]>maxWeight){
+					
+				// 	SetNextPriority(maxSlopeH, maxSlopeG, weight);
+				// }
+				// else if(buckerScore==1 && edgeCosts[which]<=maxWeight){
+				// 	SetNextPriority(maxSlopeH, maxSlopeG, maxWeight);
+				// }
+				// else{					
+				// 	SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
+				// }
+
 				if(buckerScore==1 && edgeCosts[which]>maxWeight){
 					
-					SetNextPriority(maxSlopeH, maxSlopeG, weight);
+					SetNextWeight(maxSlopeH, maxSlopeG, weight);
 				}
 				else if(buckerScore==1 && edgeCosts[which]<=maxWeight){
-					SetNextPriority(maxSlopeH, maxSlopeG, maxWeight);
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 				}
 				else{					
 					SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
@@ -1119,11 +1131,42 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			}
 			else if (policy == kDSMAP7)
 			{
+				double buckerScore;
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-				double ADVANCE = (edgeCosts[which]/(env->GetMaxTileCost())+(angle/90))/2;
-				SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*ADVANCE);
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				buckerScore = env->GetBuckerScore(neighbors[which]);
+
+				// float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+				// double ADVANCE = (edgeCosts[which]/(env->GetMaxTileCost())+(angle/90))/2;
+				// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*ADVANCE);
+
+				if(buckerScore==0){
+					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+                	SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*sqrt(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), 3.5)));
+					}
+				else{
+					prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);
+					SetNextWeight(maxSlopeH, maxSlopeG, edgeCosts[which]);
+				}
+			}
+			else if (policy == kDSMAP8)
+			{
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				int lastSize = data.size();
+				SetNextWeight(maxSlopeH, maxSlopeG, edgeCosts[which]);
+				// std::cout<<"The used Edge cost for weight is "<<edgeCosts[which]<<std::endl;
+
+				if(data.size() > lastSize)
+				{
+					std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+					lastExpansions = nodesExpanded;
+					std::cout<<"Generating ray #"<<data.size()<<std::endl;
+					env->PrintState(neighbors[which]);
+					std::cout<<"its weight= "<<edgeCosts[which]<<" and maxWeight = "<<maxWeight<<std::endl;
+					std::cout<<"------------"<<std::endl;
+				}	
 			}
 			else {
 				// last argument will be }ignored
