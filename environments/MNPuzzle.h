@@ -146,8 +146,11 @@ public:
 	double GetBuckerScore(MNPuzzleState<width, height> &s) const;
 	void PrintState(MNPuzzleState<width, height> &s) const;
 	void SetMiddleState(MNPuzzleState<width, height> &s);
-	double SetMaxTileCost(MNPuzzleState<width, height> &s);
+	void SetMaxMinTileCost(MNPuzzleState<width, height> &s);
+	void SetNormalizedCost();
+	double NormalizeTileCost(double c) const;
 	double GetMaxTileCost()const;
+	double GetMinTileCost()const;
 	void SetTerrainSize(double s);
 	void SetInputWeight(double w);
 	void SetWeighted(puzzleWeight w) { weight = w; }
@@ -278,6 +281,11 @@ private:
 
 	// stores the maxCost available for each puzzleWeight
 	double maxTileCost;
+	// stores the minCost available for each puzzleWeight
+	double minTileCost;
+
+	// to have access to both type of GCost functions
+	bool normalizedCost = false;
 };
 
 template <int width, int height>
@@ -303,10 +311,9 @@ void MNPuzzle<width, height>::PrintState(MNPuzzleState<width, height> &s) const
 template <int width, int height>
 double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) const
 {
-	if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.0;
-	// else return 0.0;
+	// if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.0;
 
-	// if(s.blank==5 || s.blank==6 || s.blank==9 || s.blank==10) return 1.0;
+	if(s.blank==5 || s.blank==6 || s.blank==9 || s.blank==10) return 1.0;
 	// if(s.blank==10 || s.blank==11 || s.blank==14 || s.blank==15) return 1.0;
 	// if(s.blank==0 || s.blank==1 || s.blank==4 || s.blank==5) return 1.0;
 
@@ -550,44 +557,46 @@ double MNPuzzle<width, height>::GetBuckerScore(MNPuzzleState<width, height> &s) 
 //	}
 }
 
-// void SetTerrainCost(double costs[])
-// {
-// 	return;
-// }
-
 /*
-stores the maxCost available for each puzzleWeight.
-gets an arbitrary state as the input to find the (size of the puzzle)-1 = last tile
+stores the maxCost and minCost available for each puzzleWeight.
+gets an arbitrary state as the input to find the (size of the puzzle)-1 = bigTile
 */
 template <int width, int height>
-double MNPuzzle<width, height>::SetMaxTileCost(MNPuzzleState<width, height> &s)
+void MNPuzzle<width, height>::SetMaxMinTileCost(MNPuzzleState<width, height> &s)
 {
-	int maxTile = s.size()-1;
+	int bigTile = s.size()-1;
+	int smallTile = 1;
 	switch (weight)
 	{
 		case kSwampedMode:
 		{
-			return maxTileCost=1; //Does not apply here
+			maxTileCost=1; //Does not apply here
+			minTileCost=1; //Does not apply here
 		}
 		case kUnitWeight: 
 		{
-			return maxTileCost=1;
+			maxTileCost=1;
+			minTileCost=1;
 		}
 		case kUnitPlusFrac:
 		{
-			return maxTileCost=1.0+1.0/(1.0+maxTile);
+			maxTileCost=max(1.0+1.0/(1.0+bigTile), 1.0+1.0/(1.0+smallTile));
+			minTileCost=min(1.0+1.0/(1.0+bigTile), 1.0+1.0/(1.0+smallTile));
 		}
 		case kSquared:
 		{
-			return maxTileCost=maxTile*maxTile;
+			maxTileCost=max(bigTile*bigTile, smallTile*smallTile);
+			minTileCost=min(bigTile*bigTile, smallTile*smallTile);
 		}
 		case kSquareRoot:
 		{
-			return maxTileCost=sqrt(maxTile);
+			maxTileCost=max(sqrt(bigTile), sqrt(smallTile));
+			minTileCost=min(sqrt(bigTile), sqrt(smallTile));
 		}
 		case kSquarePlusOneRoot:
 		{
-			return maxTileCost=sqrt(1+maxTile*maxTile);
+			maxTileCost=max(sqrt(1+bigTile*bigTile), sqrt(1+smallTile*smallTile));
+			minTileCost=min(sqrt(1+bigTile*bigTile), sqrt(1+smallTile*smallTile));
 		}
 	}
 }
@@ -598,6 +607,56 @@ double MNPuzzle<width, height>::GetMaxTileCost() const
 	return maxTileCost;
 }
 
+template <int width, int height>
+double MNPuzzle<width, height>::GetMinTileCost() const
+{
+	return minTileCost;
+}
+
+/*
+defines if we are going to use the normalizedCost version of STP.
+*/
+template <int width, int height>
+void MNPuzzle<width, height>::SetNormalizedCost()
+{
+	normalizedCost = true;
+}
+
+/*
+c is a tile. This function updates c (with respect to puzzleWeight) to a cost.
+Then normalizes it, to a cost between 1 and 2w-1.
+*/
+template <int width, int height>
+double MNPuzzle<width, height>::NormalizeTileCost(double c) const
+{
+	double puzzleCost=1;
+	switch (weight)
+	{
+		case kSwampedMode: //Does not apply here
+		{
+			//1 random locations weighted
+			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) puzzleCost = 1.5*inputWeight-0.5;
+			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) puzzleCost = 1.5*inputWeight-0.5;
+			// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) puzzleCost = 1.5*inputWeight-0.5;
+			// if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) puzzleCost = 1.5*inputWeight-0.5;
+			// if(b.blank==0 || b.blank==1) puzzleCost = 1.5*inputWeight-0.5;
+			// else puzzleCost=1;
+			
+			//2 middleState involved
+			// if(flesseq(HCost(b, middleState), swampedTerrainSize)) puzzleCost = 1.5*inputWeight-0.5);
+			// else puzzleCost = 1.5*inputWeight-0.5;
+
+			return 1.0;
+		}
+		case kUnitWeight: puzzleCost=1.0;
+		case kUnitPlusFrac: puzzleCost=1.0+1.0/(1.0+c);
+		case kSquared: puzzleCost=c*c;
+		case kSquareRoot: puzzleCost=sqrt(c);
+		case kSquarePlusOneRoot: puzzleCost=sqrt(1+c*c);
+	}
+
+	return (puzzleCost-minTileCost)*(2*inputWeight-2)/(maxTileCost - minTileCost) + 1;
+}
 
 /*
 sets the middleState to the random state s on the WA* solution path.
@@ -1175,29 +1234,32 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 	// * tile squared
 	// square root of tile
 	// tile itself
-	switch (weight)
-	{
-		case kSwampedMode:
+	if(normalizedCost)
+		return NormalizeTileCost(a.puzzle[b.blank]);
+	else{
+		switch (weight)
 		{
-			//1 random locations weighted
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 10;
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 1.5*inputWeight-0.5;
-			// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) return 1.5*inputWeight-0.5;
-			// if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) return 1.5*inputWeight-0.5;
-			// if(b.blank==0 || b.blank==1) return 1.5*inputWeight-0.5;
-			// else return 1;
-			
-			//2 middleState involved
-			if(flesseq(HCost(b, middleState), swampedTerrainSize)) return 1.5*inputWeight-0.5;
-			else return 1.0;
+			case kSwampedMode:
+			{
+				//1 random locations weighted
+				if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 1.5*inputWeight-0.5;
+				// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 1.5*inputWeight-0.5;
+				// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) return 1.5*inputWeight-0.5;
+				// if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) return 1.5*inputWeight-0.5;
+				// if(b.blank==0 || b.blank==1) return 1.5*inputWeight-0.5;
+				else return 1;
+				//2 middleState involved
+				// if(flesseq(HCost(b, middleState), swampedTerrainSize)) return 1.5*inputWeight-0.5;
+				// else return 1.0;
+			}
+			case kUnitWeight: return 1.0;
+			case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
+			case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
+			case kSquareRoot: return sqrt(a.puzzle[b.blank]);
+			case kSquarePlusOneRoot: return sqrt(1+a.puzzle[b.blank]*a.puzzle[b.blank]);
 		}
-		case kUnitWeight: return 1.0;
-		case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank]));
-		case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
-		case kSquareRoot: return sqrt(a.puzzle[b.blank]);
-		case kSquarePlusOneRoot: return sqrt(1+a.puzzle[b.blank]*a.puzzle[b.blank]);
+		return 1;
 	}
-	return 1;
 }
 
 template <int width, int height>
@@ -1234,66 +1296,79 @@ double MNPuzzle<width, height>::AdditiveGCost(const MNPuzzleState<width, height>
 template <int width, int height>
 double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &s, const slideDir &d) const
 {
-	switch (weight)
+	if(normalizedCost)
 	{
-		case kSwampedMode: //TODO: check swampedMode applies here.
+		switch (d)
 		{
-			//1 random locations weighted
-			// if(s.blank==5 || s.blank==6 || s.blank==9 || s.blank==10) return 1.5*inputWeight-0.5;
-			// if(s.blank==10 || s.blank==11 || s.blank==14 || s.blank==15) return 1.5*inputWeight-0.5;
-			// if(s.blank==0 || s.blank==1 || s.blank==4 || s.blank==5) return 1.5*inputWeight-0.5;
-			// else return 1;
+			case kLeft: return NormalizeTileCost(s.puzzle[s.blank-1]);
+			case kUp: return NormalizeTileCost(s.puzzle[s.blank-width]);
+			case kDown: return NormalizeTileCost(s.puzzle[s.blank+width]);
+			case kRight: return NormalizeTileCost(s.puzzle[s.blank+1]);
+		}
 
-			//2 middleState involved
-			if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.5*inputWeight-0.5;
-			else return 1.0;
-		}
-		case kUnitWeight: 
-		{
-			return 1;
-		}
-		case kUnitPlusFrac:
-		{
-			switch (d)
-			{
-				case kLeft: return 1.0+1.0/(1.0+s.puzzle[s.blank-1]);
-				case kUp: return 1.0+1.0/(1.0+s.puzzle[s.blank-width]);
-				case kDown: return 1.0+1.0/(1.0+s.puzzle[s.blank+width]);
-				case kRight: return 1.0+1.0/(1.0+s.puzzle[s.blank+1]);
-			}
-		}
-		case kSquared:
-		{
-			switch (d)
-			{
-				case kLeft: return s.puzzle[s.blank-1]*s.puzzle[s.blank-1];
-				case kUp: return s.puzzle[s.blank-width]*s.puzzle[s.blank-width];
-				case kDown: return s.puzzle[s.blank+width]*s.puzzle[s.blank+width];
-				case kRight: return s.puzzle[s.blank+1]*s.puzzle[s.blank+1];
-			}
-		}
-		case kSquareRoot:
-		{
-			switch (d)
-			{
-				case kLeft: return sqrt(s.puzzle[s.blank-1]);
-				case kUp: return sqrt(s.puzzle[s.blank-width]);
-				case kDown: return sqrt(s.puzzle[s.blank+width]);
-				case kRight: return sqrt(s.puzzle[s.blank+1]);
-			}
-		}
-		case kSquarePlusOneRoot:
-		{
-			switch (d)
-			{
-				case kLeft: return sqrt(1+s.puzzle[s.blank-1]*s.puzzle[s.blank-1]);
-				case kUp: return sqrt(1+s.puzzle[s.blank-width]*s.puzzle[s.blank-width]);
-				case kDown: return sqrt(1+s.puzzle[s.blank+width]*s.puzzle[s.blank+width]);
-				case kRight: return sqrt(1+s.puzzle[s.blank+1]*s.puzzle[s.blank+1]);
-			}
-		}
 	}
+	else
+	{
+		switch (weight)
+		{
+			case kSwampedMode: //TODO: check swampedMode applies here.
+			{
+				//1 random locations weighted
+				if(s.blank==5 || s.blank==6 || s.blank==9 || s.blank==10) return 1.5*inputWeight-0.5;
+				// if(s.blank==10 || s.blank==11 || s.blank==14 || s.blank==15) return 1.5*inputWeight-0.5;
+				// if(s.blank==0 || s.blank==1 || s.blank==4 || s.blank==5) return 1.5*inputWeight-0.5;
+				// else return 1;
+				//2 middleState involved
+				// if(flesseq(HCost(s, middleState), swampedTerrainSize)) return 1.5*inputWeight-0.5;
+				// else return 1.0;
+			}
+			case kUnitWeight: 
+			{
+				return 1;
+			}
+			case kUnitPlusFrac:
+			{
+				switch (d)
+				{
+					case kLeft: return 1.0+1.0/(1.0+s.puzzle[s.blank-1]);
+					case kUp: return 1.0+1.0/(1.0+s.puzzle[s.blank-width]);
+					case kDown: return 1.0+1.0/(1.0+s.puzzle[s.blank+width]);
+					case kRight: return 1.0+1.0/(1.0+s.puzzle[s.blank+1]);
+				}
+			}
+			case kSquared:
+			{
+				switch (d)
+				{
+					case kLeft: return s.puzzle[s.blank-1]*s.puzzle[s.blank-1];
+					case kUp: return s.puzzle[s.blank-width]*s.puzzle[s.blank-width];
+					case kDown: return s.puzzle[s.blank+width]*s.puzzle[s.blank+width];
+					case kRight: return s.puzzle[s.blank+1]*s.puzzle[s.blank+1];
+				}
+			}
+			case kSquareRoot:
+			{
+				switch (d)
+				{
+					case kLeft: return sqrt(s.puzzle[s.blank-1]);
+					case kUp: return sqrt(s.puzzle[s.blank-width]);
+					case kDown: return sqrt(s.puzzle[s.blank+width]);
+					case kRight: return sqrt(s.puzzle[s.blank+1]);
+				}
+			}
+			case kSquarePlusOneRoot:
+			{
+				switch (d)
+				{
+					case kLeft: return sqrt(1+s.puzzle[s.blank-1]*s.puzzle[s.blank-1]);
+					case kUp: return sqrt(1+s.puzzle[s.blank-width]*s.puzzle[s.blank-width]);
+					case kDown: return sqrt(1+s.puzzle[s.blank+width]*s.puzzle[s.blank+width]);
+					case kRight: return sqrt(1+s.puzzle[s.blank+1]*s.puzzle[s.blank+1]);
+				}
+			}
+		}
 
+	}
 	assert(!"Illegal move");
 	return 1;
 }
