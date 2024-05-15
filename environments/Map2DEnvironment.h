@@ -170,6 +170,9 @@ public:
 	{
 		return inputWeight;
 	}
+	virtual double NormalizeTileCost(const xyLoc &node1, const xyLoc &node2, double a, double b) const{
+		return 1.0;
+	}
 	MapEnvironment(Map *m, bool useOccupancy = false);
 	MapEnvironment(MapEnvironment *);
 	virtual ~MapEnvironment();
