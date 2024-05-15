@@ -12,51 +12,46 @@
 #include "TemplateAStar.h" // to get state definitions
 #include "MNPuzzle.h" // to get the STP state
 
+// enum tExpansionPriority {
+// 	kWA=0,
+// 	kpwXD=1,
+// 	kpwXU=2,
+// 	kXDP=3,
+// 	kXUP=4,
+// 	kDSMAP=5,
+// 	kDSMAP5=6,
+// 	kHalfEdgeDrop=7,
+// 	kDSMAP8=8,
+// 	kDSMAP9=18,
+// 	kGreedy=10,
+// 	kMAP=21,
+// 	kDSMAP7=31,
+// 	kFullEdgeDrop=41,
+// 	kDSMAP6=51,
+// 	kPathSuboptDouble=70,
+// 	kXDP90=61,
+//  kDSDPolicyCount=12,
+// };
 
 enum tExpansionPriority {
-	kWA=0,
-	kpwXD=1,
-	kpwXU=2,
+	kDSMAP5=0,
+	kDSMAP7=1,
+	kDSMAP=2,
 	kXDP=3,
-	kXUP=4,
-	kDSMAP8=5,
-	kGreedy=6,
-	kHalfEdgeDrop=7,
-	kDSMAP=8,
-	kDSMAP3=17,
-	kDSMAP4=19,
-	kDSMAP2=9,
-	kDSMAP5=10,
-	kMAP=21,
-	kDSMAP7=31,
-	kFullEdgeDrop=41,
-	kDSMAP6=51,
-	kPathSuboptDouble=70,
-	kXDP90=61,
- 	kDSDPolicyCount=12,
+	kpwXU=4,
+	kpwXD=21,
+	kWA=22,
+	kDSMAP8=33,
+	kDSMAP9=43,
+	kXDP90=15,
+	kGreedy=9,
+	kHalfEdgeDrop=8,
+	kXUP=10,
+	kMAP=19,
+	kFullEdgeDrop=12,
+	kPathSuboptDouble=13,
+    kDSDPolicyCount=15,
 };
-
-// enum tExpansionPriority {
-// 	kDSMAP5=0,
-// 	kDSMAP7=1,
-// 	kpwXD=2,
-// 	kXDP=3,
-// 	kpwXU=4,
-// 	kDSMAP=21,
-// 	kWA=22,
-// 	kDSMAP2=23,
-// 	kDSMAP4=24,
-// 	kDSMAP3=25,
-// 	kDSMAP6=26,
-// 	kXDP90=15,
-// 	kGreedy=9,
-// 	kHalfEdgeDrop=8,
-// 	kXUP=10,
-// 	kMAP=19,
-// 	kFullEdgeDrop=12,
-// 	kPathSuboptDouble=13,
-//     kDSDPolicyCount=15,
-// };
 
 int lastExpansions=0;
 double tolerance=0.0001; //It is ALSO embedded in TemplateAStar.h, AStarCompareWithF.
@@ -848,7 +843,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		neighborID.push_back(theID);
 		edgeCosts.push_back(env->GCost(openClosedList.Lookup(nodeid).data, neighbors[x]));
 		heuristicCosts.push_back(theHeuristic->HCost(neighbors[x], goal));
-		// heuristicCosts.push_back(0.7*theHeuristic->HCost(neighbors[x], goal));
 
 		// open list can only be reduced in cost, thus not needing to extend the priority function
 		if (neighborLoc[x] == kOpenList)
@@ -993,102 +987,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
 				// }
 			}
-			else if (policy == kDSMAP2)
-			{
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				midWeight = (maxWeight + minWeight)/2;
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
-				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
-				double buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
-				float TheNextWeight = minWeight + (maxWeight-minWeight)*buckerScore;
-
-				int lastSize = data.size();
-				SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
-				// if(data.size() > lastSize)
-				// {
-				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
-				// 	lastExpansions = nodesExpanded;
-				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
-				// 	env->PrintState(neighbors[which]);
-				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
-				// }
-			}
-			else if (policy == kDSMAP3)
-			{
-				double buckerScore;
-				float TheNextWeight;
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				midWeight = (maxWeight + minWeight)/2;
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
-				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
-				buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
-
-				if(buckerScore==0){
-					// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
-					// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-					// if(fgreater(maxWeight, minWeight))
-					// 	std::cout<<" "<<"min is:"<<minWeight<<" max is:"<<maxWeight<<std::endl;
-					// assert(fgreater(maxWeight, minWeight));
-					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-					assert(angle>=0 && angle<=90);
-                	SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle/90));
-				}
-				else{					
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-					// std::cout<<2<<std::endl;
-				}
-
-				// int lastSize = data.size();
-				// if(data.size() > lastSize)
-				// {
-				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
-				// 	lastExpansions = nodesExpanded;
-				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
-				// 	env->PrintState(neighbors[which]);
-				// 	std::cout<<"its slope= "<<maxSlope<<std::endl;
-				// }
-			}
-			else if (policy == kDSMAP4)
-			{
-				double buckerScore;
-				float TheNextWeight;
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				midWeight = (maxWeight + minWeight)/2;
-				lowMidWeight = (midWeight + minWeight)/2;
-				highMidWeight = (maxWeight + midWeight)/2;
-				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
-				buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;	
-
-				// if(buckerScore==1 && edgeCosts[which]>maxWeight){
-					
-				// 	SetNextPriority(maxSlopeH, maxSlopeG, weight);
-				// }
-				// else if(buckerScore==1 && edgeCosts[which]<=maxWeight){
-				// 	SetNextPriority(maxSlopeH, maxSlopeG, maxWeight);
-				// }
-				// else{					
-				// 	SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
-				// }
-
-				if(buckerScore==1 && edgeCosts[which]>maxWeight){
-					
-					SetNextWeight(maxSlopeH, maxSlopeG, weight);
-				}
-				else if(buckerScore==1 && edgeCosts[which]<=maxWeight){
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-				}
-				else{					
-					SetNextWeight(maxSlopeH, maxSlopeG, lowMidWeight);
-				}
-			}
 			else if (policy == kDSMAP5)
 			{
 				double buckerScore;
@@ -1109,37 +1007,13 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 				}
 			}
-			else if (policy == kDSMAP6)
-			{
-				double buckerScore;
-				float minWeight, maxWeight;
-				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
-				buckerScore = env->GetBuckerScore(neighbors[which]);
-				// std::cout<<buckerScore<<std::endl<<"======"<<std::endl;
-
-				if(buckerScore==0){
-
-					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-                	// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*sqrt(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), 3.5)));
-					SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle-prevBuckerAngle)/(90-prevBuckerAngle));
-				}
-				else{
-					prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);			
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-				}
-			}
 			else if (policy == kDSMAP7)
 			{
-				double buckerScore;
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
-				buckerScore = env->GetBuckerScore(neighbors[which]);
 
-				// float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-				// double ADVANCE = (edgeCosts[which]/(env->GetMaxTileCost())+(angle/90))/2;
-				// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*ADVANCE);
+				// double buckerScore = env->GetBuckerScore(openClosedList.Lookup(nodeid).data);
+				double buckerScore = env->GetBuckerScore(neighbors[which]);
 
 				if(buckerScore==0){
 					float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
@@ -1156,7 +1030,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				int lastSize = data.size();
 				SetNextWeight(maxSlopeH, maxSlopeG, edgeCosts[which]);
-				// std::cout<<"The used Edge cost for weight is "<<edgeCosts[which]<<std::endl;
+				std::cout<<"The Edge cost=weight is "<<edgeCosts[which]<<std::endl;
 
 				if(data.size() > lastSize)
 				{
@@ -1165,6 +1039,27 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					std::cout<<"Generating ray #"<<data.size()<<std::endl;
 					env->PrintState(neighbors[which]);
 					std::cout<<"its weight= "<<edgeCosts[which]<<" and maxWeight = "<<maxWeight<<std::endl;
+					std::cout<<"------------"<<std::endl;
+				}	
+			}
+			else if (policy == kDSMAP9)
+			{
+				float minWeight, maxWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				int lastSize = data.size();
+				double Nedge = env->NormalizeTileCost(openClosedList.Lookup(nodeid).data, neighbors[which], maxWeight, minWeight);
+				double Hb = theHeuristic->HCost(start, goal) - maxSlopeH;
+				double Hedge = theHeuristic->HCost(openClosedList.Lookup(nodeid).data, goal) - theHeuristic->HCost(neighbors[which], goal);
+				double NHedge = Nedge/edgeCosts[which]*Hedge;
+				SetNextWeight(maxSlopeH, maxSlopeG, Nedge);
+
+				if(data.size() > lastSize)
+				{
+					std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+					lastExpansions = nodesExpanded;
+					std::cout<<"Generating ray #"<<data.size()<<std::endl;
+					env->PrintState(neighbors[which]);
+					std::cout<<"its weight="<<Nedge<<" and maxWeight="<<maxWeight<<std::endl;
 					std::cout<<"------------"<<std::endl;
 				}	
 			}
