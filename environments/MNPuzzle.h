@@ -1234,20 +1234,27 @@ double MNPuzzle<width, height>::HCost(const MNPuzzleState<width, height> &state1
 					double absDist = (abs((int)(xloc[state1.puzzle[x + y*width]] - x))
 									 + abs((int)(yloc[state1.puzzle[x + y*width]] - y)));
 					double movingTile = state1.puzzle[x + y*width];
-					switch (weight)
-					{
-						case kSwampedMode:man_dist += absDist; break;
-						case kUnitWeight: man_dist += absDist; break;
-						case kUnitPlusFrac: man_dist += absDist*(1.0+1.0/(1.0+movingTile)); break;
-						case kSquared: man_dist += absDist*(movingTile)*(movingTile); break;
-						case kSquareRoot: man_dist += absDist*sqrt(movingTile); break;
-						case kSquarePlusOneRoot:
+
+					if(normalizedCost){
+						man_dist += absDist*NormalizeTileCost(movingTile, 2*inputWeight-1, 1);
+					}
+					else{
+						switch (weight)
 						{
-							double tmp = movingTile;
-							tmp = sqrt(tmp*tmp+1);
-							man_dist += tmp*absDist;
+							case kSwampedMode:man_dist += absDist; break;
+							case kUnitWeight: man_dist += absDist; break;
+							case kUnitPlusFrac: man_dist += absDist*(1.0+1.0/(1.0+movingTile)); break;
+							case kSquared: man_dist += absDist*(movingTile)*(movingTile); break;
+							case kSquareRoot: man_dist += absDist*sqrt(movingTile); break;
+							case kSquarePlusOneRoot:
+							{
+								double tmp = movingTile;
+								tmp = sqrt(tmp*tmp+1);
+								man_dist += tmp*absDist;
+							}
 						}
 					}
+
 //					if (weighted)
 //						man_dist += (abs((int)(xloc[state1.puzzle[x + y*width]] - x))
 //									 + abs((int)(yloc[state1.puzzle[x + y*width]] - y)))*state1.puzzle[x + y*width]*state1.puzzle[x + y*width];
