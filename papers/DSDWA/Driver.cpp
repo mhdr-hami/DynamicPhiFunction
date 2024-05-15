@@ -24,7 +24,7 @@
 
 int stepsPerFrame = 1;
 //  float bound = 2;
-float bound = 3.0;
+float bound = 10.0;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -37,11 +37,11 @@ std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=7;
-float a, b, tspp=70,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
+int exper=4;
+float a, b, tspp=40,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4];
 double rdm, hardness[4];
-bool saveSVG = false;
+bool saveSVG = true;
 int randomIndex;
 xyLoc xyLocRandomState;
 MNPuzzleState<4, 4> mnpRandomState;
@@ -74,7 +74,7 @@ void InstallHandlers()
 
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
-	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize", "Test grid <map> on <scenario> with <algorithm> <weight> and <TerrainSize>");
+	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-timeDSWA", "-DSDWA* stp problem weight", "Test STP <problem> <weight>");
@@ -125,8 +125,13 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		me->SetInputWeight(bound);
 		for(int i=0; i<4; i++){
 			//[0]=kSwamp, [1]=kWater,[2]=kGrass, [3]=kTrees
-			rdm = random()%101;
-			hardness[i] = rdm/101+1;
+
+			// 1. Random Hardness
+			// rdm = random()%101;
+			// hardness[i] = rdm/101+1;
+			//Or 2. Hardcoded Hardness
+			hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+
 			Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 			string type;
 			if(i==0) type="Swamp";
@@ -286,7 +291,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
 		mnp.SetInputWeight(atof(argument[3]));
-		mnp.SetMaxTileCost(start);
+		mnp.SetMaxMinTileCost(start);
+		// mnp.SetNormalizedCost(false);
 
 		if(exper==10){
 			//Run the search once using WA* to find the solution path, and place the swamp area on that.
@@ -317,7 +323,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 
 		//Save the SVG of the isoloines plots
-		if(saveSVG && (dsd_mnp.policy==6)){
+		if(saveSVG && (dsd_mnp.policy==5)){
 			Graphics::Display d;
 			dsd_mnp.DrawPriorityGraph(d);
 			std::string s = "stp="+ string(argument[1])+"_alg="+string(argument[2])+"_w="+string(argument[3])+".svg";
@@ -329,7 +335,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-DSMAP") == 0){
-		// Arguments: -DSMAP mapAddress $scen $alg $weight $TerrainSize
+		// Arguments: -DSMAP mapAddress $scen $alg $weight $TerrainSize $SwampHardness
 
 		//Thie is Prior Knowledge Map.
 		//The knowledge we have prior to the search about the domain, is it's a dynamic weighted grid map.
@@ -382,10 +388,14 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			for(int i=0; i<4; i++){
 				//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
 
-				rdm = random()%101;
-				hardness[i] = rdm/101+1;
-				//Or
-				// hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+				// 1. Random Hardness
+				// rdm = random()%101;
+				// hardness[i] = rdm/101+1;
+				//Or 2. Hardcoded Hardness
+				// hardness[0]=1.1; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+				//Or 3. Get from Input Argument Hardness
+				hardness[0]=atof(argument[6]);/*Followings are "Don't Care"*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+
 
 				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				string type;
@@ -1001,9 +1011,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				for(int i=0; i<4; i++){
 					//[0]=kSwamp, [1]=kWater ,[2]=kGrass, [3]=kTrees
 
+					// 1. Random Hardness
 					// rdm = random()%101;
 					// hardness[i] = rdm/101+1;
-					//Or
+					//Or 2. Hardcoded Hardness
 					hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 
 					Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
