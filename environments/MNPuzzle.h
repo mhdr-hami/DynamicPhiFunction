@@ -148,6 +148,7 @@ public:
 	void SetMiddleState(MNPuzzleState<width, height> &s);
 	void SetMaxMinTileCost(MNPuzzleState<width, height> &s);
 	void SetNormalizedCost(bool flag);
+	void SetPuzzleWeight(int puzzleW);
 	double NormalizeTileCost(const MNPuzzleState<width, height> &a, const MNPuzzleState<width, height> &b, double maxWeight, double minWeight) const;
 	double NormalizeTileCost(double tile, double maxWeight, double minWeight) const;
 	double GetMaxTileCost()const;
@@ -631,6 +632,37 @@ void MNPuzzle<width, height>::SetNormalizedCost(bool flag)
 }
 
 /*
+This function sets the puzzleWeight.
+*/
+template <int width, int height>
+void MNPuzzle<width, height>::SetPuzzleWeight(int puzzleW){
+	switch (puzzleW)
+	{
+	case 0:
+		weight = kUnitWeight;
+		break;
+	case 1:
+		weight = kSwampedMode;
+		break;
+	case 2:
+		weight = kSquareRoot;
+		break;
+	case 3:
+		weight = kSquared;
+		break;
+	case 4:
+		weight = kUnitPlusFrac;
+		break;
+	case 5:
+		weight = kSquarePlusOneRoot;
+		break;
+	
+	default:
+		break;
+	}
+}
+
+/*
 This function finds the cost between two states (with respect to puzzleWeight).
 Then normalizes it, to a cost between 1 and 2w-1.
 */
@@ -740,10 +772,10 @@ void MNPuzzle<width, height>::SetInputWeight(double w)
 template <int width, int height>
 MNPuzzle<width, height>::MNPuzzle()
 {
-	// weight = kUnitWeight;
+	weight = kUnitWeight;
 	// weight = kSwampedMode;
 	// weight = kSquareRoot;
-	weight = kSquared;
+	// weight = kSquared;
 	// weight = kUnitPlusFrac;
 	// weight = kSquarePlusOneRoot;
 
@@ -759,10 +791,10 @@ MNPuzzle<width, height>::MNPuzzle(const std::vector<slideDir> op_order)
 	Change_Op_Order(op_order);
 	goal_stored = false;
 	use_manhattan = true;
-	// weight = kUnitWeight;
+	weight = kUnitWeight;
 	// weight = kSwampedMode;
 	// weight = kSquareRoot;
-	weight = kSquared;
+	// weight = kSquared;
 	// weight = kUnitPlusFrac;
 	// weight = kSquarePlusOneRoot;
 

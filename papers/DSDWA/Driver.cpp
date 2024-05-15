@@ -23,7 +23,6 @@
 #include "DynamicWeightedGrid.h"
 
 int stepsPerFrame = 1;
-//  float bound = 2;
 float bound = 10.0;
 int problemNumber = 0;
 float testScale = 1.0;
@@ -39,9 +38,8 @@ MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
 int exper=4;
 float a, b, tspp=40,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
-double Tcosts[4];
-double rdm, hardness[4];
-bool saveSVG = true;
+double Tcosts[4], rdm, hardness[4];
+bool saveSVG = false;
 int randomIndex;
 xyLoc xyLocRandomState;
 MNPuzzleState<4, 4> mnpRandomState;
@@ -72,7 +70,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Swamped Problems", "Increment swamped problem", kAnyModifier, 's');
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
-	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight", "Test STP <problem> <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight puzzleW", "Test STP <problem> <algorithm> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
@@ -290,9 +288,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
-		mnp.SetInputWeight(atof(argument[3]));
-		mnp.SetMaxMinTileCost(start);
-		// mnp.SetNormalizedCost(false);
+		// Order of calling these functions matter.
+		mnp.SetInputWeight(atof(argument[3])); //0
+		mnp.SetPuzzleWeight(atoi(argument[4])); //1
+		mnp.SetMaxMinTileCost(start); //2
+		mnp.SetNormalizedCost(true); //3
 
 		if(exper==10){
 			//Run the search once using WA* to find the solution path, and place the swamp area on that.
