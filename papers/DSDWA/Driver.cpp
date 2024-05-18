@@ -388,16 +388,21 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			for(int i=0; i<4; i++){
 				//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
 
+				// Define the Hardness
 				// 1. Random Hardness
 				// rdm = random()%101;
 				// hardness[i] = rdm/101+1;
 				//Or 2. Hardcoded Hardness
 				// hardness[0]=1.1; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 				//Or 3. Get from Input Argument Hardness
-				hardness[0]=atof(argument[6]);/*Followings are "Don't Care"*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+				hardness[0]=atof(argument[6]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
 
+				// Use Hardness to define Cost
+				// 1. Hardness with respect to input w
+				// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+				//Or 2. Hardness as the exact Cost
+				Tcosts[i] = hardness[i];
 
-				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				string type;
 				if(i==0) type="Swamp";
 				if(i==1) type="Water";
