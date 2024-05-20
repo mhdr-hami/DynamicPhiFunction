@@ -39,11 +39,11 @@ enum tExpansionPriority {
 // 	kpwXU=2,
 // 	kXDP=3,
 // 	kXUP=4,
-// 	kDSMAP8=5,
+// 	kDSMAP9=5,
 // 	kDSMAP7=6,
 // 	kHalfEdgeDrop=7,
 // 	kDSMAP=8,
-// 	kDSMAP9=18,
+// 	kDSMAP8=18,
 // 	kGreedy=10,
 // 	kMAP=21,
 // 	kDSMAP5=31,
@@ -1033,15 +1033,15 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				SetNextWeight(maxSlopeH, maxSlopeG, edgeCosts[which]);
 				// std::cout<<"The Edge cost=weight is "<<edgeCosts[which]<<std::endl;
 
-				if(data.size() > lastSize)
-				{
-					std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
-					lastExpansions = nodesExpanded;
-					std::cout<<"Generating ray #"<<data.size()<<std::endl;
-					env->PrintState(neighbors[which]);
-					std::cout<<"its weight="<<edgeCosts[which]<<" and maxWeight="<<maxWeight<<std::endl;
-					std::cout<<"------------"<<std::endl;
-				}	
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its weight="<<edgeCosts[which]<<" and maxWeight="<<maxWeight<<std::endl;
+				// 	std::cout<<"------------"<<std::endl;
+				// }	
 			}
 			else if (policy == kDSMAP9)
 			{
@@ -1054,15 +1054,15 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				double NHedge = Nedge/edgeCosts[which]*Hedge;
 				SetNextWeight(maxSlopeH, maxSlopeG, Nedge);
 
-				if(data.size() > lastSize)
-				{
-					std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
-					lastExpansions = nodesExpanded;
-					std::cout<<"Generating ray #"<<data.size()<<std::endl;
-					env->PrintState(neighbors[which]);
-					std::cout<<"its weight="<<Nedge<<" and maxWeight="<<maxWeight<<std::endl;
-					std::cout<<"------------"<<std::endl;
-				}	
+				// if(data.size() > lastSize)
+				// {
+				// 	std::cout<<nodesExpanded-lastExpansions<<" epansions in prev regions, "<<std::endl;;
+				// 	lastExpansions = nodesExpanded;
+				// 	std::cout<<"Generating ray #"<<data.size()<<std::endl;
+				// 	env->PrintState(neighbors[which]);
+				// 	std::cout<<"its weight="<<Nedge<<" and maxWeight="<<maxWeight<<std::endl;
+				// 	std::cout<<"------------"<<std::endl;
+				// }	
 			}
 			else {
 				// last argument will be }ignored

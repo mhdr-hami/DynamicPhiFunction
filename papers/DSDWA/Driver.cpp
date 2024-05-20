@@ -288,11 +288,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		dsd_mnp.SetWeight(atof(argument[3]));
 		printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
 
-		// Order of calling these functions matter.
+		// Order of calling these functions matters.
 		mnp.SetInputWeight(atof(argument[3])); //0
+
 		mnp.SetPuzzleWeight(atoi(argument[4])); //1
+		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
+		// case 3:Squared, case 4:UnitPlusFrac, case 5:SquarePlusOneRoot
+
 		mnp.SetMaxMinTileCost(start); //2
-		mnp.SetNormalizedCost(true); //3
+		
+		mnp.SetNormalizedCost(false); //3
 
 		if(exper==10){
 			//Run the search once using WA* to find the solution path, and place the swamp area on that.
@@ -380,9 +385,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			goal.x = exp.GetGoalX();
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
-			dsd.SetWeight(atof(argument[4]));
+			dsd.SetWeight(10*atof(argument[4]));
 
-			me->SetInputWeight(atof(argument[4]));
+			me->SetInputWeight(10*atof(argument[4]));
 
 			//Set the cost of each terrain type randomly.
 			for(int i=0; i<4; i++){
@@ -394,8 +399,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				// hardness[i] = rdm/101+1;
 				//Or 2. Hardcoded Hardness
 				// hardness[0]=1.1; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
-				//Or 3. Get from Input Argument Hardness
-				hardness[0]=atof(argument[6]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+				//Or 3. Get Hardness from Input Argument
+				hardness[0]=10*atof(argument[6]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
 
 				// Use Hardness to define Cost
 				// 1. Hardness with respect to input w
