@@ -36,7 +36,7 @@ std::vector<xyLoc> solution;
 bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=4;
+int exper=10;
 float a, b, tspp=40,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool saveSVG = false;
@@ -385,9 +385,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			goal.x = exp.GetGoalX();
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
-			dsd.SetWeight(10*atof(argument[4]));
+			dsd.SetWeight(atof(argument[4]));
 
-			me->SetInputWeight(10*atof(argument[4]));
+			me->SetInputWeight(atof(argument[4]));
 
 			//Set the cost of each terrain type randomly.
 			for(int i=0; i<4; i++){
@@ -400,7 +400,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				//Or 2. Hardcoded Hardness
 				// hardness[0]=1.1; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 				//Or 3. Get Hardness from Input Argument
-				hardness[0]=10*atof(argument[6]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+				hardness[0]=atof(argument[6]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
 
 				// Use Hardness to define Cost
 				// 1. Hardness with respect to input w

@@ -1048,11 +1048,14 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				int lastSize = data.size();
-				double Nedge = env->NormalizeTileCost(openClosedList.Lookup(nodeid).data, neighbors[which], maxWeight, minWeight);
-				double Hb = theHeuristic->HCost(start, goal) - maxSlopeH;
-				double Hedge = theHeuristic->HCost(openClosedList.Lookup(nodeid).data, goal) - theHeuristic->HCost(neighbors[which], goal);
-				double NHedge = Nedge/edgeCosts[which]*Hedge;
-				SetNextWeight(maxSlopeH, maxSlopeG, Nedge);
+				// double Nedge = env->NormalizeTileCost(openClosedList.Lookup(nodeid).data, neighbors[which], maxWeight, minWeight);
+				// double Hb = theHeuristic->HCost(start, goal) - maxSlopeH;
+				// double Hedge = theHeuristic->HCost(openClosedList.Lookup(nodeid).data, goal) - theHeuristic->HCost(neighbors[which], goal);
+				// double NHedge = Nedge/edgeCosts[which]*Hedge;
+				// float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+                SetNextWeight(maxSlopeH, maxSlopeG, edgeCosts[which]);
+					
+				// SetNextWeight(maxSlopeH, maxSlopeG, Nedge);
 
 				// if(data.size() > lastSize)
 				// {
