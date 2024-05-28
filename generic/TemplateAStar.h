@@ -160,7 +160,7 @@ public:
 	void SetWeight(double w)
 	{
 		weight = w;
-		phi = [=](double h, double g){ return g+weight*h; };
+		// phi = [=](double h, double g){ return g+weight*h; };
 	}
 	double GetWeight() { return weight; }
 private:
