@@ -1,0 +1,34 @@
+#!/bin/tcsh
+cd ./build/SFML
+make
+cd ../..
+echo "============================================================================================"
+foreach scen (./scenarios/random/*-20-*.map.scen)
+
+foreach alg (`seq 0 6`)
+# set alg = `echo 5`
+
+foreach weight (2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0)
+
+set TSPP = `echo 40`
+
+set x = `echo $scen | sed 's/.*\///g'`
+set map = `echo $x | sed 's/.scen//'`
+echo "ALG " $alg " weight " $weight " map " $map
+
+./bin/release/DSDWA -DSMAP ./maps/random/$map $scen $alg $weight $TSPP >> dsmap20_E3C10TS40G20-results.txt
+# ./bin/release/DSDWA -DSMAP ./maps/random/$map $scen $alg $weight $TSPP >> BaseLines_dsmap_10_5-results.txt
+
+end
+end
+end
+
+mv dsmap20_E3C10TS40G20-results.txt ./papers/DSDWA
+
+mv ./papers/DSDWA/dsmap20_E3C10TS40G20-results.txt ./papers/DSDWA/results
+# cd ./papers/DSDWA/results
+# cat DSMAP_dsmap_10_5_3-results.txt BaseLines_dsmap_10_5-results.txt > F_dsmap_10_5_2-results.txt
+# cat F2_dsmap10_7_3-results.txt F_dsmap10_7_3-results.txt > F3_dsmap_10_5_2-results.txt
+# cd ../../..
+python3 ./papers/DSDWA/makeTable.py -map 1 7 9 dsmap20_E3C10TS40G20
+

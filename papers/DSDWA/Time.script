@@ -1,0 +1,44 @@
+#!/bin/tcsh
+cd ./build/SFML
+make
+cd ../..
+# rm STP1-results.txt
+echo "============================================================================================"
+# foreach problem (`seq 0 99`)
+
+# echo "------------------"
+
+# # foreach alg (`seq 8 9`)
+# set alg = `echo 0`
+
+# foreach weight ( 1.25 1.50 2.0 3.00 5.00 9.00 )
+
+# echo " Problem " $problem "ALG " $alg " weight " $weight
+# ./bin/release/DSDWA -timeDSWA $problem $alg $weight >> time_STP_Squared-results.txt
+
+# end
+# # end
+# end
+
+foreach problem (`seq 0 99`)
+
+echo "------------------"
+
+echo " Problem " $problem
+./bin/release/DSDWA -stpAstar $problem 1 1 >> A_STP_Squared-results.txt
+
+end
+# end
+# end
+
+# mv time_STP_Squared-results.txt ./papers/DSDWA
+mv A_STP_Squared-results.txt ./papers/DSDWA
+# rm ./papers/DSDWA/results/STP-results.txt
+# rm ./papers/DSDWA/results/STP1-results.txt
+# mv ./papers/DSDWA/time_STP_Squared-results.txt ./papers/DSDWA/results 
+mv ./papers/DSDWA/A_STP_Squared-results.txt ./papers/DSDWA/results 
+# cd ./papers/DSDWA/results
+# cat time_STP_Squared-results.txt F3_STP_Squared-results.txt > F4_STP_Squared-results.txt
+# cd ../../..
+
+# python3 ./papers/DSDWA/makeTable.py -stp 1 1 6 time_STP_Squared
