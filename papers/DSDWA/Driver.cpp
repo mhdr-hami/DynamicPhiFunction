@@ -29,23 +29,22 @@ float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
 float GetPriority(float h, float g);
 float ChooseWeightForTargetPriority(point3d point, float priority, float minWeight, float maxWeight, point3d last, float &K);
-bool showPlane = false;
 DSDWAStar<xyLoc, tDirection, MapEnvironment> dsd;
 TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
-bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
 int exper=4;
 float a, b, tspp=45,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
+bool showPlane = false;
+bool searchRunning = false;
 bool saveSVG = false;
 bool useDH = true;
 int randomIndex;
 xyLoc xyLocRandomState;
 MNPuzzleState<4, 4> mnpRandomState;
 tExpansionPriority prevPolicy;
-
 GridEmbedding *dh;
 
 int main(int argc, char* argv[])
@@ -503,8 +502,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			{
 			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-			tsx = max(tspp/100*abs(goal.x-start.x), 10);
-			tsy = max(tspp/100*abs(goal.y-start.y), 10);
+			tsx = max(tspp/100*abs(goal.x-start.x), 20);
+			tsy = max(tspp/100*abs(goal.y-start.y), 20);
 			tsx = max(tsx, tsy);
 			tsy = tsx;
 			}
@@ -831,8 +830,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			{
 			tspp = atof(argument[5]);
 			ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-			tsx = max(tspp/100*abs(goal.x-start.x), 10);
-			tsy = max(tspp/100*abs(goal.y-start.y), 10);
+			tsx = max(tspp/100*abs(goal.x-start.x), 20);
+			tsy = max(tspp/100*abs(goal.y-start.y), 20);
 			tsx = max(tsx, tsy);
 			tsy = tsx;
 			}
@@ -1202,13 +1201,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					goal.y = random()%me->GetMap()->GetMapHeight();
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 
-				//Set the size of the swamp area using the tspp argument.
-				ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
-				tsx = max(tspp/100*abs(goal.x-start.x), 10);
-				tsy = max(tspp/100*abs(goal.y-start.y), 10);
-				tsx = max(tsx, tsy);
-				tsy = tsx;
-
 				me->SetInputWeight(bound);
 
 				//Change one or more squares of ground states to swamp type.
@@ -1288,6 +1280,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					randomIndex = random()%solution.size();
 					xyLocRandomState = solution[randomIndex];
 					dsd.policy = prevPolicy;
+
+					//Set the size of the swamp area using the tspp argument.
+					ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
+					// ts = tspp/100*(solution.size());
+					tsx = max(tspp/100*abs(goal.x-start.x), 10);
+					tsy = max(tspp/100*abs(goal.y-start.y), 10);
+					tsx = max(tsx, tsy);
+					tsy = tsx;
 
 					//Set the square around a random state with a center on the solution path.
 					swampedloc.x = xyLocRandomState.x;
