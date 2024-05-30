@@ -20,10 +20,10 @@
 #include "DynamicPotentialSearch.h"
 #include <ctime>
 #include <cmath>
-#include "DynamicWeightedGrid.h"
+#include "GridHeuristics.h"
 
 int stepsPerFrame = 1;
-float bound = 2.0;
+float bound = 9.0;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -37,15 +37,16 @@ bool searchRunning = false;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
 int exper=4;
-float a, b, tspp=40,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
+float a, b, tspp=45,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool saveSVG = false;
+bool useDH = true;
 int randomIndex;
 xyLoc xyLocRandomState;
 MNPuzzleState<4, 4> mnpRandomState;
 tExpansionPriority prevPolicy;
 
-DWG::DynamicWeightedGridEnvironment *dwg_env;
+GridEmbedding *dh;
 
 int main(int argc, char* argv[])
 {
@@ -126,31 +127,39 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		me->SetInputWeight(bound);
 		for(int i=0; i<4; i++){
 			//[0]=kSwamp, [1]=kWater,[2]=kGrass, [3]=kTrees
+			string type;
+			if(i==0) type="Swamp";
+			if(i==1) type="Water";
+			if(i==2) type="Grass";
+			if(i==3) type="Trees";
 
 			// Define the Hardness
 			// 1. Random Hardness
 			// rdm = random()%101;
 			// hardness[i] = rdm/101+1;
 			//Or 2. Hardcoded Hardness
-			hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+			hardness[0]=17; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 			
 			// Use Hardness to define Cost
 			// 1. Hardness with respect to input w
-			Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+			// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+			// std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
 			//Or 2. Hardness as the exact Cost
-			// Tcosts[i] = hardness[i];
-
-			string type;
-			if(i==0) type="Swamp";
-			if(i==1) type="Water";
-			if(i==2) type="Grass";
-			if(i==3) type="Trees";
-			std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
+            Tcosts[i] = hardness[i];
+			std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<std::endl;
 		}
 		me->SetTerrainCost(Tcosts);
 
 		dsd.SetWeight(bound);
+
 		dsd.InitializeSearch(me, start, goal, solution);
+
+		dh = new GridEmbedding(me, 10, kLINF);
+		for (int x = 0; x < 10; x++)
+			dh->AddDimension(kDifferential, kFurthest);
+		if(useDH)
+			dsd.SetHeuristic(dh);
+
 		searchRunning = true;
 	}
 }
@@ -295,6 +304,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		MNPuzzleState<4, 4> goal;
 
 		dsd_mnp.InitializeSearch(&mnp, start, goal, path);
+
 		dsd_mnp.policy = (tExpansionPriority)atoi(argument[2]);
 		dsd_mnp.SetWeight(atof(argument[3]));
 		
@@ -571,6 +581,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				//Run the search once using WA* to find the solution path, and place the swamp area on that.
 				tas.SetPhi([=](double h,double g){return g+proveBound*h;}); //WA*
 				tas.InitializeSearch(me, start, goal, solution);
+
+				dh = new GridEmbedding(me, 10, kLINF);
+				for (int x = 0; x < 10; x++)
+					dh->AddDimension(kDifferential, kFurthest);
+				if(useDH)
+					dsd.SetHeuristic(dh);
+
 				tas.GetPath(me, start, goal, solution);
 				randomIndex = random()%solution.size();
 				xyLocRandomState = solution[randomIndex];
@@ -715,6 +732,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			
 			tas.InitializeSearch(me, start, goal, solution);
+
+			dh = new GridEmbedding(me, 10, kLINF);
+			for (int x = 0; x < 10; x++)
+				dh->AddDimension(kDifferential, kFurthest);
+			if(useDH)
+				dsd.SetHeuristic(dh);
+
 			tas.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), me->GetPathLength(solution));
 
@@ -886,6 +910,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				prevPolicy = dsd.policy;
 				dsd.policy = kWA;
 				dsd.InitializeSearch(me, start, goal, solution);
+
+				dh = new GridEmbedding(me, 10, kLINF);
+				for (int x = 0; x < 10; x++)
+					dh->AddDimension(kDifferential, kFurthest);
+				if(useDH)
+					dsd.SetHeuristic(dh);
+
 				dsd.GetPath(me, start, goal, solution);
 				randomIndex = random()%solution.size();
 				xyLocRandomState = solution[randomIndex];
@@ -1015,7 +1046,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			
 			dsd.InitializeSearch(me, start, goal, solution);
-			// dsd.GetPath(me, start, goal, solution, true);
+
+			dh = new GridEmbedding(me, 10, kLINF);
+			for (int x = 0; x < 10; x++)
+				dh->AddDimension(kDifferential, kFurthest);
+			if(useDH)
+				dsd.SetHeuristic(dh);
+			
 			dsd.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
 		}
