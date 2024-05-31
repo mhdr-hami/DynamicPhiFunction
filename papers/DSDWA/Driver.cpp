@@ -153,11 +153,12 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 
 		dsd.InitializeSearch(me, start, goal, solution);
 
-		dh = new GridEmbedding(me, 10, kLINF);
-		for (int x = 0; x < 10; x++)
-			dh->AddDimension(kDifferential, kFurthest);
-		if(useDH)
+		if(useDH){
+			dh = new GridEmbedding(me, 10, kLINF);
+			for (int x = 0; x < 10; x++)
+				dh->AddDimension(kDifferential, kFurthest);
 			dsd.SetHeuristic(dh);
+		}
 
 		searchRunning = true;
 	}
@@ -581,11 +582,12 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				tas.SetPhi([=](double h,double g){return g+proveBound*h;}); //WA*
 				tas.InitializeSearch(me, start, goal, solution);
 
-				dh = new GridEmbedding(me, 10, kLINF);
-				for (int x = 0; x < 10; x++)
-					dh->AddDimension(kDifferential, kFurthest);
-				if(useDH)
+				if(useDH){
+					dh = new GridEmbedding(me, 10, kLINF);
+					for (int x = 0; x < 10; x++)
+						dh->AddDimension(kDifferential, kFurthest);
 					dsd.SetHeuristic(dh);
+				}
 
 				tas.GetPath(me, start, goal, solution);
 				randomIndex = random()%solution.size();
@@ -732,11 +734,12 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			tas.InitializeSearch(me, start, goal, solution);
 
-			dh = new GridEmbedding(me, 10, kLINF);
-			for (int x = 0; x < 10; x++)
-				dh->AddDimension(kDifferential, kFurthest);
-			if(useDH)
+			if(useDH){
+				dh = new GridEmbedding(me, 10, kLINF);
+				for (int x = 0; x < 10; x++)
+					dh->AddDimension(kDifferential, kFurthest);
 				dsd.SetHeuristic(dh);
+			}
 
 			tas.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), me->GetPathLength(solution));
@@ -910,11 +913,12 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				dsd.policy = kWA;
 				dsd.InitializeSearch(me, start, goal, solution);
 
-				dh = new GridEmbedding(me, 10, kLINF);
-				for (int x = 0; x < 10; x++)
-					dh->AddDimension(kDifferential, kFurthest);
-				if(useDH)
+				if(useDH){
+					dh = new GridEmbedding(me, 10, kLINF);
+					for (int x = 0; x < 10; x++)
+						dh->AddDimension(kDifferential, kFurthest);
 					dsd.SetHeuristic(dh);
+				}
 
 				dsd.GetPath(me, start, goal, solution);
 				randomIndex = random()%solution.size();
@@ -1046,11 +1050,12 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			dsd.InitializeSearch(me, start, goal, solution);
 
-			dh = new GridEmbedding(me, 10, kLINF);
-			for (int x = 0; x < 10; x++)
-				dh->AddDimension(kDifferential, kFurthest);
-			if(useDH)
+			if(useDH){
+				dh = new GridEmbedding(me, 10, kLINF);
+				for (int x = 0; x < 10; x++)
+					dh->AddDimension(kDifferential, kFurthest);
 				dsd.SetHeuristic(dh);
+			}
 			
 			dsd.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
