@@ -486,9 +486,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 				// Use Hardness to define Cost
 				// 1. Hardness with respect to input w
-				// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				//Or 2. Hardness as the exact Cost
-				Tcosts[i] = hardness[i];
+				// Tcosts[i] = hardness[i];
 
 				string type;
 				if(i==0) type="Swamp";
