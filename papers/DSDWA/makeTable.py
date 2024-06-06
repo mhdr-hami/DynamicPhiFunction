@@ -19,8 +19,8 @@ weight_to_int = {"1.50":0, "2.00":1, '3.00':2, '4.00':3, '5.00':4, '6.00':5, '7.
 # weight_to_int = {'6.00':0, '7.00':1, '8.00':2, '9.00':3, '10.00':4, '11.00':5, '12.00':6, '13.00':7, '14.00':8, '15.00':9}
 
 # int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP7'}
-int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP'}
-# int_to_alg = {0:'oldPWXD', 1:'newPWXD'}
+int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'MAP', 7:'new', 8:'new2'}
+# int_to_alg = {0:'oldDSMAP', 1:'newDSMAP'}
 # int_to_alg = {0:'DSMAP9', 1:'DSMAP7', 2:'DSMAP8', 3:'DSMAP10'}
 # int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP2', 3:'DSMAP3', 4:'DSMAP4', 5:'DSMAP5', 6:'DSMAP6'}
 # int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP5', 3:'DSMAP2'}
