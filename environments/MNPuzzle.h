@@ -145,6 +145,8 @@ public:
 	~MNPuzzle();
 	double GetBuckerScore(MNPuzzleState<width, height> &s) const;
 	void PrintState(MNPuzzleState<width, height> &s) const;
+	void SetPiviotState(MNPuzzleState<width, height> &s);
+	MNPuzzleState<width, height> GetPiviotState();
 	void SetMiddleState(MNPuzzleState<width, height> &s);
 	void SetMaxMinTileCost(MNPuzzleState<width, height> &s);
 	void SetNormalizedCost(bool flag);
@@ -275,6 +277,8 @@ private:
 	// stores a random state on the WA* solution path, to create a swamp area on the path using heuristic
 	MNPuzzleState<width, height> middleState;
 
+	MNPuzzleState<width, height> PiviotState;
+
 	// stores the terrain size of the swamped area.
 	double swampedTerrainSize;
 
@@ -300,6 +304,28 @@ private:
 };
 
 //typedef UnitSimulation<MNPuzzleState, slideDir, MNPuzzle> PuzzleSimulation;
+
+/*
+sets the Piviot State to the state s.
+Piviot is used in dsmap policy.
+*/
+template <int width, int height>
+void MNPuzzle<width, height>::SetPiviotState(MNPuzzleState<width, height> &s)
+{
+	for(int i=0; i<width*height; i++) PiviotState.puzzle[i]=s.puzzle[i];
+	PiviotState.blank = s.blank;
+	PiviotState.weight = s.weight;
+}
+
+/*
+sets the Piviot State to the state s.
+Piviot is used in dsmap policy.
+*/
+template <int width, int height>
+MNPuzzleState<width, height> MNPuzzle<width, height>::GetPiviotState()
+{
+	return PiviotState;
+}
 
 template <int width, int height>
 void MNPuzzle<width, height>::PrintState(MNPuzzleState<width, height> &s) const

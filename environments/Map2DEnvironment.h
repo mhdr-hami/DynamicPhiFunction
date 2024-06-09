@@ -138,6 +138,13 @@ public:
 		std::cout<<"Printing State..."<<std::endl;
 		std::cout<<"x="<<s.x<<", y="<<s.y<<std::endl;
 	}
+	void SetPiviotState(xyLoc &s){
+		PiviotState.x = s.x;
+		PiviotState.y = s.y;
+	}
+	xyLoc GetPiviotState(){
+		return PiviotState;
+	}
 	double GetBuckerScore(xyLoc &s) const
 	{
 		if(map->GetTerrainType(s.x, s.y) == kSwamp || map->GetTerrainType(s.x, s.y) == kWater || map->GetTerrainType(s.x, s.y) == kGrass || map->GetTerrainType(s.x, s.y) == kTrees)
@@ -255,6 +262,7 @@ public:
 //	double GetPathLength(std::vector<xyLoc> &neighbors);
 private:
 	double inputWeight;
+	xyLoc PiviotState;
 	double TerrainCosts[4]; //[0]=kWater,[1]kSwamp,[2]kGrass,[3]kTrees
 	void GetMaxRect(long terrain, int x, int y, int endx, int endy, std::vector<bool> &drawn, Graphics::rect &r) const;
 	void DrawSingleTerrain(long terrain, Graphics::Display &disp, std::vector<bool> &drawn) const;
