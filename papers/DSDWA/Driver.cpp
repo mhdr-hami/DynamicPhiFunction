@@ -23,7 +23,7 @@
 #include "GridHeuristics.h"
 
 int stepsPerFrame = 1;
-float bound = 2.1;
+float bound = 1.5;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -34,13 +34,14 @@ TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=4;
-float a, b, tspp=45,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
+int exper=44;
+float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
 bool searchRunning = false;
-bool saveSVG = false;
+bool saveSVG = true;
 bool useDH = false;
+bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
 xyLoc xyLocRandomState;
@@ -105,8 +106,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 
 		// BuildRandomRoomMap(m, 30);
-		MakeRandomMap(m, 40);
-		//  MakeMaze(m, 10);
+		// MakeRandomMap(m, 40);
+		 MakeMaze(m, 10);
       	// MakeDesignedMap(m, 20, 3);
 
 		// default 8-connected with ROOT_TWO edge costs
@@ -138,14 +139,14 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 			// rdm = random()%101;
 			// hardness[i] = rdm/101+1;
 			//Or 2. Hardcoded Hardness
-			hardness[0]=3; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+			hardness[0]=2; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 			
 			// Use Hardness to define Cost
 			// 1. Hardness with respect to input w
-			// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+			Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 			// std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
 			//Or 2. Hardness as the exact Cost
-            Tcosts[i] = hardness[i];
+            // Tcosts[i] = hardness[i];
 			std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<std::endl;
 		}
 		me->SetTerrainCost(Tcosts);
@@ -200,9 +201,11 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 			{
 				if (solution.size() == 0)
 				{
-					// if (dsd.DoSingleSearchStep(solution, true))
-					if (dsd.DoSingleSearchStep(solution))
+					if (dsd.DoSingleSearchStep(solution)){
 						std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
+						// std::cout<<solution.size()<<" here???\n";
+						return;
+					}
 				}
 			}
 			dsd.Draw(display);
@@ -323,14 +326,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 		dsd_mnp.InitializeSearch(&mnp, start, goal, path);
 
-		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		dsd_mnp.GetPath(&mnp, start, goal, path);
 
 		//Save the SVG of the isoloines plots
 		if(saveSVG && (dsd_mnp.policy==5)){
 			Graphics::Display d;
 			dsd_mnp.DrawPriorityGraph(d);
-			std::string s = "stp="+ string(argument[1])+string(argument[2])+"_w="+string(argument[3])+".svg";
+			std::string s = "stp="+ string(argument[1])+"_w="+string(argument[3])+".svg";
 			MakeSVG(d, s.c_str(), 750,750,0);
 		}
 			
@@ -383,7 +385,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 		tas_mnp.InitializeSearch(&mnp, start, goal, path);
 
-		// dsd_mnp.GetPath(&mnp, start, goal, path, true);
 		tas_mnp.GetPath(&mnp, start, goal, path);
 			
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), tas_mnp.GetNodesExpanded(), path.size());
@@ -559,7 +560,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
-			else if(exper==44){
+			else if(exper==4){
 				//Run the search once using WA* to find the solution path, and place the swamp area on that.
 				tas.SetPhi([=](double h,double g){return g+proveBound*h;}); //WA*
 				tas.InitializeSearch(me, start, goal, solution);
@@ -895,7 +896,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						if(me->GetMap()->GetTerrainType(i, j) == kGround)
 							me->GetMap()->SetTerrainType(i, j, kSwamp);
 			}
-			else if(exper==44){
+			else if(exper==4){
 				//Run the search once using WA* to find the solution path, and place the swamp area on that.
 				prevPolicy = dsd.policy;
 				dsd.policy = kWA;
@@ -1185,14 +1186,27 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							me->GetMap()->SetTerrainType(i, j, kGround);
 
 				//Set the start and goal states of the search.
-				do {
-					start.x = random()%me->GetMap()->GetMapWidth();
-					start.y = random()%me->GetMap()->GetMapHeight();
-				} while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround);
-				do {
-					goal.x = random()%me->GetMap()->GetMapWidth();
-					goal.y = random()%me->GetMap()->GetMapHeight();
-				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
+				start.x = random()%me->GetMap()->GetMapWidth();
+				start.y = random()%me->GetMap()->GetMapHeight();
+				while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround){
+					start.x = (start.x+1) %me->GetMap()->GetMapWidth();
+					start.y = (start.y+1)%me->GetMap()->GetMapHeight();
+				}
+				goal.x = random()%me->GetMap()->GetMapWidth();
+				goal.y = random()%me->GetMap()->GetMapHeight();
+				while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround){
+					goal.x = (goal.x+1) %me->GetMap()->GetMapWidth();
+					goal.y = (goal.y+1)%me->GetMap()->GetMapHeight();
+				}
+
+				// do {
+				// 	start.x = random()%me->GetMap()->GetMapWidth();
+				// 	start.y = random()%me->GetMap()->GetMapHeight();
+				// } while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround);
+				// do {
+				// 	goal.x = random()%me->GetMap()->GetMapWidth();
+				// 	goal.y = random()%me->GetMap()->GetMapHeight();
+				// } while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 
 				me->SetInputWeight(bound);
 
