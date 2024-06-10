@@ -1277,6 +1277,7 @@ double MNPuzzle<width, height>::HCost(const MNPuzzleState<width, height> &state1
 								double tmp = movingTile;
 								tmp = sqrt(tmp*tmp+1);
 								man_dist += tmp*absDist;
+								break;
 							}
 						}
 					}

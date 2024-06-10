@@ -23,7 +23,7 @@
 #include "GridHeuristics.h"
 
 int stepsPerFrame = 1;
-float bound = 1.5;
+float bound = 2;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -34,7 +34,7 @@ TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=44;
+int exper=4;
 float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
@@ -106,8 +106,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 
 		// BuildRandomRoomMap(m, 30);
-		// MakeRandomMap(m, 40);
-		 MakeMaze(m, 10);
+		MakeRandomMap(m, 10);
+		//  MakeMaze(m, 10);
       	// MakeDesignedMap(m, 20, 3);
 
 		// default 8-connected with ROOT_TWO edge costs
@@ -139,7 +139,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 			// rdm = random()%101;
 			// hardness[i] = rdm/101+1;
 			//Or 2. Hardcoded Hardness
-			hardness[0]=2; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+			hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 			
 			// Use Hardness to define Cost
 			// 1. Hardness with respect to input w
@@ -414,11 +414,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		
 		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
-			if(showExtraLog){
-				if((x/sl.GetNumExperiments()*100) %10 == 0){
-					std::cout<<x/sl.GetNumExperiments()*100<<" %\n";
-				}
-			}
 			
 			//Reset the last problem's swamped states.
 			{
@@ -749,11 +744,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		
 		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
-			if(showExtraLog){
-				if((x/sl.GetNumExperiments()*100) %10 == 0){
-					std::cout<<x/sl.GetNumExperiments()*100<<", Experiment:"<<exper<<"%\n";
-				}
-			}
 
 			//Reset the last problem's swamped states.
 			{
