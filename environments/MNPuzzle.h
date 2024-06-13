@@ -1097,11 +1097,6 @@ void MNPuzzle<width, height>::GetSuccessors(const MNPuzzleState<width, height> &
 		neighbors.push_back(stateID);
 		ApplyAction(neighbors.back(), operators[stateID.blank][i]);
 	}
-	// std::cout<<"Printing the Successor: "<<std::endl;
-	// for(auto child: neighbors)
-	// {
-	// 	child.printState();
-	// }
 }
 
 template <int width, int height>

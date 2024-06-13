@@ -916,125 +916,86 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float deltaGlobalH, deltaGlobalG;
 
 				if(angle>=angleCounter*5){
-					// std::cout<<"Here 2222222222\n";
 					
 					piviotG = maxSlopeG;
-					// ?
+					
+					// if not using the piviot state to [which] state heuristic
 					// piviotH = theHeuristic->HCost(start, neighbors[which]);
-
-					// ?
+					// or
 					// piviotH = theHeuristic->HCost(neighbors[which], goal);
 
-					// STP
 					env->SetPiviotState(neighbors[which]);
 
 					angleCounter += 1;
-					// std::cout<<"angle:"<<angle<<", piviotG:"<<piviotG<<", piviotH:"<<piviotH<<"\n";
 				}
 
 				if(fgreater(maxSlope, data.back().slope)){
 					globalMaxG = maxSlopeG;
 
-					// ?
+					// if not using the piviot state to [which] state heuristic
 					// globalMaxH = theHeuristic->HCost(start, neighbors[which]);
-					// ?
+					// or
 					// globalMaxH = theHeuristic->HCost(neighbors[which], goal); 
-					// ?
+
 					globalMaxH = theHeuristic->HCost(env->GetPiviotState(), neighbors[which]);
 
 					deltaGlobalH = globalMaxH;
 					deltaGlobalG = globalMaxG - piviotG;
 				}
-
 				
-				//
+				// if not using the piviot state to which state heuristic
 				// float deltaGlobalH = globalMaxH - piviotH;
-				// ?
 
 				// To generate a number in [1,2] so min=2 and max=1
 				float normalizeWeight = 2-(GetWeight()-1.5)/(10-1.5);
+				// or
 				// float normalizeWeight = 3-(GetWeight()-1.5)/(10-1.5)*2;
 
 				// [0.7,1] : [0,1]*0.3->[0,0.3]+0.6->[0.6,0.9]
 				float normalizeLimit = (GetWeight()-1.5)/(10-1.5)*(0.3)+0.6;
 
-				// if(fgreater(maxSlope, data.back().slope)){
-				// 	if(fequal(deltaGlobalG, 0)) std::cout<<0<<"\n";
-				// 	else std::cout<<deltaGlobalH/deltaGlobalG<<"\n";
-				// }
 				
-				// std::cout<<"deltaGlobalG:"<<deltaGlobalG<<", deltaGlobalH:"<<deltaGlobalH<<"\n";
 				if(fequal(deltaGlobalG, 0)){
-					// prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);
-					// SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
 
 					if(fgreater(prevBuckerAngle3, prevBuckerAngle2)){
-						float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
-						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
+						//1: random10E4
+						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 						prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
-						// std::cout<<"first weight: "<<maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight))<<"\n";
+
+						//2: STPs , random10E4 , 
+						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
+						// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 					}
 					else if(fgreater(prevBuckerAngle2, prevBuckerAngle3)){
+						//3: STPs , random10E4 , 
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 						prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
-						// std::cout<<"first weight: "<<minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight))<<"\n";
 					}
 					else{
 						prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);
 						SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
-						// std::cout<<"first weight: "<<minWeight<<"\n";
 					}
 				}
-				else if(flesseq(deltaGlobalH/deltaGlobalG, normalizeLimit)){
-				// else if(flesseq(deltaGlobalH/deltaGlobalG, 0.7)){ //hard problem: higher weights
-					
-
+				// else if(flesseq(deltaGlobalH/deltaGlobalG, normalizeLimit)){
+				else if(flesseq(deltaGlobalH/deltaGlobalG, 0.9)){
 					//1: random10E4
-					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-					// prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);
-
-					// 1.1:
-					// SetNextWeight(maxSlopeH, maxSlopeG, highMidWeight);
-					// prevBuckerAngle = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle);
-					
-					//2:
-					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), 1)));
-
-					float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
-					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
+					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 					prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
-					
-					//3
-					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(deltaGlobalH/deltaGlobalG));	
+
+					//2: STPs , random10E4 , 
+					// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
+					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
+					// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 				}
 				else{ //easy problems: lower weights
 					
-					// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), (12-GetWeight())/2)));
-
-					//1: random10E4
-					// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevBuckerAngle)/(90-prevBuckerAngle)), 1)));
-					
+					//3: STPs , random10E4 , 
 					float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 					SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 					prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
-					
-					// SetNextWeight(maxSlopeH, maxSlopeG, minWeight);	
 				}
-
-				// if(angle>=angleCounter*15){
-				// 	// std::cout<<"Here 2222222222\n";
-				// 	piviotG = maxSlopeG;
-				// 	std::cout<<firstLast<<" "<<secondLast<<" "<<thirdLast<<"\n";
-				// 	// ?
-				// 	// piviotH = theHeuristic->HCost(start, neighbors[which]);
-				// 	// ?
-				// 	// piviotH = theHeuristic->HCost(neighbors[which], goal);
-				// 	// STP
-				// 	env->SetPiviotState(neighbors[which]);
-				// 	angleCounter += 1;
-				// 	// std::cout<<"angle:"<<angle<<", piviotG:"<<piviotG<<", piviotH:"<<piviotH<<"\n";
-				// }
 			}
 			else {
 				// last argument will be }ignored
