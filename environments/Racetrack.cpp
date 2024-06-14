@@ -43,6 +43,48 @@ Racetrack::Racetrack(Map *map)
 	UpdateMap(map);
 }
 
+/*
+sets the Piviot State to the state s.
+Piviot is used in dsmap policy.
+*/
+void Racetrack::SetPiviotState(RacetrackState &s)
+{
+	PiviotState.xLoc = s.xLoc;
+	PiviotState.xVelocity = s.xVelocity;
+	PiviotState.yLoc = s.yLoc;
+	PiviotState.yVelocity = s.yVelocity;
+}
+
+/*
+returns the Piviot State.
+Piviot is used in dsmap policy.
+*/
+RacetrackState Racetrack::GetPiviotState()
+{
+	return PiviotState;
+}
+
+/*
+Does not apply to this domain.
+*/
+double Racetrack::GetBuckerScore(RacetrackState &s) const{
+	return 1;
+}
+
+/*
+Does not apply to this domain.
+*/
+void Racetrack::SetNormalizedCost(bool flag)
+{
+	return;
+}
+
+/*
+Does not apply to this domain.
+*/
+double Racetrack::NormalizeTileCost(const RacetrackState &a, const RacetrackState &b, double maxWeight, double minWeight) const{
+	return 1;
+}
 
 Racetrack::~Racetrack()
 {

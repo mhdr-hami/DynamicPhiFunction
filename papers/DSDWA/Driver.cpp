@@ -10,6 +10,7 @@
 #include "Common.h"
 #include "Driver.h"
 #include "Map2DEnvironment.h"
+#include "Racetrack.h"
 #include "TemplateAStar.h"
 #include "ScenarioLoader.h"
 #include "FPUtil.h"
@@ -33,8 +34,9 @@ DSDWAStar<xyLoc, tDirection, MapEnvironment> dsd;
 TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
 MapEnvironment *me = 0;
+Racetrack *r = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=8;
+int exper=4;
 float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
@@ -77,6 +79,8 @@ void InstallHandlers()
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
+	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
+	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-pwxds", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
@@ -106,7 +110,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 
 		// BuildRandomRoomMap(m, 30);
-		MakeRandomMap(m, 10);
+		MakeRandomMap(m, 40);
 		//  MakeMaze(m, 10);
       	// MakeDesignedMap(m, 20, 3);
 
@@ -147,6 +151,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 			// std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
 			//Or 2. Hardness as the exact Cost
             // Tcosts[i] = hardness[i];
+			//Or 3. The exact Cost hardcoded
+            // Tcosts[i] = 4.5;
 			std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<std::endl;
 		}
 		me->SetTerrainCost(Tcosts);
@@ -486,6 +492,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				//Or 2. Hardness as the exact Cost
 				// Tcosts[i] = hardness[i];
+				//Or 3. The exact Cost hardcoded
+            	// Tcosts[i] = 4.5;
 
 				string type;
 				if(i==0) type="Swamp";
@@ -866,8 +874,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			for(int i=0; i<4; i++){
 				//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
 
-				// Define the Hardness
-				// 1. Random Hardness
+				//Define the Hardness
+				//1. Random Hardness
 				// rdm = random()%101;
 				// hardness[i] = rdm/101+1;
 				//Or 2. Hardcoded Hardness
@@ -875,11 +883,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				//Or 3. Get Hardness from Input Argument
 				hardness[0]=atof(argument[6]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
 
-				// Use Hardness to define Cost
+				//Use Hardness to define Cost
 				// 1. Hardness with respect to input w
 				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				//Or 2. Hardness as the exact Cost
 				// Tcosts[i] = hardness[i];
+				//Or 3. The exact Cost hardcoded
+            	// Tcosts[i] = 4.5;
 
 				string type;
 				if(i==0) type="Swamp";
@@ -1162,6 +1172,106 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			dsd.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+		}
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-RTBLs") == 0){
+		assert(maxNumArgs >= 5);
+
+		RacetrackState from;
+		RacetrackState end;
+		std::vector<RacetrackState> path;
+		TemplateAStar<RacetrackState, RacetrackMove, Racetrack> astar;
+
+		// Runs all five baselines.
+		assert(maxNumArgs >= 6);
+		// me = new MapEnvironment(new Map(argument[1]));
+		Map * m = new Map(argument[1]);
+		r = new Racetrack(m);
+
+		ScenarioLoader sl(argument[2]);
+		
+		for (int x = 0; x < sl.GetNumExperiments(); x++)
+		{
+			Experiment exp = sl.GetNthExperiment(x);
+			if(exp.GetDistance()<30) continue;
+
+			//Set the start and goal states, weight and policy of the search. 
+			from.xLoc = exp.GetStartX();
+			from.yLoc = exp.GetStartY();
+			from.xVelocity = 0;
+			from.yVelocity = 0;
+			end.xLoc = exp.GetGoalX();
+			end.yLoc = exp.GetGoalY();
+			end.xVelocity = 0;
+			end.yVelocity = 0;
+
+			double proveBound = atof(argument[4]);
+			tas.SetWeight(proveBound);
+
+			//Set the Baseline Policy.
+			if(atoi(argument[3]) == 0){ //WA*
+			tas.SetPhi([=](double h,double g){return g+proveBound*h;});
+			}
+			else if(atoi(argument[3]) == 1){ //PWXD
+			tas.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
+			}
+			else if(atoi(argument[3]) == 2){ //PWXU
+			tas.SetPhi([=](double h,double g){return (h*(2*proveBound-1)>g)?(g/(2*proveBound-1)+h):(1/proveBound*(g+h));});
+			}
+			else if(atoi(argument[3]) == 3){ //XDP
+			tas.SetPhi([=](double h,double g){return (g+(2*proveBound-1)*h+sqrt((g-h)*(g-h)+4*proveBound*g*h))/(2*proveBound);});
+			}
+			else if(atoi(argument[3]) == 4){ //XUP
+			tas.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
+			}
+
+			astar.InitializeSearch(r, from, end, path);
+			astar.GetPath(r, from, end, path);
+
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), astar.GetNodesExpanded());
+
+		}
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-RTdsmap") == 0){
+		assert(maxNumArgs >= 5);
+
+		RacetrackState from;
+		RacetrackState end;
+		std::vector<RacetrackState> path;
+		DSDWAStar<RacetrackState, RacetrackMove, Racetrack> dsdtrack;
+
+		// Runs all five baselines.
+		assert(maxNumArgs >= 6);
+		// me = new MapEnvironment(new Map(argument[1]));
+		Map * m = new Map(argument[1]);
+		r = new Racetrack(m);
+
+		ScenarioLoader sl(argument[2]);
+		
+		for (int x = 0; x < sl.GetNumExperiments(); x++)
+		{
+			Experiment exp = sl.GetNthExperiment(x);
+			if(exp.GetDistance()<30) continue;
+
+			//Set the start and goal states, weight and policy of the search. 
+			from.xLoc = exp.GetStartX();
+			from.yLoc = exp.GetStartY();
+			from.xVelocity = 0;
+			from.yVelocity = 0;
+			end.xLoc = exp.GetGoalX();
+			end.yLoc = exp.GetGoalY();
+			end.xVelocity = 0;
+			end.yVelocity = 0;
+			dsdtrack.policy = (tExpansionPriority)atoi(argument[3]);
+			dsdtrack.SetWeight(atof(argument[4]));
+
+			dsdtrack.InitializeSearch(r, from, end, path);
+			dsdtrack.GetPath(r, from, end, path);
+
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsdtrack.GetNodesExpanded());
+
 		}
 		exit(0);
 	}
