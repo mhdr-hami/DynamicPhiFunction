@@ -318,7 +318,7 @@ void MNPuzzle<width, height>::SetPiviotState(MNPuzzleState<width, height> &s)
 }
 
 /*
-sets the Piviot State to the state s.
+returns the Piviot State.
 Piviot is used in dsmap policy.
 */
 template <int width, int height>
