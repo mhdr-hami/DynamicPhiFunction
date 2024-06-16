@@ -285,17 +285,20 @@ RacetrackMove Racetrack::GetAction(const RacetrackState &s1, RacetrackState &s2)
 /*
  * The goal is implicit: We reach the goal if we have reached kEndTerrain.
  * So, we ignore the speicfic goal state
+ * ------------------>>>>> Changed the goal test to the actual goal test
  */
-bool Racetrack::GoalTest(const RacetrackState &node, const RacetrackState &) const
+bool Racetrack::GoalTest(const RacetrackState &node, const RacetrackState &goal) const
 {
 	// Use the node to see if the location matches the goal location
 
-	if (map->GetTerrainType(node.xLoc, node.yLoc) == kEndTerrain)
-	{
-		//std::cout << "Touched the goal! \n";
-		return true;
-	}
-	return false;
+	// if (map->GetTerrainType(node.xLoc, node.yLoc) == kEndTerrain)
+	// {
+	// 	//std::cout << "Touched the goal! \n";
+	// 	return true;
+	// }
+	// return false;
+
+	return ((node.xLoc == goal.xLoc) && (node.yLoc == goal.yLoc));
 }
 
 // --- The legal function, which checks whether an action is legal --- //
