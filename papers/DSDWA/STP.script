@@ -12,25 +12,29 @@ set alg = `echo 5`
 
 foreach weight ( 1.50 2.0 3.00 4.00 5.00 6.00 7.00 8.00 9.00 10.00)
 
-set puzzleW = `echo 3`
+set puzzleW = `echo 0`
 
 echo " Problem " $problem "ALG " $alg " weight " $weight
 
 #1
-./bin/release/DSDWA -stpBLs $problem $alg $weight $puzzleW>> STP_Squared_BaseLines-results.txt
-# ./bin/release/DSDWA -stp $problem $alg $weight $puzzleW>> STP_Squared_Policies-results.txt
+# ./bin/release/DSDWA -stpBLs $problem $alg $weight $puzzleW >> STP_Squared_BaseLines-results.txt
+./bin/release/DSDWA -stp $problem $alg $weight $puzzleW >> STP_Policies-results.txt
 
 end
 # end
 end
 
-mv STP_Squared_BaseLines-results.txt ./papers/DSDWA/results
-# mv STP_Squared_Policies-results.txt ./papers/DSDWA/results
+# mv STPBaseLines-results.txt ./papers/DSDWA/results
+mv STP_Policies-results.txt ./papers/DSDWA/results
 
-# mv *.svg ./papers/DSDWA/results/SVGs/STP_Squared
+cd ./papers/DSDWA/results/SVGs/STP
+rm *.svg
+cd ../../../../..
 
-# cd ./papers/DSDWA/results
-# cat STP_Squared_Policies-results.txt STP_Squared_BaseLines-results.txt > STP_Squared-results.txt
-# cd ../../..
+mv *.svg ./papers/DSDWA/results/SVGs/STP
 
-# python3 ./papers/DSDWA/makeTable.py -stp 1 7 10 STP_Squared 1 1 1
+cd ./papers/DSDWA/results
+cat STP_Policies-results.txt STP_BaseLines-results.txt > STP-results.txt
+cd ../../..
+
+python3 ./papers/DSDWA/makeTable.py -stp 1 6 10 STP 1 1 1
