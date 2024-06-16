@@ -914,8 +914,13 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
 				int lastSize = data.size();
 				float deltaGlobalH, deltaGlobalG;
+				int angleJump = 0;
+				if(GetWeight() >= 5)
+					angleJump = 18;
+				else
+					angleJump = 5;
 
-				if(angle>=angleCounter*5){
+				if(angle>=angleCounter*angleJump){
 					
 					piviotG = maxSlopeG;
 					
