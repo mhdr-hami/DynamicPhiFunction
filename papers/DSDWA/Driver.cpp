@@ -1297,7 +1297,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		
 		// for (int x = 0; x < sl.GetNumExperiments(); x++)
 		// for (int x = 0; x < 50; x++)
-		while (approvedScenaios < 100)
+		while (approvedScenaios < 100 && x < sl.GetNumExperiments())
 		{
 			Experiment exp = sl.GetNthExperiment(x);
 			x++;
@@ -1359,7 +1359,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		
 		// for (int x = 0; x < sl.GetNumExperiments(); x++)
 		// for (int x = 0; x < 50; x++)
-		while (approvedScenaios < 100)
+		while (approvedScenaios < 100 && x < sl.GetNumExperiments())
 		{
 			Experiment exp = sl.GetNthExperiment(x);
 			x++;
