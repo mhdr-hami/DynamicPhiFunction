@@ -1350,22 +1350,25 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-RTdsmap") == 0){
-		// Runs all five baselines.
 		assert(maxNumArgs >= 4);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 
 		ScenarioLoader sl(argument[2]);
+		int approvedScenaios = 0, x=0;
 		
 		// for (int x = 0; x < sl.GetNumExperiments(); x++)
-		for (int x = 0; x < 50; x++)
+		// for (int x = 0; x < 50; x++)
+		while (approvedScenaios < 100)
 		{
 			Experiment exp = sl.GetNthExperiment(x);
-			// if(exp.GetDistance()<30) continue;
+			x++;
+			if(exp.GetDistance()<50 || exp.GetDistance()>100) continue;
+			else approvedScenaios ++;
 
 			//Reset the previous start and goal
-			// m->SetTerrainType(from.xLoc, from.yLoc, kGround);
-			// m->SetTerrainType(end.xLoc, end.yLoc, kGround);
+			m->SetTerrainType(from.xLoc, from.yLoc, kGround);
+			m->SetTerrainType(end.xLoc, end.yLoc, kGround);
 
 			//Set the start and goal states, weight and policy of the search. 
 			from.xLoc = exp.GetStartX();
@@ -1378,9 +1381,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			end.yVelocity = 0;
 			dsd_track.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd_track.SetWeight(atof(argument[4]));
-			// m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
-			// m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
-			// r->UpdateMap(m);
+			m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
+			m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			r->UpdateMap(m);
 
 			dsd_track.InitializeSearch(r, from, end, path);
 			dsd_track.GetPath(r, from, end, path);
