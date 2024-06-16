@@ -22,6 +22,9 @@
 #include <ctime>
 #include <cmath>
 #include "GridHeuristics.h"
+// #include <filesystem>
+// #include <iostream>
+// namespace fs = std::filesystem;
 
 int stepsPerFrame = 1;
 float bound = 3;
@@ -34,9 +37,14 @@ DSDWAStar<xyLoc, tDirection, MapEnvironment> dsd;
 TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
 MapEnvironment *me = 0;
-Racetrack *r = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
-int exper=4;
+TemplateAStar<RacetrackState, RacetrackMove, Racetrack> tas_track;
+DSDWAStar<RacetrackState, RacetrackMove, Racetrack> dsd_track;
+std::vector<RacetrackState> path;
+Racetrack *r = 0;
+RacetrackState from;
+RacetrackState end;
+int exper=9;
 float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
@@ -50,6 +58,7 @@ xyLoc xyLocRandomState;
 MNPuzzleState<4, 4> mnpRandomState;
 tExpansionPriority prevPolicy;
 GridEmbedding *dh;
+
 
 int main(int argc, char* argv[])
 {
@@ -79,8 +88,8 @@ void InstallHandlers()
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
-	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
-	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
+	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-pwxds", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
@@ -110,15 +119,15 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 
 		// BuildRandomRoomMap(m, 30);
-		MakeRandomMap(m, 40);
+		MakeRandomMap(m, 10);
 		//  MakeMaze(m, 10);
       	// MakeDesignedMap(m, 20, 3);
 
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
 
-        // me->SetDiagonalCost(1.41);
-		me->SetDiagonalCost(1.5);
+        me->SetDiagonalCost(1.41);
+		// me->SetDiagonalCost(1.5);
 		dsd.policy = kWA;
 		start = {1,1};
 		goal = {198, 198};
@@ -402,8 +411,10 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// Runs all five baselines.
 		assert(maxNumArgs >= 6);
 		me = new MapEnvironment(new Map(argument[1]));
+		MapEnvironment * me2 = new MapEnvironment(new Map(argument[1]));
 
-		me->SetDiagonalCost(1.5);
+		// me->SetDiagonalCost(1.5);
+		me->SetDiagonalCost(1.41);
 		swampedloc = {1,1};
 		swampedloc2 = {1,1};
 		swampedloc3 = {1,1};
@@ -460,6 +471,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 			}
+			else if(exper==9){
+				// me = NULL;
+				// delete me;
+				// me = me2;
+				me->~MapEnvironment();
+				me = new MapEnvironment(me2);
+				// me = new MapEnvironment(new Map(argument[1]));
+				// me->SetDiagonalCost(1.5);
+				me->SetDiagonalCost(1.41);
+			}
 			
 			Experiment exp = sl.GetNthExperiment(x);
 			if(exp.GetDistance()<30) continue;
@@ -469,7 +490,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
 			goal.y = exp.GetGoalY();
-
 			double proveBound = atof(argument[4]);
 			tas.SetWeight(proveBound);
 			me->SetInputWeight(atof(argument[4]));
@@ -762,7 +782,49 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.x = 0;
 				}
 			}
+			else if(exper==9){
+				//Set the size of the swamp area using the tspp argument.
+				tsx = max(tspp/100*abs(goal.x-start.x), 10);
+				tsy = max(tspp/100*abs(goal.y-start.y), 10);
 
+				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
+					// swampedloc.x = (goal.x+start.x)/2;
+					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
+					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
+						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.y = 0;
+				}
+				else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
+					// swampedloc.y = (goal.y+start.y)/2;
+					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
+					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
+						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.x = 0;
+				}
+				else if(abs(goal.x-start.x) > abs(goal.y-start.y)){
+					swampedloc.x = (goal.x+start.x)/2;
+					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
+					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
+						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.y = 0;
+				}
+				else{
+					swampedloc.y = (goal.y+start.y)/2;
+					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
+					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
+						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.x = 0;
+				}
+			}
+			
 			//Set the Baseline Policy.
 			if(atoi(argument[3]) == 0){ //WA*
 			tas.SetPhi([=](double h,double g){return g+proveBound*h;});
@@ -803,8 +865,10 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		//Some Terrain Types exist that makes action costs different in different parts of the map.
 		assert(maxNumArgs >= 6);
 		me = new MapEnvironment(new Map(argument[1]));
+		MapEnvironment * me2 = new MapEnvironment(new Map(argument[1]));
 
-		me->SetDiagonalCost(1.5);
+		// me->SetDiagonalCost(1.5);
+		me->SetDiagonalCost(1.41);
 		swampedloc = {1,1};
 		swampedloc2 = {1,1};
 		swampedloc3 = {1,1};
@@ -854,21 +918,26 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 			}
+			else if(exper==9){
+				me = NULL;
+				delete me;
+				me = me2;
+				// me->SetDiagonalCost(1.5);
+				me->SetDiagonalCost(1.41);
+			}
 
 			Experiment exp = sl.GetNthExperiment(x);
 			if(exp.GetDistance()<30) continue;
 
 			//Set the start and goal states, weight and policy of the search. 
-			{
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
 			goal.y = exp.GetGoalY();
 			dsd.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd.SetWeight(atof(argument[4]));
-
 			me->SetInputWeight(atof(argument[4]));
-			}
+
 
 			//Set the cost of each terrain type randomly.
 			for(int i=0; i<4; i++){
@@ -1160,6 +1229,48 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.x = 0;
 				}
 			}
+			else if(exper==9){
+				//Set the size of the swamp area using the tspp argument.
+				tsx = max(tspp/100*abs(goal.x-start.x), 10);
+				tsy = max(tspp/100*abs(goal.y-start.y), 10);
+
+				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
+					// swampedloc.x = (goal.x+start.x)/2;
+					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
+					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
+						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.y = 0;
+				}
+				else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
+					// swampedloc.y = (goal.y+start.y)/2;
+					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
+					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
+						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.x = 0;
+				}
+				else if(abs(goal.x-start.x) > abs(goal.y-start.y)){
+					swampedloc.x = (goal.x+start.x)/2;
+					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
+					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
+						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.y = 0;
+				}
+				else{
+					swampedloc.y = (goal.y+start.y)/2;
+					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
+					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
+						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							if(me->GetMap()->GetTerrainType(i, j) != kGround)
+								me->GetMap()->SetTerrainType(i, j, kGround);
+					swampedloc.x = 0;
+				}
+			}
 			
 			dsd.InitializeSearch(me, start, goal, solution);
 
@@ -1176,25 +1287,26 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-RTBLs") == 0){
-		assert(maxNumArgs >= 5);
-
-		RacetrackState from;
-		RacetrackState end;
-		std::vector<RacetrackState> path;
-		TemplateAStar<RacetrackState, RacetrackMove, Racetrack> astar;
-
 		// Runs all five baselines.
-		assert(maxNumArgs >= 6);
-		// me = new MapEnvironment(new Map(argument[1]));
+		assert(maxNumArgs >= 4);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 
 		ScenarioLoader sl(argument[2]);
+		int approvedScenaios = 0, x=0;
 		
-		for (int x = 0; x < sl.GetNumExperiments(); x++)
+		// for (int x = 0; x < sl.GetNumExperiments(); x++)
+		// for (int x = 0; x < 50; x++)
+		while (approvedScenaios < 100)
 		{
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<30) continue;
+			x++;
+			if(exp.GetDistance()<50 || exp.GetDistance()>100) continue;
+			else approvedScenaios ++;
+
+			//Reset the previous start and goal
+			m->SetTerrainType(from.xLoc, from.yLoc, kGround);
+			m->SetTerrainType(end.xLoc, end.yLoc, kGround);
 
 			//Set the start and goal states, weight and policy of the search. 
 			from.xLoc = exp.GetStartX();
@@ -1205,55 +1317,55 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			end.yLoc = exp.GetGoalY();
 			end.xVelocity = 0;
 			end.yVelocity = 0;
+			m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
+			m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			r->UpdateMap(m);
 
 			double proveBound = atof(argument[4]);
-			tas.SetWeight(proveBound);
+			tas_track.SetWeight(proveBound);
 
 			//Set the Baseline Policy.
 			if(atoi(argument[3]) == 0){ //WA*
-			tas.SetPhi([=](double h,double g){return g+proveBound*h;});
+			tas_track.SetPhi([=](double h,double g){return g+proveBound*h;});
 			}
 			else if(atoi(argument[3]) == 1){ //PWXD
-			tas.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
+			tas_track.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
 			}
 			else if(atoi(argument[3]) == 2){ //PWXU
-			tas.SetPhi([=](double h,double g){return (h*(2*proveBound-1)>g)?(g/(2*proveBound-1)+h):(1/proveBound*(g+h));});
+			tas_track.SetPhi([=](double h,double g){return (h*(2*proveBound-1)>g)?(g/(2*proveBound-1)+h):(1/proveBound*(g+h));});
 			}
 			else if(atoi(argument[3]) == 3){ //XDP
-			tas.SetPhi([=](double h,double g){return (g+(2*proveBound-1)*h+sqrt((g-h)*(g-h)+4*proveBound*g*h))/(2*proveBound);});
+			tas_track.SetPhi([=](double h,double g){return (g+(2*proveBound-1)*h+sqrt((g-h)*(g-h)+4*proveBound*g*h))/(2*proveBound);});
 			}
 			else if(atoi(argument[3]) == 4){ //XUP
-			tas.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
+			tas_track.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
 			}
 
-			astar.InitializeSearch(r, from, end, path);
-			astar.GetPath(r, from, end, path);
+			tas_track.InitializeSearch(r, from, end, path);
+			tas_track.GetPath(r, from, end, path);
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), astar.GetNodesExpanded());
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas_track.GetNodesExpanded());
 
 		}
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-RTdsmap") == 0){
-		assert(maxNumArgs >= 5);
-
-		RacetrackState from;
-		RacetrackState end;
-		std::vector<RacetrackState> path;
-		DSDWAStar<RacetrackState, RacetrackMove, Racetrack> dsdtrack;
-
 		// Runs all five baselines.
-		assert(maxNumArgs >= 6);
-		// me = new MapEnvironment(new Map(argument[1]));
+		assert(maxNumArgs >= 4);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 
 		ScenarioLoader sl(argument[2]);
 		
-		for (int x = 0; x < sl.GetNumExperiments(); x++)
+		// for (int x = 0; x < sl.GetNumExperiments(); x++)
+		for (int x = 0; x < 50; x++)
 		{
 			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<30) continue;
+			// if(exp.GetDistance()<30) continue;
+
+			//Reset the previous start and goal
+			// m->SetTerrainType(from.xLoc, from.yLoc, kGround);
+			// m->SetTerrainType(end.xLoc, end.yLoc, kGround);
 
 			//Set the start and goal states, weight and policy of the search. 
 			from.xLoc = exp.GetStartX();
@@ -1264,13 +1376,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			end.yLoc = exp.GetGoalY();
 			end.xVelocity = 0;
 			end.yVelocity = 0;
-			dsdtrack.policy = (tExpansionPriority)atoi(argument[3]);
-			dsdtrack.SetWeight(atof(argument[4]));
+			dsd_track.policy = (tExpansionPriority)atoi(argument[3]);
+			dsd_track.SetWeight(atof(argument[4]));
+			// m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
+			// m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			// r->UpdateMap(m);
 
-			dsdtrack.InitializeSearch(r, from, end, path);
-			dsdtrack.GetPath(r, from, end, path);
+			dsd_track.InitializeSearch(r, from, end, path);
+			dsd_track.GetPath(r, from, end, path);
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsdtrack.GetNodesExpanded());
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd_track.GetNodesExpanded());
 
 		}
 		exit(0);
@@ -1430,31 +1545,55 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 									me->GetMap()->SetTerrainType(i, j, kGround);
 					}
 				}
+				else if(exper==9){
+					Map *m = new Map(200, 200);
+					// srandom(20221228);
+
+					// BuildRandomRoomMap(m, 30);
+					// MakeRandomMap(m, 10);
+					 MakeMaze(m, 10);
+					// MakeDesignedMap(m, 20, 3);
+
+					// default 8-connected with ROOT_TWO edge costs
+					// delete me;
+					me->~MapEnvironment();
+					// MapEnvironment *me = 0;
+					MapEnvironment * me = new MapEnvironment(m);
+
+					me->SetDiagonalCost(1.41);
+					// me->SetDiagonalCost(1.5);
+				}
 
 				//Set the start and goal states of the search.
-				start.x = random()%me->GetMap()->GetMapWidth();
-				start.y = random()%me->GetMap()->GetMapHeight();
-				while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround){
-					start.x = (start.x+1) %me->GetMap()->GetMapWidth();
-					start.y = (start.y+1)%me->GetMap()->GetMapHeight();
-				}
-				goal.x = random()%me->GetMap()->GetMapWidth();
-				goal.y = random()%me->GetMap()->GetMapHeight();
-				while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround){
-					goal.x = (goal.x+1) %me->GetMap()->GetMapWidth();
-					goal.y = (goal.y+1)%me->GetMap()->GetMapHeight();
-				}
+				// start.x = random()%me->GetMap()->GetMapWidth();
+				// start.y = random()%me->GetMap()->GetMapHeight();
+				// while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround){
+				// 	start.x = (start.x+1) %me->GetMap()->GetMapWidth();
+				// 	start.y = (start.y+1)%me->GetMap()->GetMapHeight();
+				// }
+				// goal.x = random()%me->GetMap()->GetMapWidth();
+				// goal.y = random()%me->GetMap()->GetMapHeight();
+				// while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround  || solution.size()==0){
+				// 	goal.x = (goal.x+5) %me->GetMap()->GetMapWidth();
+				// 	goal.y = (goal.y+5)%me->GetMap()->GetMapHeight();
+				// 	prevPolicy = dsd.policy;
+				// 	dsd.policy = kpwXD;
+				// 	dsd.InitializeSearch(me, start, goal, solution);
+				// 	dsd.GetPath(me, start, goal, solution);
+				// 	dsd.policy = prevPolicy;
+				// }
 
-				// do {
-				// 	start.x = random()%me->GetMap()->GetMapWidth();
-				// 	start.y = random()%me->GetMap()->GetMapHeight();
-				// } while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround);
-				// do {
-				// 	goal.x = random()%me->GetMap()->GetMapWidth();
-				// 	goal.y = random()%me->GetMap()->GetMapHeight();
-				// } while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
+				do {
+					start.x = random()%me->GetMap()->GetMapWidth();
+					start.y = random()%me->GetMap()->GetMapHeight();
+				} while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround);
+				do {
+					goal.x = random()%me->GetMap()->GetMapWidth();
+					goal.y = random()%me->GetMap()->GetMapHeight();
+				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 
 				me->SetInputWeight(bound);
+				std::cout<<"solution.size "<<solution.size()<<"\n";
 
 				//Change one or more squares of ground states to swamp type.
 				if(exper==0){
@@ -1692,6 +1831,48 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
+						swampedloc.x = 0;
+					}
+				}
+				else if(exper==9){
+					//Set the size of the swamp area using the tspp argument.
+					tsx = max(tspp/100*abs(goal.x-start.x), 10);
+					tsy = max(tspp/100*abs(goal.y-start.y), 10);
+
+					if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
+						// swampedloc.x = (goal.x+start.x)/2;
+						swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
+						for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
+							for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+								if(me->GetMap()->GetTerrainType(i, j) != kGround)
+									me->GetMap()->SetTerrainType(i, j, kGround);
+						swampedloc.y = 0;
+					}
+					else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
+						// swampedloc.y = (goal.y+start.y)/2;
+						swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
+						for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
+							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+								if(me->GetMap()->GetTerrainType(i, j) != kGround)
+									me->GetMap()->SetTerrainType(i, j, kGround);
+						swampedloc.x = 0;
+					}
+					else if(abs(goal.x-start.x) > abs(goal.y-start.y)){
+						swampedloc.x = (goal.x+start.x)/2;
+						// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
+						for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
+							for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+								if(me->GetMap()->GetTerrainType(i, j) != kGround)
+									me->GetMap()->SetTerrainType(i, j, kGround);
+						swampedloc.y = 0;
+					}
+					else{
+						swampedloc.y = (goal.y+start.y)/2;
+						// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
+						for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
+							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+								if(me->GetMap()->GetTerrainType(i, j) != kGround)
+									me->GetMap()->SetTerrainType(i, j, kGround);
 						swampedloc.x = 0;
 					}
 				}
