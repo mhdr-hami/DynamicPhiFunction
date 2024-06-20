@@ -98,6 +98,19 @@ double Racetrack::NormalizeTileCost(const RacetrackState &a, const RacetrackStat
 	return 1;
 }
 
+/*
+Prints all information about the given state.
+*/
+void Racetrack::PrintState(RacetrackState s) const
+{
+	std::cout<<"Printing State..."<<std::endl;
+	std::cout<<"state xLoc: "<<s.xLoc<<std::endl;
+	std::cout<<"state yLoc: "<<s.yLoc<<std::endl;
+	std::cout<<"state xVelocity: "<<s.xVelocity<<std::endl;
+	std::cout<<"state yVelocity: "<<s.yVelocity<<std::endl;
+}
+
+
 Racetrack::~Racetrack()
 {
 	delete me;

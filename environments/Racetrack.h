@@ -50,6 +50,7 @@ public:
 	~Racetrack();
 	void UpdateMap(Map *map);
 	void SetPiviotState();
+	void PrintState(RacetrackState s) const;
 	void SetqueuePiviotState(RacetrackState &s);
 	RacetrackState GetPiviotState();
 	double GetBuckerScore(RacetrackState &s) const;
