@@ -36,6 +36,7 @@ float ChooseWeightForTargetPriority(point3d point, float priority, float minWeig
 DSDWAStar<xyLoc, tDirection, MapEnvironment> dsd;
 TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
 std::vector<xyLoc> solution;
+std::vector<xyLoc> theList;
 MapEnvironment *me = 0;
 xyLoc start, goal, swampedloc, swampedloc2, swampedloc3, swampedloc4;
 TemplateAStar<RacetrackState, RacetrackMove, Racetrack> tas_track;
@@ -44,7 +45,8 @@ std::vector<RacetrackState> path;
 Racetrack *r = 0;
 RacetrackState from;
 RacetrackState end;
-int exper=9;
+int numExtendedGoals = 0;
+int exper=10;
 float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
@@ -88,8 +90,8 @@ void InstallHandlers()
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
-	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
-	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight numExtendedGoals", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
+	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight numExtendedGoals", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
 	InstallCommandLineHandler(MyCLHandler, "-pwxds", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight", "Test STP <problem> <weight>");
@@ -119,7 +121,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 
 		// BuildRandomRoomMap(m, 30);
-		MakeRandomMap(m, 10);
+		MakeRandomMap(m, 40);
 		//  MakeMaze(m, 10);
       	// MakeDesignedMap(m, 20, 3);
 
@@ -938,7 +940,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			dsd.SetWeight(atof(argument[4]));
 			me->SetInputWeight(atof(argument[4]));
 
-
 			//Set the cost of each terrain type randomly.
 			for(int i=0; i<4; i++){
 				//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
@@ -1288,7 +1289,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 	}
 	else if (strcmp(argument[0], "-RTBLs") == 0){
 		// Runs all five baselines.
-		assert(maxNumArgs >= 4);
+		assert(maxNumArgs >= 5);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 
@@ -1306,7 +1307,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			//Reset the previous start and goal
 			m->SetTerrainType(from.xLoc, from.yLoc, kGround);
-			m->SetTerrainType(end.xLoc, end.yLoc, kGround);
+			if(numExtendedGoals == 0){
+				//Not extended the goal.
+				m->SetTerrainType(end.xLoc, end.yLoc, kGround);
+			}
+			else{
+				//Extended the goal
+				for(int tNode=0; tNode<theList.size(); tNode++){
+					me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
+				}
+			}
 
 			//Set the start and goal states, weight and policy of the search. 
 			from.xLoc = exp.GetStartX();
@@ -1317,8 +1327,25 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			end.yLoc = exp.GetGoalY();
 			end.xVelocity = 0;
 			end.yVelocity = 0;
+
+			//Set the start and goal TerrainType.
 			m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
-			m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			numExtendedGoals = atoi(argument[5]);
+			if(numExtendedGoals == 0){
+				//Not extend the goal.
+				m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			}
+			else{
+				//Extend the goal
+				tas.SetPhi([=](double h,double g){return g;});
+				goal.x = end.xLoc;
+				goal.y = end.yLoc;
+				tas.ExtendGoal(me, goal, theList, numExtendedGoals);
+				for(int tNode=0; tNode<theList.size(); tNode++){
+					me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
+				}
+			}
+			
 			r->UpdateMap(m);
 
 			double proveBound = atof(argument[4]);
@@ -1566,7 +1593,11 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					me->SetDiagonalCost(1.41);
 					// me->SetDiagonalCost(1.5);
 				}
-
+				else if(exper==10){
+					for(int tNode=0; tNode<theList.size(); tNode++){
+						me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
+					}
+				}
 				//Set the start and goal states of the search.
 				// start.x = random()%me->GetMap()->GetMapWidth();
 				// start.y = random()%me->GetMap()->GetMapHeight();
@@ -1877,6 +1908,13 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 								if(me->GetMap()->GetTerrainType(i, j) != kGround)
 									me->GetMap()->SetTerrainType(i, j, kGround);
 						swampedloc.x = 0;
+					}
+				}
+				else if(exper==10){
+					tas.SetPhi([=](double h,double g){return g;});
+					tas.ExtendGoal(me, goal, theList, 50);
+					for(int tNode=0; tNode<theList.size(); tNode++){
+						me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
 					}
 				}
 				problemNumber +=1;
