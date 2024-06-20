@@ -144,7 +144,7 @@ public:
 	MNPuzzle(const std::vector<slideDir> op_order); // used to set action order
 	~MNPuzzle();
 	double GetBuckerScore(MNPuzzleState<width, height> &s) const;
-	void PrintState(MNPuzzleState<width, height> &s) const;
+	void PrintState(MNPuzzleState<width, height> s) const;
 	void SetPiviotState();
 	void SetqueuePiviotState(MNPuzzleState<width, height> &s);
 	MNPuzzleState<width, height> GetPiviotState();
@@ -343,7 +343,7 @@ MNPuzzleState<width, height> MNPuzzle<width, height>::GetPiviotState()
 }
 
 template <int width, int height>
-void MNPuzzle<width, height>::PrintState(MNPuzzleState<width, height> &s) const
+void MNPuzzle<width, height>::PrintState(MNPuzzleState<width, height> s) const
 {
 	std::cout<<"Printing State..."<<std::endl;
 	for(int i=0; i<width*height; i++) std::cout<<s.puzzle[i]<<" ";
