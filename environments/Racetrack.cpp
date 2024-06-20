@@ -44,15 +44,27 @@ Racetrack::Racetrack(Map *map)
 }
 
 /*
+sets the Piviot State to the queuePiviotState.
+Piviot is used in dsmap policy.
+*/
+void Racetrack::SetPiviotState()
+{
+	PiviotState.xLoc = queuePiviotState.xLoc;
+	PiviotState.xVelocity = queuePiviotState.xVelocity;
+	PiviotState.yLoc = queuePiviotState.yLoc;
+	PiviotState.yVelocity = queuePiviotState.yVelocity;
+}
+
+/*
 sets the Piviot State to the state s.
 Piviot is used in dsmap policy.
 */
-void Racetrack::SetPiviotState(RacetrackState &s)
+void Racetrack::SetqueuePiviotState(RacetrackState &s)
 {
-	PiviotState.xLoc = s.xLoc;
-	PiviotState.xVelocity = s.xVelocity;
-	PiviotState.yLoc = s.yLoc;
-	PiviotState.yVelocity = s.yVelocity;
+	queuePiviotState.xLoc = s.xLoc;
+	queuePiviotState.xVelocity = s.xVelocity;
+	queuePiviotState.yLoc = s.yLoc;
+	queuePiviotState.yVelocity = s.yVelocity;
 }
 
 /*
@@ -146,7 +158,6 @@ void Racetrack::Reset(RacetrackState &s) const
 	exit(1);
 }
 
-
 void Racetrack::GetSuccessors(const RacetrackState &nodeID, std::vector<RacetrackState> &neighbors) const
 {
 	static std::vector<RacetrackMove> actions;
@@ -202,8 +213,6 @@ void Racetrack::GetActions(const RacetrackState &nodeID, std::vector<RacetrackMo
 //	}
 }
 
-
-
 void Racetrack::ApplyAction(RacetrackState &s, RacetrackMove a) const
 { // When x y velocity and action is applied -- location changes when velocity changes
 	if (a.hitGoal)
@@ -258,9 +267,6 @@ void Racetrack::Boundaries(RacetrackState &s, RacetrackMove &v) const
 	
 }
 
-
-
-
 bool Racetrack::InvertAction(RacetrackMove &a) const
 {
 	// Actions are not invertable
@@ -281,24 +287,23 @@ RacetrackMove Racetrack::GetAction(const RacetrackState &s1, RacetrackState &s2)
 	return m;
 }
 
-
 /*
  * The goal is implicit: We reach the goal if we have reached kEndTerrain.
  * So, we ignore the speicfic goal state
- * ------------------>>>>> Changed the goal test to the actual goal test
+ * ------------------>>>>> Added checking the location of the goal to the test.
  */
 bool Racetrack::GoalTest(const RacetrackState &node, const RacetrackState &goal) const
 {
+	//Use the TerrainType of the node to see if we have reached the GoalTerrain.
+	if (map->GetTerrainType(node.xLoc, node.yLoc) == kEndTerrain)
+	{
+		//std::cout << "Touched the goal! \n";
+		return true;
+	}
+	return false;
+
 	// Use the node to see if the location matches the goal location
-
-	// if (map->GetTerrainType(node.xLoc, node.yLoc) == kEndTerrain)
-	// {
-	// 	//std::cout << "Touched the goal! \n";
-	// 	return true;
-	// }
-	// return false;
-
-	return ((node.xLoc == goal.xLoc) && (node.yLoc == goal.yLoc));
+	// return ((node.xLoc == goal.xLoc) && (node.yLoc == goal.yLoc));
 }
 
 // --- The legal function, which checks whether an action is legal --- //
@@ -366,6 +371,7 @@ bool Racetrack::Legal(const RacetrackState &node1, RacetrackMove &act) const
 	}
 	return true;
 }
+
 double Racetrack::HCost(const RacetrackState &node1, const RacetrackState &node2) const
 {
 	return HCost(node1);
@@ -385,7 +391,6 @@ double Racetrack::HCost(const RacetrackState &node) const
 	}
 	return h;
 }
-
 
 uint64_t Racetrack::GetStateHash(const RacetrackState &node) const
 {

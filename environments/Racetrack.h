@@ -49,7 +49,8 @@ public:
 	Racetrack(Map *map); 
 	~Racetrack();
 	void UpdateMap(Map *map);
-	void SetPiviotState(RacetrackState &s);
+	void SetPiviotState();
+	void SetqueuePiviotState(RacetrackState &s);
 	RacetrackState GetPiviotState();
 	double GetBuckerScore(RacetrackState &s) const;
 	void SetNormalizedCost(bool flag);
@@ -96,6 +97,7 @@ public:
 protected: // take two states and draw a line
 private:
 	RacetrackState PiviotState;
+	RacetrackState queuePiviotState;
 	MapEnvironment *me;
 	Map *map;
 	std::vector<int> heuristic;

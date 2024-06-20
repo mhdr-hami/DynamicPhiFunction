@@ -54,7 +54,7 @@ enum tExpansionPriority {
 
 int lastExpansions=0, angleCounter=0;
 double tolerance=0.0001; //It is ALSO embedded in TemplateAStar.h, AStarCompareWithF.
-double globalMaxG=0, globalMaxH=-1, piviotG=0, piviotH=0, globalAngle=-1,prevBuckerAngle=0,prevBuckerAngle2=0,prevBuckerAngle3=0;
+double globalMaxG=0, globalMaxH=-1, piviotG=0, queuepiviotG=0, piviotH=0, globalAngle=-1,prevBuckerAngle=0,prevBuckerAngle2=0,prevBuckerAngle3=0;
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
@@ -94,7 +94,7 @@ public:
 	
 	void PrintStats();
 	uint64_t GetUniqueNodesExpanded() { return uniqueNodesExpanded; }
-	void ResetNodeCount() { nodesExpanded = nodesTouched = 0; uniqueNodesExpanded = 0; lastRegionExpanded=0; minH=MAXFLOAT; maxH=FLT_MIN; easyProblem=true; prevH=0; guider=1; firstLast=0; secondLast=0; thirdLast=0; angleCounter=0; globalMaxG=0; piviotG=0; piviotH=0; globalMaxH=-1; globalAngle=-1;prevBuckerAngle=0;prevBuckerAngle2=0;prevBuckerAngle3=0;}
+	void ResetNodeCount() { nodesExpanded = nodesTouched = 0; uniqueNodesExpanded = 0; lastRegionExpanded=0; minH=MAXFLOAT; maxH=FLT_MIN; easyProblem=true; prevH=0; guider=1; firstLast=0; secondLast=0; thirdLast=0; angleCounter=0; globalMaxG=0; piviotG=0; queuepiviotG=0; piviotH=0; globalMaxH=-1; globalAngle=-1;prevBuckerAngle=0;prevBuckerAngle2=0;prevBuckerAngle3=0;}
 	int GetMemoryUsage();
 	
 	bool GetClosedListGCost(const state &val, double &gCost) const;
@@ -627,7 +627,8 @@ bool DSDWAStar<state,action,environment,openList>::InitializeSearch(environment 
 	double h = theHeuristic->HCost(start, goal);
 	openClosedList.AddOpenNode(start, env->GetStateHash(start), Phi(h, 0), 0, h);
 
-	env->SetPiviotState(start);
+	env->SetqueuePiviotState(start);
+	env->SetPiviotState();
 	
 	return true;
 }
@@ -914,22 +915,23 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
 				int lastSize = data.size();
 				float deltaGlobalH, deltaGlobalG;
-				int angleJump = 0;
-				if(GetWeight() >= 5)
-					angleJump = 18;
-				else
-					angleJump = 5;
+				float angleJump = 2.5;
 
+				//Set the piviot state
 				if(angle>=angleCounter*angleJump){
+
+					env->SetPiviotState();
+					env->SetqueuePiviotState(neighbors[which]);
 					
-					piviotG = maxSlopeG;
+					piviotG = queuepiviotG;
+					queuepiviotG = maxSlopeG;
 					
 					// if not using the piviot state to [which] state heuristic
 					// piviotH = theHeuristic->HCost(start, neighbors[which]);
 					// or
 					// piviotH = theHeuristic->HCost(neighbors[which], goal);
 
-					env->SetPiviotState(neighbors[which]);
+					// env->SetPiviotState(neighbors[which]);
 
 					angleCounter += 1;
 				}
@@ -963,17 +965,17 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if(fequal(deltaGlobalG, 0)){
 
 					if(fgreater(prevBuckerAngle3, prevBuckerAngle2)){
-						//1: random10E4
+						//1
 						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 						prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 
-						//2: STPs , random10E4 , 
+						//2
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
 						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 						// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 					}
 					else if(fgreater(prevBuckerAngle2, prevBuckerAngle3)){
-						//3: STPs , random10E4 , 
+						//3:
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 						prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
@@ -985,18 +987,18 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				}
 				// else if(flesseq(deltaGlobalH/deltaGlobalG, normalizeLimit)){
 				else if(flesseq(deltaGlobalH/deltaGlobalG, 0.9)){
-					//1: random10E4
+					//1
 					SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 					prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 
-					//2: STPs , random10E4 , 
+					//2
 					// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
 					// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 					// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 				}
 				else{ //easy problems: lower weights
 					
-					//3: STPs , random10E4 , 
+					//3
 					float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 					SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 					prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
