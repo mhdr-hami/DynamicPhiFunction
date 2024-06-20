@@ -1292,12 +1292,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		assert(maxNumArgs >= 5);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
+		me = new MapEnvironment(m);
 
 		ScenarioLoader sl(argument[2]);
 		int approvedScenaios = 0, x=0;
 		
-		// for (int x = 0; x < sl.GetNumExperiments(); x++)
-		// for (int x = 0; x < 50; x++)
 		while (approvedScenaios < 100 && x < sl.GetNumExperiments())
 		{
 			Experiment exp = sl.GetNthExperiment(x);
@@ -1314,7 +1313,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			else{
 				//Extended the goal
 				for(int tNode=0; tNode<theList.size(); tNode++){
-					me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
+					m->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
 				}
 			}
 
@@ -1342,7 +1341,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				goal.y = end.yLoc;
 				tas.ExtendGoal(me, goal, theList, numExtendedGoals);
 				for(int tNode=0; tNode<theList.size(); tNode++){
-					me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
+					m->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
 				}
 			}
 			
@@ -1380,12 +1379,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		assert(maxNumArgs >= 4);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
+		me = new MapEnvironment(m);
 
 		ScenarioLoader sl(argument[2]);
 		int approvedScenaios = 0, x=0;
 		
-		// for (int x = 0; x < sl.GetNumExperiments(); x++)
-		// for (int x = 0; x < 50; x++)
 		while (approvedScenaios < 100 && x < sl.GetNumExperiments())
 		{
 			Experiment exp = sl.GetNthExperiment(x);
@@ -1395,7 +1393,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			//Reset the previous start and goal
 			m->SetTerrainType(from.xLoc, from.yLoc, kGround);
-			m->SetTerrainType(end.xLoc, end.yLoc, kGround);
+			if(numExtendedGoals == 0){
+				//Not extended the goal.
+				m->SetTerrainType(end.xLoc, end.yLoc, kGround);
+			}
+			else{
+				//Extended the goal
+				for(int tNode=0; tNode<theList.size(); tNode++){
+					m->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
+				}
+			}
 
 			//Set the start and goal states, weight and policy of the search. 
 			from.xLoc = exp.GetStartX();
@@ -1408,8 +1415,25 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			end.yVelocity = 0;
 			dsd_track.policy = (tExpansionPriority)atoi(argument[3]);
 			dsd_track.SetWeight(atof(argument[4]));
+			
+			//Set the start and goal TerrainType.
 			m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
-			m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			numExtendedGoals = atoi(argument[5]);
+			if(numExtendedGoals == 0){
+				//Not extend the goal.
+				m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
+			}
+			else{
+				//Extend the goal
+				tas.SetPhi([=](double h,double g){return g;});
+				goal.x = end.xLoc;
+				goal.y = end.yLoc;
+				tas.ExtendGoal(me, goal, theList, numExtendedGoals);
+				for(int tNode=0; tNode<theList.size(); tNode++){
+					m->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
+				}
+			}
+
 			r->UpdateMap(m);
 
 			dsd_track.InitializeSearch(r, from, end, path);
