@@ -1289,7 +1289,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 	}
 	else if (strcmp(argument[0], "-RTBLs") == 0){
 		// Runs all five baselines.
-		assert(maxNumArgs >= 5);
+		assert(maxNumArgs >= 6);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 		me = new MapEnvironment(m);
@@ -1376,7 +1376,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-RTdsmap") == 0){
-		assert(maxNumArgs >= 4);
+		assert(maxNumArgs >= 6);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 		me = new MapEnvironment(m);
