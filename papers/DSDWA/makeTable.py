@@ -1,7 +1,8 @@
 import numpy as np 
 import sys
 import matplotlib.pyplot as plt
-# plt.rcParams["figure.figsize"] = [9.00, 7.00]
+from collections import OrderedDict
+plt.rcParams["figure.figsize"] = [7.00, 7.00]
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
 # weight_to_int = {'1.25':0, '1.50':1, '2.00':2, '3.00':3, '5.00':4, '9.00':5}
@@ -20,14 +21,32 @@ weight_to_int = {"1.50":0, "2.00":1, '3.00':2, '4.00':3, '5.00':4, '6.00':5, '7.
 
 # int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'DSMAP7'}
 # int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'MAP'}
-int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP'}
+int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DSP'}
 # int_to_alg = {0:'oldDSMAP', 1:'newDSMAP'}
 # int_to_alg = {0:'DSMAP9', 1:'DSMAP7', 2:'DSMAP8', 3:'DSMAP10'}
 # int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP2', 3:'DSMAP3', 4:'DSMAP4', 5:'DSMAP5', 6:'DSMAP6'}
 # int_to_alg = {0:'WA*', 1:'DSMAP', 2:'DSMAP5', 3:'DSMAP2'}
 cost='5.0'
 mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamond', 3:'Swamped Diamond Cost='+cost, 4:'Obstacle Circle', 5:'Swamped Circle Cost='+cost, 6: sys.argv[5]+" Cost="+sys.argv[8]}
-markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
+# markers = ['o-', '*-', 's-', 'v-', '1-', 'p-', '+-', '-.', '-.', '-.', 'D-']
+markers = ['s', '*', 'o', '.', 'x', 'X']
+colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue']
+linestyles = OrderedDict(
+    [('dashed',              (0, (5, 5))),
+     ('dashdotted',          (0, (3, 5, 1, 5))),
+     ('dotted',              (0, (1, 5))),
+     ('long dash with offset', (5, (10, 3))),
+     ('dashdotdotted',         (0, (3, 5, 1, 5, 1, 5))),
+     ('solid',               (0, ())),
+     ('loosely dotted',      (0, (1, 10))),
+     ('densely dashed',      (0, (5, 1))),
+     ('densely dotted',      (0, (1, 1))),
+     ('loosely dashed',      (0, (5, 10))),
+     ('loosely dashdotted',  (0, (3, 10, 1, 10))),
+     ('densely dashdotted',  (0, (3, 1, 1, 1))),
+     ('loosely dashdotdotted', (0, (3, 10, 1, 10, 1, 10))),
+     ('densely dashdotdotted', (0, (3, 1, 1, 1, 1, 1)))])
+# markers = [':', '-.', '--', 'long dash with offset', 'loosely dashdotdotted', '-']
 
 if sys.argv[1] == '-stp':
     if sys.argv[2] == '1':
@@ -35,7 +54,7 @@ if sys.argv[1] == '-stp':
         ##Experiment 1: Creates a table from average of runs of different problems over different weights
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
-        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
             for line in f:
                 data = line.split()
                 if(len(data)): ## To check for empy lines
@@ -90,7 +109,28 @@ if sys.argv[1] == '-stp':
         print('====================================================')
         print()
 
-    ############################################################################################
+        with open("./papers/DSDWA/results/"+sys.argv[5]+"_table.txt", "w") as f:
+            for i in range(len(table)):
+                if i!=6:
+                    f.write("$\Phi_{\\text{"+int_to_alg[i]+"}}$ ")
+                    for j in range(len(table[i])):
+                        if  j!=3 and j!=5 and j!=6 and j!=7 and j!=9:
+                            tmp = str(round(result[i][j], 2))
+                            firstPart = tmp.split(".")[0]
+                            secondPart = tmp.split(".")[1]
+                            f.write("& ")
+                            for k in range(len(firstPart)):
+                                f.write(firstPart[k])
+                                if (len(firstPart) - k)%4 == 0:
+                                    f.write(",")
+                            if len(secondPart):
+                                f.write(".")
+                            f.write(secondPart)
+                            f.write(" ")
+                            # f.write("& " + str(round(result[i][j], 2))+" ")
+                    f.write("\\\\ \n \n")
+
+    ##############################################
     elif sys.argv[2] == '2':
         ##Experiment 2: creates a plot for one specific weight sorting the hardness of problems
         # x-axis is all the problems in decending order and y-axix is the umber of node expansions
@@ -133,7 +173,7 @@ if sys.argv[1] == '-stp':
         # plt.legend(loc='upper right')
         # plt.show()
 
-    ############################################################################################
+    ##############################################
     elif sys.argv[2] == '3':
         ##Experiment 3: For each problem, creates a plot of applying different algorithms using different weights
 
@@ -160,13 +200,62 @@ if sys.argv[1] == '-stp':
             # plt.title('STP Problem '+str(problem))
             # plt.show()
 
+    ##############################################
+    elif sys.argv[2] == '4':
+
+        ##Experiment 4: Creates the work/weight plot
+        ##arg[3] is the number of algs and arg[4] is the number of weights
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "STP" and (data[5] in list(weight_to_int.keys())) and (int(data[3]) in list(int_to_alg.keys())) : #and data[3]!='0' and data[3]!='1' and data[3]!='6' and data[3]!='8': # and data[9]!='0':
+                        table[int(data[3])][weight_to_int[data[5]]] += float(data[7])
+                        count_table[int(data[3])][weight_to_int[data[5]]] += 1
+                        # print(float(data[7]), count_table[int(data[3])][weight_to_int[data[5]]], sep=" ")
+
+        result = np.divide(table, count_table)
+        # Weights = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        # Weights = [1.001, 1.002, 1.004, 1.008, 1.016, 1.032, 1.064, 1.128, 1.256, 1.512, 2.024, 3.048, 5.096]
+        # Weights = [1.01, 1.02, 1.04, 1.08, 1.16, 1.32, 1.64, 2.28, 3.56, 6.12, 11.24]
+        # Weights = [1.01, 1.02, 1.04, 1.08, 1.16, 1.32, 1.64, 2.28, 3.56, 6.12]
+        # Weights = ["1.01", "1.02", "1.03", "1.04", "1.05", "1.06", "1.07", "1.08", "1.09", "1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
+        # Weights = ["1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
+        # Weights = ["11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00", "25.00", "26.00", "27.00", "28.00", "29.00", "30.00", "31.00", "32.00", "33.00", "34.00", "35.00", "36.00", "37.00", "38.00", "39.00", "40.00", "41.00", "42.00", "43.00", "44.00", "45.00", "46.00", "47.00", "48.00", "49.00", "50.00"]
+        # Weights = ["110.00", "120.00", "130.00", "140.00", "150.00", "160.00", "170.00", "180.00", "190.00", "200.00", "210.00", "220.00", "230.00", "240.00", "250.00", "260.00", "270.00", "280.00", "290.00", "300.00", "310.00", "320.00", "330.00", "340.00", "350.00", "360.00", "370.00", "380.00", "390.00", "400.00", "410.00", "420.00", "430.00", "440.00", "450.00", "460.00", "470.00", "480.00", "490.00", "500.00"]
+        xpoints = np.array(Weights)
+        works = []
+        for policy in int_to_alg:
+            work_i = []
+            for w in list(weight_to_int.keys()):
+                work_i.append(result[policy][weight_to_int[w]])
+            works.append(work_i)
+        for policy in int_to_alg:
+            ypoints = []
+            for i in works[policy]:
+                ypoints.append(i)
+            ypoints = np.array(ypoints)
+            plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[policy]], marker=markers[policy], label=int_to_alg[policy], color=colours[policy])
+        
+        font = {'family':'serif','color':'darkred','size':12}
+        plt.ylabel("Work", fontdict=font)
+        plt.xlabel("Weights", fontdict=font)
+        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.legend(fontsize="17")
+        plt.xticks(xpoints) 
+        plt.yscale('log')
+        plt.show()
+############################################################################################
 elif sys.argv[1] == '-map':
     if sys.argv[2] == '1':
 
         ##Experiment 1: Creates a table from average of runs of different problems over different weights
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
-        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
             for line in f:
                 data = line.split()
                 if(len(data)): ## To check for empy lines
@@ -199,6 +288,7 @@ elif sys.argv[1] == '-map':
                     print('|', end="")
                 print()
         print('__________________' * 7)
+                    
         for cnt in range(len(table)):
             print(str(cnt+1)+' place Alg |', end="")
             for i in range(len(table[0])):
@@ -219,7 +309,28 @@ elif sys.argv[1] == '-map':
         print('====================================================')
         print()
 
-    ############################################################################################
+        with open("./papers/DSDWA/results/"+sys.argv[5]+"_table.txt", "w") as f:
+            for i in range(len(table)):
+                if i!=6:
+                    f.write("$\Phi_{\\text{"+int_to_alg[i]+"}}$ ")
+                    for j in range(len(table[i])):
+                        if  j!=3 and j!=5 and j!=6 and j!=7 and j!=9:
+                            tmp = str(round(result[i][j], 2))
+                            firstPart = tmp.split(".")[0]
+                            secondPart = tmp.split(".")[1]
+                            f.write("& ")
+                            for k in range(len(firstPart)):
+                                f.write(firstPart[k])
+                                if (len(firstPart) - k)%4 == 0:
+                                    f.write(",")
+                            if len(secondPart):
+                                f.write(".")
+                            f.write(secondPart)
+                            f.write(" ")
+                            # f.write("& " + str(round(result[i][j], 2))+" ")
+                    f.write("\\\\ \n \n")
+
+    ##############################################
     elif sys.argv[2] == '2':
         # Second idea: create plots, each plot for one weight, 
         # x-axis is all the problems in decending order and y-axix is the umber of node expansions
@@ -266,7 +377,7 @@ elif sys.argv[1] == '-map':
         # plt.legend(loc='upper right')
         # plt.show()
 
-    ############################################################################################
+    ##############################################
     elif sys.argv[2] == '3':
         ##Experiment 3: For each problem, creates a plot of applying different algorithms using different weights
 
@@ -318,14 +429,14 @@ elif sys.argv[1] == '-map':
                 # plt.title('MAP Problem '+str(problem))
                 # plt.show()
     
-    ############################################################################################
+    ##############################################
     elif sys.argv[2] == '4':
 
         ##Experiment 4: Creates the work/weight plot
         ##arg[3] is the number of algs and arg[4] is the number of weights
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
-        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
             for line in f:
                 data = line.split()
                 if(len(data)): ## To check for empy lines
@@ -335,34 +446,35 @@ elif sys.argv[1] == '-map':
 
         result = np.divide(table, count_table)
         # Weights = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
         # Weights = [1.001, 1.002, 1.004, 1.008, 1.016, 1.032, 1.064, 1.128, 1.256, 1.512, 2.024, 3.048, 5.096]
         # Weights = [1.01, 1.02, 1.04, 1.08, 1.16, 1.32, 1.64, 2.28, 3.56, 6.12, 11.24]
         # Weights = [1.01, 1.02, 1.04, 1.08, 1.16, 1.32, 1.64, 2.28, 3.56, 6.12]
         # Weights = ["1.01", "1.02", "1.03", "1.04", "1.05", "1.06", "1.07", "1.08", "1.09", "1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
-        Weights = ["1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
+        # Weights = ["1.10", "1.20", "1.30", "1.40", "1.50", "1.60", "1.70", "1.80", "1.90", "2.00", "2.10", "2.20", "2.30", "2.40", "2.50", "2.60", "2.70", "2.80", "2.90", "3.00", "3.10", "3.20", "3.30", "3.40", "3.50", "3.60", "3.70", "3.80", "3.90", "4.00", "4.10", "4.20", "4.30", "4.40", "4.50", "4.60", "4.70", "4.80", "4.90", "5.00"]
         # Weights = ["11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00", "25.00", "26.00", "27.00", "28.00", "29.00", "30.00", "31.00", "32.00", "33.00", "34.00", "35.00", "36.00", "37.00", "38.00", "39.00", "40.00", "41.00", "42.00", "43.00", "44.00", "45.00", "46.00", "47.00", "48.00", "49.00", "50.00"]
         # Weights = ["110.00", "120.00", "130.00", "140.00", "150.00", "160.00", "170.00", "180.00", "190.00", "200.00", "210.00", "220.00", "230.00", "240.00", "250.00", "260.00", "270.00", "280.00", "290.00", "300.00", "310.00", "320.00", "330.00", "340.00", "350.00", "360.00", "370.00", "380.00", "390.00", "400.00", "410.00", "420.00", "430.00", "440.00", "450.00", "460.00", "470.00", "480.00", "490.00", "500.00"]
         xpoints = np.array(Weights)
         works = []
         for policy in int_to_alg:
             work_i = []
-            for w in Weights:
-                work_i.append(result[policy][weight_to_int[str(w)]])
+            for w in list(weight_to_int.keys()):
+                work_i.append(result[policy][weight_to_int[w]])
             works.append(work_i)
         for policy in int_to_alg:
             ypoints = []
             for i in works[policy]:
                 ypoints.append(i)
             ypoints = np.array(ypoints)
-            plt.plot(xpoints, ypoints, markers[policy], ms = 5, label=int_to_alg[policy])
+            plt.plot(xpoints, ypoints, markers[policy], ms = 5, label=int_to_alg[policy], color='black')
         
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
         plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
-        plt.legend()
-        plt.xticks(xpoints, rotation=90) 
-        # plt.yscale('log')
+        plt.legend(fontsize="17")
+        plt.xticks(xpoints) 
+        plt.yscale('log')
         # plt.xscale('log')
         plt.show()
     
@@ -378,9 +490,9 @@ elif sys.argv[1] == '-map':
                 w.append(a)
         
         cnt = 0
-        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
             numLines = len(f.readlines())
-        with open("./papers/DSDWA/results/"+sys.argv[5]+"-results.txt", "r") as f:
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
             for line in f:
                 data = line.split()
                 if(len(data)): ## To check for empy lines
