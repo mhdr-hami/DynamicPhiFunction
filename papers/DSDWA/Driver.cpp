@@ -46,7 +46,7 @@ Racetrack *r = 0;
 RacetrackState from;
 RacetrackState end;
 int numExtendedGoals = 0;
-int exper=10;
+int exper=8;
 float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
@@ -88,8 +88,8 @@ void InstallHandlers()
 	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight puzzleW", "Test STP <problem> <algorithm> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-stpBLs", "-stp problem alg weight puzzleW", "Test STP <problem> <algorithm> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
-	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
-	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
+	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness Experiment", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
+	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness Experiment", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
 	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight numExtendedGoals", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
 	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight numExtendedGoals", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
 	InstallCommandLineHandler(MyCLHandler, "-pwxds", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
@@ -121,9 +121,9 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		srandom(20221228);
 
 		// BuildRandomRoomMap(m, 30);
-		MakeRandomMap(m, 40);
-		//  MakeMaze(m, 10);
-      	// MakeDesignedMap(m, 20, 3);
+		//  MakeRandomMap(m, 10);
+		  MakeMaze(m, 10);
+//      	 MakeDesignedMap(m, 20, 3);
 
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
@@ -413,7 +413,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// Runs all five baselines.
 		assert(maxNumArgs >= 6);
 		me = new MapEnvironment(new Map(argument[1]));
-		MapEnvironment * me2 = new MapEnvironment(new Map(argument[1]));
+		exper = atoi(argument[7]);
 
 		// me->SetDiagonalCost(1.5);
 		me->SetDiagonalCost(1.41);
@@ -473,17 +473,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 			}
-			else if(exper==9){
-				// me = NULL;
-				// delete me;
-				// me = me2;
-				me->~MapEnvironment();
-				me = new MapEnvironment(me2);
-				// me = new MapEnvironment(new Map(argument[1]));
-				// me->SetDiagonalCost(1.5);
-				me->SetDiagonalCost(1.41);
-			}
-			
+
 			Experiment exp = sl.GetNthExperiment(x);
 			if(exp.GetDistance()<30) continue;
 
@@ -784,49 +774,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.x = 0;
 				}
 			}
-			else if(exper==9){
-				//Set the size of the swamp area using the tspp argument.
-				tsx = max(tspp/100*abs(goal.x-start.x), 10);
-				tsy = max(tspp/100*abs(goal.y-start.y), 10);
 
-				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
-					// swampedloc.x = (goal.x+start.x)/2;
-					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
-					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.y = 0;
-				}
-				else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
-					// swampedloc.y = (goal.y+start.y)/2;
-					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
-					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.x = 0;
-				}
-				else if(abs(goal.x-start.x) > abs(goal.y-start.y)){
-					swampedloc.x = (goal.x+start.x)/2;
-					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
-					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.y = 0;
-				}
-				else{
-					swampedloc.y = (goal.y+start.y)/2;
-					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
-					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.x = 0;
-				}
-			}
-			
 			//Set the Baseline Policy.
 			if(atoi(argument[3]) == 0){ //WA*
 			tas.SetPhi([=](double h,double g){return g+proveBound*h;});
@@ -867,7 +815,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		//Some Terrain Types exist that makes action costs different in different parts of the map.
 		assert(maxNumArgs >= 6);
 		me = new MapEnvironment(new Map(argument[1]));
-		MapEnvironment * me2 = new MapEnvironment(new Map(argument[1]));
+		exper = atoi(argument[7]);
 
 		// me->SetDiagonalCost(1.5);
 		me->SetDiagonalCost(1.41);
@@ -919,13 +867,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
-			}
-			else if(exper==9){
-				me = NULL;
-				delete me;
-				me = me2;
-				// me->SetDiagonalCost(1.5);
-				me->SetDiagonalCost(1.41);
 			}
 
 			Experiment exp = sl.GetNthExperiment(x);
@@ -1227,48 +1168,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
-					swampedloc.x = 0;
-				}
-			}
-			else if(exper==9){
-				//Set the size of the swamp area using the tspp argument.
-				tsx = max(tspp/100*abs(goal.x-start.x), 10);
-				tsy = max(tspp/100*abs(goal.y-start.y), 10);
-
-				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
-					// swampedloc.x = (goal.x+start.x)/2;
-					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
-					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.y = 0;
-				}
-				else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
-					// swampedloc.y = (goal.y+start.y)/2;
-					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
-					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.x = 0;
-				}
-				else if(abs(goal.x-start.x) > abs(goal.y-start.y)){
-					swampedloc.x = (goal.x+start.x)/2;
-					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
-					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
-					swampedloc.y = 0;
-				}
-				else{
-					swampedloc.y = (goal.y+start.y)/2;
-					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
-					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
-							if(me->GetMap()->GetTerrainType(i, j) != kGround)
-								me->GetMap()->SetTerrainType(i, j, kGround);
 					swampedloc.x = 0;
 				}
 			}
@@ -1936,7 +1835,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				}
 				else if(exper==10){
 					tas.SetPhi([=](double h,double g){return g;});
-					tas.ExtendGoal(me, goal, theList, 50);
+					tas.ExtendGoal(me, goal, theList, 0);
 					for(int tNode=0; tNode<theList.size(); tNode++){
 						me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
 					}
