@@ -466,7 +466,7 @@ elif sys.argv[1] == '-map':
             for i in works[policy]:
                 ypoints.append(i)
             ypoints = np.array(ypoints)
-            plt.plot(xpoints, ypoints, markers[policy], ms = 5, label=int_to_alg[policy], color='black')
+            plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[policy]], marker=markers[policy], label=int_to_alg[policy], color=colours[policy])
         
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
