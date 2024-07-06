@@ -38,7 +38,8 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	kDSMAP12=5,
+	kDSMAP13=5,
+	kDSMAP12=65,
 	kDSMAP11=55,
 	kMAP=6,
 	kHalfEdgeDrop=8,
@@ -94,9 +95,15 @@ public:
 	
 	void PrintStats();
 	uint64_t GetUniqueNodesExpanded() { return uniqueNodesExpanded; }
-    void ResetNodeCount() { nodesExpanded = nodesTouched = 0; uniqueNodesExpanded = 0; lastRegionExpanded=0; minH=MAXFLOAT; maxH=FLT_MIN; easyProblem=true; prevH=0; guider=1; firstLast=0; secondLast=0; thirdLast=0; angleCounter=0; globalMaxG=0; piviotG=0; queuepiviotG=0; piviotH=0; globalMaxH=-1; globalAngle=-1;prevBuckerAngle=0;prevBuckerAngle2=0;prevBuckerAngle3=0;usedGcost=0;}
+    void ResetNodeCount() { 
+		nodesExpanded = nodesTouched = 0; 
+		uniqueNodesExpanded = 0; lastRegionExpanded=0; minH=MAXFLOAT; 
+		maxH=FLT_MIN; easyProblem=true; prevH=0; guider=1; firstLast=0; 
+		secondLast=0; thirdLast=0; angleCounter=0; globalMaxG=0; piviotG=0; 
+		queuepiviotG=0; piviotH=0; globalMaxH=-1; globalAngle=-1;prevBuckerAngle=0;
+		prevBuckerAngle2=0;prevBuckerAngle3=0;usedGcost=0;
+	}
 	int GetMemoryUsage();
-	
 	bool GetClosedListGCost(const state &val, double &gCost) const;
 	bool GetOpenListGCost(const state &val, double &gCost) const;
 	bool GetHCost(const state &val, double &hCost) const;
@@ -133,6 +140,10 @@ public:
 		if (policy == kXDP)
 		{
 				float nextF = (g+(2*weight-1)*h+sqrt((g-h)*(g-h)+4*weight*g*h))/(2*weight);
+				
+				// tmp line to try to visualize A*
+				// float nextF = g+h;
+
 				return nextF; 
 				
 		}
@@ -143,11 +154,6 @@ public:
 				
 		}
 		else return GetPriority(h, g);
-	}
-	double Phi(float h, float g, bool dummy)
-	{
-        float region = floor(atan(g/h) * 180 / PI)+1;
-		return GetPriority(h, g, region);
 	}
 	void SetWeight(double w)
 	{
@@ -284,7 +290,7 @@ public:
 		if (fgreater(h, 0, tolerance) && fgreater(g, 0, tolerance))
 		{
 			float slope = g/h;
-			if (data.size() == 0 || data.back().slope < slope)
+			if (data.size() == 0 || fless(data.back().slope, slope))
 			{
 				//std::cout << "Virtual hit of " << loc << " slope " << slope << "\n";
 				float minWeight, maxWeight;
@@ -629,6 +635,7 @@ bool DSDWAStar<state,action,environment,openList>::InitializeSearch(environment 
 
 	env->SetqueuePiviotState(start);
 	env->SetPiviotState();
+	piviotH = h;
 	
 	return true;
 }
@@ -1054,7 +1061,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 					// To generate a number in [1,2] so min=2 and max=1
 					// float normalizeWeight = 2-(GetWeight()-1.5)/(10-1.5);
-					float normalizeWeight = 4;
 					// deltaGlobalG = maxSlopeG - piviotG;
 
 					// std::cout<<"usedHcost: "<<usedHcost<<"\n";
@@ -1072,26 +1078,101 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					//mazes: pwxd=0.186
 					//random10E8:
 
-					if(fless(usedHcost/usedGcost, 0.21)){
+					if(fless(usedHcost/usedGcost, 0.5)){
 						//1
-						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-						prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 
 						//2
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
-						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 7)));
-						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
+						float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
+						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 5)));
+						prevBuckerAngle3 = max(angle, prevBuckerAngle3);
 
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
 						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 						// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 					}
 					else{ //easy problems: lower weights
-						//3
+						//1
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 2)));
 						prevBuckerAngle2 = max(angle, prevBuckerAngle2);
 
+						//2
+						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+
+						//3
+						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
+						// prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
+					}
+				}
+				// else{
+				// 	// dummy set weight, as it does not go into data.
+				// 	SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+				// }
+			}
+			else if (policy == kDSMAP13)
+			{
+				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+				float lastW = data.back().weight;
+				assert(angle>=0 && angle<=90);
+				// float deltaGlobalH, deltaGlobalG;
+				// float StartToNodeH = theHeuristic->HCost(start, neighbors[which]);
+
+				float angleJump = 5;
+				// float lowerWeight = min(max(minWeight, edgeCosts[which]), maxWeight);
+				// float lowerWeight = minWeight;
+
+				//Set the piviot state
+				double tmpH = theHeuristic->HCost(neighbors[which], goal);
+				if(angle>=angleCounter*angleJump && (fgreater(piviotH, tmpH))){
+					//sets the state to queue, and then piviot to queue 
+					//=> piviot to state
+
+					env->SetqueuePiviotState(neighbors[which]);
+					env->SetPiviotState();
+					piviotH = tmpH;
+
+					angleCounter += 1;
+				}
+
+				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
+
+					// float usedHcost = theHeuristic->HCost(env->GetPiviotState(), goal);
+
+					if(fgreatereq(piviotH, heuristicCosts[which])){
+						//
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+
+						//1
+						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 7)));
+						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
+
+						//=XUP, 2, 3
+						float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+						SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+						prevBuckerAngle3 = max(angle, prevBuckerAngle3);
+
+						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
+						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
+						// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
+					}
+					else{ //easy problems: lower weights
+						//1, 3
+						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						prevBuckerAngle2 = max(angle, prevBuckerAngle2);
+
+						//=XDP, 2
+						// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
+						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+
+						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+
+						//
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
 						// prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
@@ -1103,6 +1184,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				// }
 			}
 			else {
+				// To Run BaseLines using DSDWA* for graphic
+				// -> CL code, uses template Astar
 				// last argument will be ignored
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
 			}
@@ -1113,11 +1196,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
 			GetNextWeightRange(minWeight, maxWeight, maxSlope);
 			SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
-			// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 		}
 	}
-
-	// std::cout<<"DID NOT REACH HERE 2\n";
 	
 	// iterate again updating costs and writing out to memory
 	for (size_t x = 0; x < neighbors.size(); x++)
