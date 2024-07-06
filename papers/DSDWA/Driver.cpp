@@ -372,19 +372,22 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		tas_mnp.SetWeight(proveBound);
 
 		if(atoi(argument[2]) == 0){ //WA*
-		tas_mnp.SetPhi([=](double h,double g){return g+proveBound*h;});
+			tas_mnp.SetPhi([=](double h,double g){return g+proveBound*h;});
 		}
 		else if(atoi(argument[2]) == 1){ //PWXD
-		tas_mnp.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
+			tas_mnp.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
 		}
 		else if(atoi(argument[2]) == 2){ //PWXU
-		tas_mnp.SetPhi([=](double h,double g){return (h*(2*proveBound-1)>g)?(g/(2*proveBound-1)+h):(1/proveBound*(g+h));});
+			tas_mnp.SetPhi([=](double h,double g){return (h*(2*proveBound-1)>g)?(g/(2*proveBound-1)+h):(1/proveBound*(g+h));});
 		}
 		else if(atoi(argument[2]) == 3){ //XDP
-		tas_mnp.SetPhi([=](double h,double g){return (g+(2*proveBound-1)*h+sqrt((g-h)*(g-h)+4*proveBound*g*h))/(2*proveBound);});
+			tas_mnp.SetPhi([=](double h,double g){return (g+(2*proveBound-1)*h+sqrt((g-h)*(g-h)+4*proveBound*g*h))/(2*proveBound);});
 		}
 		else if(atoi(argument[2]) == 4){ //XUP
-		tas_mnp.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
+			tas_mnp.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
+		}
+		else if(atoi(argument[3]) == 5){ //A*
+			tas.SetPhi([=](double h,double g){return g+h;});
 		}
 		
 		// printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
@@ -791,7 +794,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			else if(atoi(argument[3]) == 4){ //XUP
 			tas.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
 			}
-
+			else if(atoi(argument[3]) == 5){ //A*
+			tas.SetPhi([=](double h,double g){return g+h;});
+			}
 			tas.InitializeSearch(me, start, goal, solution);
 
 			if(useDH){
