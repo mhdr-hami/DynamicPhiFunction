@@ -15,8 +15,8 @@ plt.rcParams["figure.figsize"] = [7.00, 7.00]
 # weight_to_int = {"1.12":0, "1.25":1, "1.50":2, "2.00":3, '3.00':4, '4.00':5, '5.00':6, '6.00':7, '7.00':8, '8.00':9, '9.00':10, '10.00':11}
 weight_to_int = {"1.50":0, "2.00":1, '3.00':2, '4.00':3, '5.00':4, '6.00':5, '7.00':6, '8.00':7, '9.00':8, '10.00':9}
 
-# int_to_alg = {0:'WA*', 1:'pwXD', 2:'pwXU', 3:'XDP', 4:'XUP', 5:'DSMAP', 6:'MAP'}
-int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DSP'}
+# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'CADP'}
+int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'OBDP'}
 
 cost='5.0'
 mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamond', 3:'Swamped Diamond Cost='+cost, 4:'Obstacle Circle', 5:'Swamped Circle Cost='+cost, 6: sys.argv[5]+" Cost="+sys.argv[8]}
@@ -228,7 +228,10 @@ if sys.argv[1] == '-stp':
             for i in works[policy]:
                 ypoints.append(i)
             ypoints = np.array(ypoints)
-            plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
+            if policy!=5:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy], alpha=0.5)
+            else:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
         
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
@@ -456,7 +459,10 @@ elif sys.argv[1] == '-map':
             for i in works[policy]:
                 ypoints.append(i)
             ypoints = np.array(ypoints)
-            plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[policy]], marker=markers[policy], label=int_to_alg[policy], color=colours[policy])
+            if policy!=5:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy], alpha=0.5)
+            else:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
         
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
