@@ -1063,26 +1063,27 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				float lastW = data.back().weight;
 				assert(angle>=0 && angle<=90);
 
-				float angleJump = 5;
-
+				// float angleJump = 5;
 				//Set the piviot state
-				double tmpH = theHeuristic->HCost(neighbors[which], goal);
-				if(angle>=angleCounter*angleJump){
-					//sets the state to queue, and then piviot to queue 
-					//=> piviot to state
+				// double tmpH = heuristicCosts[which];
+				// if(angle>=angleCounter*angleJump){
+				// 	//sets the state to queue, and then piviot to queue 
+				// 	//=> piviot to state
 
-					env->SetqueuePiviotState(neighbors[which]);
-					env->SetPiviotState();
-					piviotH = tmpH;
+				// 	env->SetqueuePiviotState(neighbors[which]);
+				// 	env->SetPiviotState();
+				// 	piviotH = tmpH;
 
-					angleCounter += 1;
-				}
+				// 	angleCounter += 1;
+				// }
 
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
 
-					if(fgreatereq(piviotH, heuristicCosts[which])){
+					// if(fgreatereq(piviotH, heuristicCosts[which])){
+					if(fgreatereq(openClosedList.Lookup(nodeid).h, heuristicCosts[which])){
 						//
-						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
 
 						//1
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
@@ -1090,14 +1091,9 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
 
 						//=XUP, 2, 3 best
-						// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
-
-						//Squared
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
-						// prevBuckerAngle2 = max(angle, prevBuckerAngle2);
+						float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+						SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+						prevBuckerAngle3 = max(angle, prevBuckerAngle3);
 
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
 						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
@@ -1108,11 +1104,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
 						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
 						prevBuckerAngle2 = max(angle, prevBuckerAngle2);
-
-						//Squared
-						// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
 
 						//=XDP, 2
 						// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
@@ -1126,10 +1117,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 						// prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
 					}
 				}
-				// else{
-				// 	// dummy set weight, as it does not go into data.
-				// 	SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
-				// }
 			}
 			else {
 				// To Run BaseLines using DSDWA* for graphic
