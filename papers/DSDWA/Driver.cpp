@@ -52,7 +52,7 @@ double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
 bool searchRunning = false;
 bool saveSVG = true;
-bool useDH = false;
+bool useDH = true;
 bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
@@ -128,8 +128,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
 
-        // me->SetDiagonalCost(1.41);
-		me->SetDiagonalCost(1.5);
+        me->SetDiagonalCost(1.41);
+		// me->SetDiagonalCost(1.5);
 		dsd.policy = kWA;
 		start = {1,1};
 		goal = {198, 198};
@@ -1639,6 +1639,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
 					}
 				}
+				
 				//Set the start and goal states of the search.
 				do {
 					start.x = random()%me->GetMap()->GetMapWidth();
