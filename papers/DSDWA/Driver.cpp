@@ -128,8 +128,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		// default 8-connected with ROOT_TWO edge costs
 		me = new MapEnvironment(m);
 
-        me->SetDiagonalCost(1.41);
-		// me->SetDiagonalCost(1.5);
+        // me->SetDiagonalCost(1.41);
+		me->SetDiagonalCost(1.5);
 		dsd.policy = kWA;
 		start = {1,1};
 		goal = {198, 198};
@@ -322,6 +322,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		MNPuzzle<4, 4> mnp;
 		MNPuzzleState<4, 4> start = STP::GetKorfInstance(atoi(argument[1]));
 		MNPuzzleState<4, 4> goal;
+		//random.randint(10, int(data[10])//2)
+		// std::vector<int> hardcodedNumbers = {18, 11, 10, 12, 19, 15, 12, 14, 13, 17, 14, 17, 18, 18, 19, 11, 13, 20, 14, 15, 12, 14, 15, 10, 13, 17, 11, 10, 18, 14, 16, 13, 20, 17, 19, 17, 13, 17, 12, 13, 17, 12, 11, 16, 19, 13, 14, 11, 12, 13, 12, 12, 14, 14, 11, 13, 17, 14, 17, 20, 15, 13, 11, 10, 15, 15, 11, 11, 13, 12, 10, 19, 18, 11, 14, 19, 12, 19, 12, 12, 15, 20, 14, 15, 16, 16, 13, 17, 13, 12, 11, 14, 14, 16, 17, 17, 15, 10, 14, 11 };
+		//random.randint(5, int(data[10])-5)
+		// std::vector<int> hardcodedNumbers = {27, 30, 34, 9, 20, 19, 16, 19, 7, 36, 24, 18, 18, 34, 17, 16, 18, 34, 30, 7, 11, 16, 26, 20, 22, 33, 9, 11, 26, 5, 32, 21, 29, 11, 34, 20, 6, 11, 26, 20, 17, 20, 41, 7, 30, 21, 8, 25, 9, 28, 38, 19, 23, 34, 17, 19, 30, 24, 22, 25, 13, 14, 11, 21, 22, 26, 11, 6, 23, 16, 9, 18, 8, 38, 19, 26, 18, 8, 10, 8, 32, 12, 21, 26, 17, 7, 24, 26, 29, 29, 27, 12, 10, 13, 24, 18, 8, 17, 17, 11};
+		//random.randint(10, int(data[10])-10)
+		std::vector<int> hardcodedNumbers = {23, 12, 25, 20, 31, 14, 14, 10, 13, 13, 14, 15, 23, 20, 21, 12, 13, 28, 23, 17, 14, 22, 12, 22, 12, 12, 12, 22, 28, 25, 15, 13, 27, 21, 10, 19, 20, 15, 21, 22, 15, 12, 36, 20, 15, 19, 23, 12, 12, 10, 12, 25, 22, 11, 14, 13, 12, 23, 15, 28, 12, 13, 17, 10, 11, 16, 11, 19, 21, 17, 11, 17, 14, 24, 16, 24, 15, 23, 13, 15, 28, 22, 20, 13, 11, 12, 21, 20, 19, 22, 16, 14, 15, 15, 21, 17, 22, 12, 27, 13 };
+
 
 		dsd_mnp.InitializeSearch(&mnp, start, goal, path);
 
@@ -332,6 +339,59 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 		// Order of calling these functions matters.
 		mnp.SetInputWeight(atof(argument[3])); //0
+
+		// std::cout<<"Heuristic start to goal in alg "<<argument[2]<<" weight "<<argument[3]<<" is "<<mnp.HCost(start, goal)<<"\n";
+
+		if(atoi(argument[4])==1){
+
+			//Run the search once using PWXD to find the solution path, and place the swamp area on that.
+			//The terrainSize is a proportion of the solution length.
+
+			// TemplateAStar<MNPuzzleState<4, 4>, slideDir, MNPuzzle<4, 4>> tas_mnp;
+
+			// double proveBound = atof(argument[3]);
+			// tas_mnp.SetWeight(proveBound);
+
+
+			// mnp.SetPuzzleWeight(0); //to find the plain path.
+
+			// tas_mnp.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
+
+			// tas_mnp.InitializeSearch(&mnp, start, goal, path);
+
+			// tas_mnp.GetPath(&mnp, start, goal, path);
+
+			// if(hardcodedNumbers[atoi(argument[1])] >= path.size())
+			// 	{mnp.SetTerrainSize(10);
+			// 	std::cout<<"SetTerrainSize is: "<<10<<"\n";}
+			// else
+			// 	{mnp.SetTerrainSize(hardcodedNumbers[atoi(argument[1])]);
+			// 	std::cout<<"SetTerrainSize is: "<<hardcodedNumbers[atoi(argument[1])]<<"\n";}
+			mnp.SetMiddleState(start);
+			mnp.SetTerrainSize(hardcodedNumbers[atoi(argument[1])]);
+			// std::cout<<"SetTerrainSize is: "<<hardcodedNumbers[atoi(argument[1])]<<"\n";
+
+			// mnp.SetTerrainSize(int(30/100*path.size()));
+
+			// if(path.size()){
+			// 	// randomIndex = random()%path.size();
+			// 	// mnp.SetMiddleState(path[randomIndex]);
+
+			// 	if(hardcodedNumbers[atoi(argument[1])] >= path.size())
+			// 		mnp.SetMiddleState(path[10]);
+			// 	else
+			// 		mnp.SetMiddleState(path[hardcodedNumbers[atoi(argument[1])]]);
+
+			// 	// std::cout<<"Swamped Region Created\n";
+			// 	std::cout<<"Path size is: "<<path.size()<<"\n";
+			// 	std::cout<<"Middle State at index "<<hardcodedNumbers[atoi(argument[1])]<<" is:\n";
+			// 	// mnp.PrintState(path[randomIndex]);
+			// }
+			// else{
+			// 	std::cout<<"WTFFFFFF???? \n";
+			// 	mnp.SetMiddleState(start);
+			// }
+		}
 
 		mnp.SetPuzzleWeight(atoi(argument[4])); //1
 		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
@@ -367,9 +427,75 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		MNPuzzle<4, 4> mnp;
 		MNPuzzleState<4, 4> start = STP::GetKorfInstance(atoi(argument[1]));
 		MNPuzzleState<4, 4> goal;
+		//random.randint(10, int(data[10])//2)
+		// std::vector<int> hardcodedNumbers = {18, 11, 10, 12, 19, 15, 12, 14, 13, 17, 14, 17, 18, 18, 19, 11, 13, 20, 14, 15, 12, 14, 15, 10, 13, 17, 11, 10, 18, 14, 16, 13, 20, 17, 19, 17, 13, 17, 12, 13, 17, 12, 11, 16, 19, 13, 14, 11, 12, 13, 12, 12, 14, 14, 11, 13, 17, 14, 17, 20, 15, 13, 11, 10, 15, 15, 11, 11, 13, 12, 10, 19, 18, 11, 14, 19, 12, 19, 12, 12, 15, 20, 14, 15, 16, 16, 13, 17, 13, 12, 11, 14, 14, 16, 17, 17, 15, 10, 14, 11 };
+		//random.randint(5, int(data[10])-5)
+		// std::vector<int> hardcodedNumbers = {27, 30, 34, 9, 20, 19, 16, 19, 7, 36, 24, 18, 18, 34, 17, 16, 18, 34, 30, 7, 11, 16, 26, 20, 22, 33, 9, 11, 26, 5, 32, 21, 29, 11, 34, 20, 6, 11, 26, 20, 17, 20, 41, 7, 30, 21, 8, 25, 9, 28, 38, 19, 23, 34, 17, 19, 30, 24, 22, 25, 13, 14, 11, 21, 22, 26, 11, 6, 23, 16, 9, 18, 8, 38, 19, 26, 18, 8, 10, 8, 32, 12, 21, 26, 17, 7, 24, 26, 29, 29, 27, 12, 10, 13, 24, 18, 8, 17, 17, 11};
+		//random.randint(10, int(data[10])-10)
+		std::vector<int> hardcodedNumbers = {23, 12, 25, 20, 31, 14, 14, 10, 13, 13, 14, 15, 23, 20, 21, 12, 13, 28, 23, 17, 14, 22, 12, 22, 12, 12, 12, 22, 28, 25, 15, 13, 27, 21, 10, 19, 20, 15, 21, 22, 15, 12, 36, 20, 15, 19, 23, 12, 12, 10, 12, 25, 22, 11, 14, 13, 12, 23, 15, 28, 12, 13, 17, 10, 11, 16, 11, 19, 21, 17, 11, 17, 14, 24, 16, 24, 15, 23, 13, 15, 28, 22, 20, 13, 11, 12, 21, 20, 19, 22, 16, 14, 15, 15, 21, 17, 22, 12, 27, 13 };
+
 
 		double proveBound = atof(argument[3]);
 		tas_mnp.SetWeight(proveBound);
+
+		// printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
+
+		// Order of calling these functions matters.
+		mnp.SetInputWeight(atof(argument[3])); //0
+
+		if(atoi(argument[4])==1){
+			//Run the search once using PWXD to find the solution path, and place the swamp area on that.
+			//The terrainSize is a proportion of the solution length.
+
+			// tas_mnp.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
+
+			// mnp.SetPuzzleWeight(0); //to find the plain path.
+
+			// tas_mnp.InitializeSearch(&mnp, start, goal, path);
+
+			// tas_mnp.GetPath(&mnp, start, goal, path);
+
+			// if(hardcodedNumbers[atoi(argument[1])] >= path.size())
+			// 	{mnp.SetTerrainSize(10);
+			// 	std::cout<<"SetTerrainSize is: "<<10<<"\n";}
+			// else
+			// 	{mnp.SetTerrainSize(hardcodedNumbers[atoi(argument[1])]);
+			// 	std::cout<<"SetTerrainSize is: "<<hardcodedNumbers[atoi(argument[1])]<<"\n";}
+
+			mnp.SetMiddleState(start);
+			mnp.SetTerrainSize(hardcodedNumbers[atoi(argument[1])]);
+			// mnp.SetTerrainSize(hardcodedNumbers[atoi(argument[1])]);
+			// std::cout<<"SetTerrainSize is: "<<hardcodedNumbers[atoi(argument[1])]<<"\n";
+			
+
+			// mnp.SetTerrainSize(int(30/100*path.size()));
+
+			// if(path.size()){
+			// 	// randomIndex = random()%path.size();
+			// 	// mnp.SetMiddleState(path[randomIndex]);
+			// 	if(hardcodedNumbers[atoi(argument[1])] >= path.size())
+			// 		mnp.SetMiddleState(path[10]);
+			// 	else
+			// 		mnp.SetMiddleState(path[hardcodedNumbers[atoi(argument[1])]]);
+
+			// 	// std::cout<<"Swamped Region Created\n";
+			// 	std::cout<<"Path size is: "<<path.size()<<"\n";
+			// 	std::cout<<"Middle State at index "<<hardcodedNumbers[atoi(argument[1])]<<" is:\n";
+			// 	// mnp.PrintState(path[randomIndex]);
+			// }
+			// else{
+			// 	std::cout<<"WTFFFFFF???? \n";
+			// 	mnp.SetMiddleState(start);
+			// }
+		}
+		
+		mnp.SetPuzzleWeight(atoi(argument[4])); //1
+		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
+		// case 3:Squared, case 4:UnitPlusFrac, case 5:SquarePlusOneRoot
+
+		mnp.SetMaxMinTileCost(start); //2
+		
+		mnp.SetNormalizedCost(false); //3
 
 		if(atoi(argument[2]) == 0){ //WA*
 			tas_mnp.SetPhi([=](double h,double g){return g+proveBound*h;});
@@ -390,19 +516,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			tas.SetPhi([=](double h,double g){return g+h;});
 		}
 		
-		// printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[3]));
-
-		// Order of calling these functions matters.
-		mnp.SetInputWeight(atof(argument[3])); //0
-
-		mnp.SetPuzzleWeight(atoi(argument[4])); //1
-		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
-		// case 3:Squared, case 4:UnitPlusFrac, case 5:SquarePlusOneRoot
-
-		mnp.SetMaxMinTileCost(start); //2
-		
-		mnp.SetNormalizedCost(false); //3
-
 		tas_mnp.InitializeSearch(&mnp, start, goal, path);
 
 		tas_mnp.GetPath(&mnp, start, goal, path);
@@ -1527,24 +1640,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					}
 				}
 				//Set the start and goal states of the search.
-				// start.x = random()%me->GetMap()->GetMapWidth();
-				// start.y = random()%me->GetMap()->GetMapHeight();
-				// while (me->GetMap()->GetTerrainType(start.x, start.y) != kGround){
-				// 	start.x = (start.x+1) %me->GetMap()->GetMapWidth();
-				// 	start.y = (start.y+1)%me->GetMap()->GetMapHeight();
-				// }
-				// goal.x = random()%me->GetMap()->GetMapWidth();
-				// goal.y = random()%me->GetMap()->GetMapHeight();
-				// while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround  || solution.size()==0){
-				// 	goal.x = (goal.x+5) %me->GetMap()->GetMapWidth();
-				// 	goal.y = (goal.y+5)%me->GetMap()->GetMapHeight();
-				// 	prevPolicy = dsd.policy;
-				// 	dsd.policy = kpwXD;
-				// 	dsd.InitializeSearch(me, start, goal, solution);
-				// 	dsd.GetPath(me, start, goal, solution);
-				// 	dsd.policy = prevPolicy;
-				// }
-
 				do {
 					start.x = random()%me->GetMap()->GetMapWidth();
 					start.y = random()%me->GetMap()->GetMapHeight();
@@ -1553,9 +1648,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					goal.x = random()%me->GetMap()->GetMapWidth();
 					goal.y = random()%me->GetMap()->GetMapHeight();
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
-
-				me->SetInputWeight(bound);
-				std::cout<<"solution.size "<<solution.size()<<"\n";
 
 				//Change one or more squares of ground states to swamp type.
 				if(exper==0){
@@ -1845,6 +1937,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
 					}
 				}
+				
 				problemNumber +=1;
 				printf("==============\n");
 				printf("Problem: %d\n", problemNumber);

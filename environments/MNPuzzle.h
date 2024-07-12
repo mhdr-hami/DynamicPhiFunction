@@ -27,7 +27,8 @@ enum puzzleWeight {
 	kSquared,
 	kSquareRoot,
 	kSquarePlusOneRoot,
-	kUnitPlusFrac
+	kUnitPlusFrac,
+	kDWSTP
 };
 
 template <int width, int height>
@@ -195,7 +196,6 @@ public:
 	void OpenGLDraw(const MNPuzzleState<width, height> &, const slideDir &) const { /* currently not drawing moves */ }
 	void Draw(Graphics::Display &display, const MNPuzzleState<width, height>&) const;
 	void Draw(Graphics::Display &display, const MNPuzzleState<width, height> &l1, const MNPuzzleState<width, height> &l2, float v) const;
-
 	
 	void StoreGoal(MNPuzzleState<width, height> &); // stores the locations for the given goal state
 
@@ -696,6 +696,9 @@ void MNPuzzle<width, height>::SetPuzzleWeight(int puzzleW){
 		break;
 	case 5:
 		weight = kSquarePlusOneRoot;
+		break;
+	case 6:
+		weight = kDWSTP;
 		break;
 	
 	default:
@@ -1279,6 +1282,7 @@ double MNPuzzle<width, height>::HCost(const MNPuzzleState<width, height> &state1
 						{
 							case kSwampedMode:man_dist += absDist; break;
 							case kUnitWeight: man_dist += absDist; break;
+							case kDWSTP: man_dist += absDist; break;
 							case kUnitPlusFrac: man_dist += absDist*(1.0+1.0/(1.0+movingTile)); break;
 							case kSquared: man_dist += absDist*(movingTile)*(movingTile); break;
 							case kSquareRoot: man_dist += absDist*sqrt(movingTile); break;
@@ -1390,18 +1394,23 @@ double MNPuzzle<width, height>::GCost(const MNPuzzleState<width, height> &a, con
 		{
 			case kSwampedMode:
 			{
-				//1 random locations weighted
-				if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 1.5*inputWeight-0.5;
-				// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) return 1.5*inputWeight-0.5;
-				// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) return 1.5*inputWeight-0.5;
-				// if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) return 1.5*inputWeight-0.5;
-				// if(b.blank==0 || b.blank==1) return 1.5*inputWeight-0.5;
-				else return 1;
-				//2 middleState involved
-				// if(flesseq(HCost(b, middleState), swampedTerrainSize)) return 1.5*inputWeight-0.5;
-				// else return 1.0;
+				double tmpH = HCost(middleState, b);
+				// std::cout<<tmpH<<"\n";
+				if(flesseq(tmpH, swampedTerrainSize+5) && fgreatereq(tmpH, swampedTerrainSize-5)){
+					return 2.0*inputWeight-1.0;
+				} 
+				else{
+					return 1.0;
+				}
 			}
 			case kUnitWeight: return 1.0;
+			case kDWSTP: 
+			{
+				int tileLoc = a.puzzle[b.blank];
+				if(tileLoc==1 || tileLoc==2) return 1.5*inputWeight-0.5;
+				// if(tileLoc==5 || tileLoc==6) return 8;
+				else return 1;
+			}
 			case kUnitPlusFrac: return (1.0+1.0/(1.0+a.puzzle[b.blank])); 
 			case kSquared: return a.puzzle[b.blank]*a.puzzle[b.blank];
 			case kSquareRoot: return sqrt(a.puzzle[b.blank]); 
