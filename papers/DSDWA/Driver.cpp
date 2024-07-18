@@ -22,9 +22,8 @@
 #include <ctime>
 #include <cmath>
 #include "GridHeuristics.h"
-// #include <filesystem>
-// #include <iostream>
-// namespace fs = std::filesystem;
+#include "MNPuzzle.h"
+#include "STPInstances.h"
 
 int stepsPerFrame = 1;
 float bound = 3;
@@ -53,6 +52,8 @@ bool showPlane = false;
 bool searchRunning = false;
 bool saveSVG = true;
 bool useDH = true;
+bool limitScenarios = true;
+int numLimitedScenarios = 3000, lowerLimit=50, upperLimit=2000;
 bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
@@ -309,8 +310,6 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 	}
 }
 
-#include "MNPuzzle.h"
-#include "STPInstances.h"
 int MyCLHandler(char *argument[], int maxNumArgs)
 {
 	if (strcmp(argument[0], "-stp") == 0)
@@ -531,6 +530,14 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		me = new MapEnvironment(new Map(argument[1]));
 		exper = atoi(argument[7]);
 
+		//Set the heuristic
+		if(useDH){
+			dh = new GridEmbedding(me, 10, kLINF);
+			for (int x = 0; x < 10; x++)
+				dh->AddDimension(kDifferential, kFurthest);
+			tas.SetHeuristic(dh);
+		}
+
 		// me->SetDiagonalCost(1.5);
 		me->SetDiagonalCost(1.41);
 		swampedloc = {1,1};
@@ -539,16 +546,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		swampedloc4 = {1,1};
 
 		ScenarioLoader sl(argument[2]);
-
-		if(useDH){
-			dh = new GridEmbedding(me, 10, kLINF);
-			for (int x = 0; x < 10; x++)
-				dh->AddDimension(kDifferential, kFurthest);
-			dsd.SetHeuristic(dh);
-		}
+		int approvedScenaios = 0;
 		
 		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
+			// Experiment exp = sl.GetNthExperiment(x);
+			// if(exp.GetDistance()<30) continue;
+			if(approvedScenaios >= numLimitedScenarios && limitScenarios) break;
+			Experiment exp = sl.GetNthExperiment(x);
+			if(limitScenarios && (exp.GetDistance()<lowerLimit || exp.GetDistance()>upperLimit)) continue;
+			else approvedScenaios ++;
 			
 			//Reset the last problem's swamped states.
 			if(exper==4){
@@ -589,9 +596,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 			}
-
-			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<30) continue;
 
 			//Set the start and goal states, weight and policy of the search. 
 			start.x = exp.GetStartX();
@@ -910,14 +914,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			else if(atoi(argument[3]) == 5){ //A*
 			tas.SetPhi([=](double h,double g){return g+h;});
 			}
+			
 			tas.InitializeSearch(me, start, goal, solution);
-
-			if(useDH){
-				dh = new GridEmbedding(me, 10, kLINF);
-				for (int x = 0; x < 10; x++)
-					dh->AddDimension(kDifferential, kFurthest);
-				dsd.SetHeuristic(dh);
-			}
 
 			tas.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), me->GetPathLength(solution));
@@ -935,6 +933,14 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		me = new MapEnvironment(new Map(argument[1]));
 		exper = atoi(argument[7]);
 
+		//Set the heuristic
+		if(useDH){
+			dh = new GridEmbedding(me, 10, kLINF);
+			for (int x = 0; x < 10; x++)
+				dh->AddDimension(kDifferential, kFurthest);
+			dsd.SetHeuristic(dh);
+		}
+
 		// me->SetDiagonalCost(1.5);
 		me->SetDiagonalCost(1.41);
 		swampedloc = {1,1};
@@ -943,9 +949,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		swampedloc4 = {1,1};
 
 		ScenarioLoader sl(argument[2]);
+		int approvedScenaios = 0;
 		
 		for (int x = 0; x < sl.GetNumExperiments(); x++)
 		{
+			// Experiment exp = sl.GetNthExperiment(x);
+			// if(exp.GetDistance()<30) continue;
+			if(approvedScenaios >= numLimitedScenarios && limitScenarios) break;
+			Experiment exp = sl.GetNthExperiment(x);
+			if(limitScenarios && (exp.GetDistance()<lowerLimit || exp.GetDistance()>upperLimit)) continue;
+			else approvedScenaios ++;
 
 			//Reset the last problem's swamped states.
 			if(exper==4){
@@ -986,9 +999,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 			}
-
-			Experiment exp = sl.GetNthExperiment(x);
-			if(exp.GetDistance()<30) continue;
 
 			//Set the start and goal states, weight and policy of the search. 
 			start.x = exp.GetStartX();
@@ -1291,13 +1301,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			}
 			
 			dsd.InitializeSearch(me, start, goal, solution);
-
-			if(useDH){
-				dh = new GridEmbedding(me, 10, kLINF);
-				for (int x = 0; x < 10; x++)
-					dh->AddDimension(kDifferential, kFurthest);
-				dsd.SetHeuristic(dh);
-			}
 			
 			dsd.GetPath(me, start, goal, solution);
 			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
