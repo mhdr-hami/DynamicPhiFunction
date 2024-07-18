@@ -52,7 +52,7 @@ bool showPlane = false;
 bool searchRunning = false;
 bool saveSVG = true;
 bool useDH = true;
-bool limitScenarios = true;
+bool limitScenarios = false;
 int numLimitedScenarios = 3000, lowerLimit=50, upperLimit=2000;
 bool flag = false;
 bool showExtraLog = false;
