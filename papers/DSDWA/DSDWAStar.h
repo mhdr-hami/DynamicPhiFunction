@@ -19,7 +19,7 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	OBDP=65,
+	OBDP=55,
 	CADP=5,
 	kDSMAP11=55,
 	kMAP=6,
@@ -1021,54 +1021,56 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			}
 			else if (policy == OBDP)
 			{
-				float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-				float lastW = data.back().weight;
 				assert(angle>=0 && angle<=90);
-
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
-
 					if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
 
-						globalMaxH = openClosedList.Lookup(nodeid).h;
-						//
-						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-						prevBuckerAngle3 = max(angle, prevBuckerAngle3);
+						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
 
-						//1
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
-						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 7)));
+						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+						SetNextPriority(maxSlopeH, maxSlopeG, nextF);
 						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
-
-						//=XUP, 2, 3 best
-						// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
-
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
-						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
-						// prevBuckerAngle3 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle3);
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
-						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
-						prevBuckerAngle2 = max(angle, prevBuckerAngle2);
-
-						//=XDP, 2
-						// float nextF = (maxSlopeG+(2*weight-1)*maxSlopeH+sqrt((maxSlopeG-maxSlopeH)*(maxSlopeG-maxSlopeH)+4*weight*maxSlopeG*maxSlopeH))/(2*weight);
-						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-
-						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
-
-						//
+						SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
 						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), normalizeWeight)));
-						// prevBuckerAngle2 = max(atan2f(maxSlopeG,maxSlopeH)/PID180, prevBuckerAngle2);
+						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
+						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
+						// prevBuckerAngle2 = max(angle, prevBuckerAngle2);
 					}
+					globalMaxH = openClosedList.Lookup(nodeid).h;
 				}
 			}
+			// else if (policy == OBDP)
+			// {
+			// 	float minWeight, maxWeight;
+			// 	GetNextWeightRange(minWeight, maxWeight, maxSlope);
+			// 	float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+			// 	assert(angle>=0 && angle<=90);
+			// 	if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
+			// 		if(fgreatereq(openClosedList.Lookup(nodeid).h, heuristicCosts[which])){
+			// 			//=XUP, 2, 3 best
+			// 			float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+			// 			SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+			// 			prevBuckerAngle3 = max(angle, prevBuckerAngle3);
+			// 		}
+			// 		else{ //easy problems: lower weights
+			// 			//1, 3 best
+			// 			float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+			// 			SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+			// 			prevBuckerAngle2 = max(angle, prevBuckerAngle2);
+			// 		}
+			// 	}
+			// }
 			else {
 				// To Run BaseLines using DSDWA* for graphic
 				// -> CL code, uses template Astar
@@ -1147,8 +1149,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 		}
 	}
 
-	// std::cout<<"DID NOT REACH HERE\n";
-		
 	return false;
 }
 
