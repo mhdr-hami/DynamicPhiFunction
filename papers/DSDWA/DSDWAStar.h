@@ -19,8 +19,8 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	OBDP=55,
-	CADP=5,
+	OBDP=5,
+	CADP=65,
 	kDSMAP11=55,
 	kMAP=6,
 	kHalfEdgeDrop=8,
@@ -1028,26 +1028,14 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
 					if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
 
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
-
-						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle2);
-						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
 						float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
 						SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-						// prevBuckerAngle3 = max(angle, prevBuckerAngle3);
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
 						SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
-						// float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						// SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
-						// prevBuckerAngle2 = max(angle, prevBuckerAngle2);
 					}
-					globalMaxH = openClosedList.Lookup(nodeid).h;
+				globalMaxH = openClosedList.Lookup(nodeid).h;
 				}
 			}
 			// else if (policy == OBDP)
