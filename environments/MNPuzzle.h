@@ -719,18 +719,6 @@ double MNPuzzle<width, height>::NormalizeTileCost(const MNPuzzleState<width, hei
 	{
 		case kSwampedMode: //Does not apply here
 		{
-			//1 random locations weighted
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==0 || b.blank==1) puzzleCost = 1.5*inputWeight-0.5;
-			// else puzzleCost=1;
-			
-			//2 middleState involved
-			// if(flesseq(HCost(b, middleState), swampedTerrainSize)) puzzleCost = 1.5*inputWeight-0.5);
-			// else puzzleCost = 1.5*inputWeight-0.5;
-
 			break;
 		}
 		case kUnitWeight: puzzleCost=1.0; break;
@@ -757,18 +745,6 @@ double MNPuzzle<width, height>::NormalizeTileCost(double c, double maxWeight, do
 	{
 		case kSwampedMode: //Does not apply here
 		{
-			//1 random locations weighted
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==5 || b.blank==6 || b.blank==9 || b.blank==10) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==10 || b.blank==11 || b.blank==14 || b.blank==15) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==0 || b.blank==1 || b.blank==4 || b.blank==5) puzzleCost = 1.5*inputWeight-0.5;
-			// if(b.blank==0 || b.blank==1) puzzleCost = 1.5*inputWeight-0.5;
-			// else puzzleCost=1;
-			
-			//2 middleState involved
-			// if(flesseq(HCost(b, middleState), swampedTerrainSize)) puzzleCost = 1.5*inputWeight-0.5);
-			// else puzzleCost = 1.5*inputWeight-0.5;
-
 			break;
 		}
 		case kUnitWeight: puzzleCost=1.0; break;

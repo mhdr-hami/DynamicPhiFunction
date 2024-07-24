@@ -182,10 +182,10 @@ void DynamicPotentialSearch<state,action,environment>::GetPath(environment *_env
 				break;
 		}
 		// std::cout<<"it is working 5555555555555555555"<<std::endl;
-		// if (nodesExpanded %10000 == 0)
-		// {
-		// 	std::cout<<"it is working "<<nodesExpanded<<std::endl;
-		// }
+		if (nodesExpanded %10000 == 0)
+		{
+			std::cout<<"it is working "<<nodesExpanded<<std::endl;
+		}
 	}
 	// while (!DoSingleSearchStep(thePath))
 	// { }
@@ -304,8 +304,6 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 		if (i.open == true && fless(i.g+i.h, fmin))
 			fmin = i.g+i.h;
 	}
-
-	// std::cout<<"test 1"<<std::endl;
 	
 	// get best priority
 	double bestP = 0;
@@ -332,8 +330,6 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 		return true;
 	}
 
-	// std::cout<<"test 2"<<std::endl;
-
 //	std::cout << "Expanding " << next->data << " with priority " << bestP << "\n";
 	next->open = false;
 	
@@ -343,8 +339,6 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 		ExtractPathToStart(next->data, thePath);
 		return true;
 	}
-
-	// std::cout<<"test 3"<<std::endl;
 	
 	env->GetSuccessors(next->data, neighbors);
 
@@ -375,7 +369,6 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 		}
 	}
 
-	// std::cout<<"test 4"<<std::endl;
 	return false;
 }
 
