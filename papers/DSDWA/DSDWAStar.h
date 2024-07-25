@@ -21,14 +21,15 @@ enum tExpansionPriority {
 	kXUP=4,
 	OBDP=5,
 	CADP=65,
+	ECBP=95,
 	kDSMAP11=55,
 	kMAP=6,
-	kHalfEdgeDrop=8,
+	kHalfEdgeDrop=95,
 	kDSMAP8=38,
 	kDSMAP7=18,
 	kDSMAP=28,
 	kGreedy=10,
-	kFullEdgeDrop=41,
+	kFullEdgeDrop=85,
 	kDSMAP6=51,
 	kPathSuboptDouble=70,
 	kXDP90=7,
@@ -1033,45 +1034,30 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
 					}
-				globalMaxH = openClosedList.Lookup(nodeid).h;
+					globalMaxH = openClosedList.Lookup(nodeid).h;
 				}
 			}
-			// else if (policy == OBDP)
-			// {
-			// 	float minWeight, maxWeight;
-			// 	GetNextWeightRange(minWeight, maxWeight, maxSlope);
-			// 	float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-			// 	assert(angle>=0 && angle<=90);
-			// 	if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
-			// 		if(fgreatereq(openClosedList.Lookup(nodeid).h, heuristicCosts[which])){
-			// 			//=XUP, 2, 3 best
-			// 			float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-			// 			SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-			// 			prevBuckerAngle3 = max(angle, prevBuckerAngle3);
-			// 		}
-			// 		else{ //easy problems: lower weights
-			// 			//1, 3 best
-			// 			float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-			// 			SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
-			// 			prevBuckerAngle2 = max(angle, prevBuckerAngle2);
-			// 		}
-			// 	}
-			// }
-			else {
-				// To Run BaseLines using DSDWA* for graphic
+			else {// To Run BaseLines using DSDWA* for graphic
 				// -> CL code, uses template Astar
 				// last argument will be ignored
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
 			}
 		}
 		else {
+			// Expansion of the start state. open is empty.
+
 			// Unsure if this is the right setting - can use lowest possible weight
 			// or perhaps use same weight as parent?
-			float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
+			float minWeight, maxWeight;
 			GetNextWeightRange(minWeight, maxWeight, maxSlope);
-			SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+
+			if (policy == OBDP || policy == CADP)
+				SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+			else 
+				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
 		}
 	}
 	
