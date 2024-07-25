@@ -303,7 +303,6 @@ RacetrackMove Racetrack::GetAction(const RacetrackState &s1, RacetrackState &s2)
 /*
  * The goal is implicit: We reach the goal if we have reached kEndTerrain.
  * So, we ignore the speicfic goal state
- * ------------------>>>>> Added checking the location of the goal to the test.
  */
 bool Racetrack::GoalTest(const RacetrackState &node, const RacetrackState &goal) const
 {
@@ -314,9 +313,6 @@ bool Racetrack::GoalTest(const RacetrackState &node, const RacetrackState &goal)
 		return true;
 	}
 	return false;
-
-	// Use the node to see if the location matches the goal location
-	// return ((node.xLoc == goal.xLoc) && (node.yLoc == goal.yLoc));
 }
 
 // --- The legal function, which checks whether an action is legal --- //
@@ -351,6 +347,8 @@ bool Racetrack::Legal(const RacetrackState &node1, RacetrackMove &act) const
 	Graphics::point s(node1.xLoc, node1.yLoc);
 	Graphics::point g(node2.xLoc, node2.yLoc);
 
+	auto currTerrain = map->GetTerrainType(node1.xLoc, node1.yLoc);
+
 	// We only have to be consistent with ourselves, so we do a simple
 	// line sweep and check 5 points on each sweep location
 	int numSegments = static_cast<int>(2*ceilf((g-s).length()));
@@ -371,7 +369,9 @@ bool Racetrack::Legal(const RacetrackState &node1, RacetrackMove &act) const
 				return false;
 
 			auto terrain = map->GetTerrainType(xNext, yNext);
-			if (terrain == kObstacle)
+			// if (terrain == kObstacle)
+			// 	return false;
+			if (!CanPass(currTerrain, terrain))
 				return false;
 			if (terrain == kEndTerrain)
 			{

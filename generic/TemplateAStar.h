@@ -335,7 +335,6 @@ void TemplateAStar<state,action,environment,openList>::ExtendGoal(environment *_
 	}
 }
 
-
 /**
  * Initialize the A* search
  * @author Nathan Sturtevant	
