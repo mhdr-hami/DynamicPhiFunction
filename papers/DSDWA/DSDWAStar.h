@@ -1029,8 +1029,9 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
 					if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
 
-						float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-						SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+						// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
