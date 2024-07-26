@@ -26,7 +26,7 @@
 #include "STPInstances.h"
 
 int stepsPerFrame = 1;
-float bound = 10;
+float bound = 4;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -46,7 +46,7 @@ std::vector<RacetrackState> path;
 Racetrack *r = 0;
 RacetrackState from;
 RacetrackState end;
-int numExtendedGoals = 100;
+int numExtendedGoals = 300;
 int exper=8;
 float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, tsx4=10, tsy4=10;
 double Tcosts[4], rdm, hardness[4];
@@ -55,7 +55,7 @@ bool searchRunning = false;
 bool saveSVG = true;
 bool useDH = false;
 bool limitScenarios = false, normalizedSTP= false;
-int numLimitedScenarios = 3000, lowerLimit=50, upperLimit=2000, numScenario;
+int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2000, numScenario=124;
 bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
@@ -66,10 +66,12 @@ GridEmbedding *dh;
 
 // 1=random room map, 2=random map, 3=random maze, 4=designed map, 5=Load map, 6=Load RaceTrack
 std::string mapcmd = "6";
-std::string mapload = "mazes/maze512-32-6";
+// std::string mapload = "mazes/maze512-32-6";
 // std::string mapload = "dao/ost003d";
-// std::string mapload = "dao/den520d";
-// std::string mapload = "dao/arena";
+// std::string mapload = "dao/orz000d";
+//std::string mapload = "dao/den520d";
+ std::string mapload = "dao/arena";
+// std::string mapload = "da2/ca_caverns1";
 
 int main(int argc, char* argv[])
 {
@@ -156,7 +158,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 			std::string tmpscenload = "./Users/mohammadrezahami/Documents/University/Project/hog2-PDB-refactor/DynamicPhiFunction/scenarios/"+ mapload + ".map.scen";
 			std::string tmpmapload = "./Users/mohammadrezahami/Documents/University/Project/hog2-PDB-refactor/DynamicPhiFunction/maps/"+ mapload + ".map";
 			sl = new ScenarioLoader (tmpscenload.c_str());
-			numScenario = sl->GetNumExperiments()/2;
+			// numScenario = 0;
 			m = new Map(tmpmapload.c_str());
 			me = new MapEnvironment(m);
 			r = new Racetrack(m);
@@ -278,6 +280,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		else if(mapcmd == "6"){
 			numScenario += 1;
 			Experiment exp = sl->GetNthExperiment(numScenario);
+			std::cout<<"Path Length is "<<exp.GetDistance()<<"\n";
+			if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
 			//Set the start and goal states, weight and policy of the search. 
 			from.xLoc = exp.GetStartX();
@@ -1464,13 +1468,16 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// ScenarioLoader sl(argument[2]);
 		sl = new ScenarioLoader(argument[2]);
 		int approvedScenaios = 0, x=0;
+		// numLimitedScenarios = max(sl->GetNumExperiments(), numLimitedScenarios);
 		
-		while (approvedScenaios < 100 && x < sl->GetNumExperiments())
+		while (approvedScenaios < numLimitedScenarios && x < sl->GetNumExperiments())
 		{
 			Experiment exp = sl->GetNthExperiment(x);
-			x++;
-			if(exp.GetDistance()<50 || exp.GetDistance()>100) continue;
+			x+=sl->GetNumExperiments()/1000+1;
+			// std::cout<<"experiment "<<x<<"\n";
+			if(exp.GetDistance()<lowerLimit || exp.GetDistance()>upperLimit) continue;
 			else approvedScenaios ++;
+			// approvedScenaios ++;
 
 			//Reset the previous start and goal
 			m->SetTerrainType(from.xLoc, from.yLoc, kGround);
@@ -1495,6 +1502,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			//Set the start and goal TerrainType.
 			numExtendedGoals = atoi(argument[5]);
+			if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 			m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
 			if(numExtendedGoals == 0){//Not extend the goal.
 				m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
@@ -1548,12 +1556,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// ScenarioLoader sl(argument[2]);
 		sl = new ScenarioLoader(argument[2]);
 		int approvedScenaios = 0, x=0;
+		// numLimitedScenarios = max(sl->GetNumExperiments(), numLimitedScenarios);
 		
-		while (approvedScenaios < 100 && x < sl->GetNumExperiments())
+		while (approvedScenaios < numLimitedScenarios && x < sl->GetNumExperiments())
 		{
 			Experiment exp = sl->GetNthExperiment(x);
-			x++;
-			if(exp.GetDistance()<50 || exp.GetDistance()>100) continue;
+			x+=sl->GetNumExperiments()/1000+1;
+			if(exp.GetDistance()<lowerLimit || exp.GetDistance()>upperLimit) continue;
 			else approvedScenaios ++;
 
 			//Reset the previous start and goal
@@ -1581,6 +1590,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			//Set the start and goal TerrainType.
 			numExtendedGoals = atoi(argument[5]);
+			if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 			m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
 			if(numExtendedGoals == 0){//Not extend the goal.
 				m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
@@ -2301,8 +2311,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(mapcmd == "6"){
 				//Racetrack
-				numScenario += 1;
+				numScenario += sl->GetNumExperiments()/20+1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
+				std::cout<<"Path Length is "<<exp.GetDistance()<<"\n";
+				if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
 				//Reset the previous start and goal
 				m->SetTerrainType(from.xLoc, from.yLoc, kGround);
@@ -2327,7 +2339,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				
 				//Set the start and goal TerrainType.
 				m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
-				
 				if(numExtendedGoals == 0){//Not extend the goal.
 					m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
 				}
@@ -2391,6 +2402,8 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				//Racetrack
 				numScenario -= 1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
+				std::cout<<"Path Length is "<<exp.GetDistance()<<"\n";
+				if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
 				//Reset the previous start and goal
 				m->SetTerrainType(from.xLoc, from.yLoc, kGround);
@@ -2415,7 +2428,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				
 				//Set the start and goal TerrainType.
 				m->SetTerrainType(from.xLoc, from.yLoc, kStartTerrain);
-				
 				if(numExtendedGoals == 0){//Not extend the goal.
 					m->SetTerrainType(end.xLoc, end.yLoc, kEndTerrain);
 				}
@@ -2428,6 +2440,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						m->SetTerrainType(theList[tNode].x, theList[tNode].y, kEndTerrain);
 					}
 				}
+				
 				r->UpdateMap(m);
 			}
 
