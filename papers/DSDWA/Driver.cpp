@@ -55,7 +55,7 @@ bool searchRunning = false;
 bool saveSVG = true;
 bool useDH = false;
 bool limitScenarios = false, normalizedSTP= false;
-int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2000, numScenario=124;
+int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=124;
 bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
@@ -97,15 +97,14 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Swamped Problems", "Increment swamped problem", kAnyModifier, 's');
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
-	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp problem alg weight puzzleW", "Test STP <problem> <algorithm> <weight> <puzzleW>");
-	InstallCommandLineHandler(MyCLHandler, "-stpBLs", "-stp problem alg weight puzzleW", "Test STP <problem> <algorithm> <weight> <puzzleW>");
-	InstallCommandLineHandler(MyCLHandler, "-exp0", "-map <map> alg weight TerrainSize mapType", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
-	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-map <map> <scenario> alg weight TerrainSize SwampHardness Experiment", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
-	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-map <map> <scenario> alg weight TerrainSize SwampHardness Experiment", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
-	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-map <map> <scenario> alg weight numExtendedGoals", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
-	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-map <map> <scenario> alg weight numExtendedGoals", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
-	InstallCommandLineHandler(MyCLHandler, "-pwxds", "-map <map> <scenario> alg weight TerrainSize SwampHardness", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> and <SwampHardness>");
-	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar problem alg weight", "Test STP <problem> <algorithm> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
+	InstallCommandLineHandler(MyCLHandler, "-stpBLs", "-stpBLs <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
+	InstallCommandLineHandler(MyCLHandler, "-exp0", "-exp0 <map> <alg> <weight> <TerrainSize> <mapType>", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
+	InstallCommandLineHandler(MyCLHandler, "-DSMAP", "-DSMAP <map> <scenario> <alg> <weight> <TerrainSize> <SwampHardness> <Experiment>", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
+	InstallCommandLineHandler(MyCLHandler, "-gridBLs", "-gridBLs <map> <scenario> <alg> <weight> <TerrainSize> <SwampHardness> <Experiment>", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
+	InstallCommandLineHandler(MyCLHandler, "-RTBLs", "-RTBLs <map> <scenario> <alg> <weight> <numExtendedGoals>", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
+	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-RTdsmap <map> <scenario> <alg> <weight> <numExtendedGoals>", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
+	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar <problem> <alg> <weight>", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight puzzleW", "Test STP <problem> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-timeDSWA", "-DSDWA* stp problem weight", "Test STP <problem> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-map", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
@@ -1467,17 +1466,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 		// ScenarioLoader sl(argument[2]);
 		sl = new ScenarioLoader(argument[2]);
-		int approvedScenaios = 0, x=0;
-		// numLimitedScenarios = max(sl->GetNumExperiments(), numLimitedScenarios);
-		
-		while (approvedScenaios < numLimitedScenarios && x < sl->GetNumExperiments())
+		int approvedScenaios = 0, x=0;		
+		while ((approvedScenaios < numLimitedScenarios) && (x < sl->GetNumExperiments()))
 		{
 			Experiment exp = sl->GetNthExperiment(x);
-			x+=sl->GetNumExperiments()/1000+1;
-			// std::cout<<"experiment "<<x<<"\n";
-			if(exp.GetDistance()<lowerLimit || exp.GetDistance()>upperLimit) continue;
+			x=x+(sl->GetNumExperiments()/1000)+1;
+			if((exp.GetDistance()<lowerLimit) || (exp.GetDistance()>upperLimit)) continue;
 			else approvedScenaios ++;
-			// approvedScenaios ++;
 
 			//Reset the previous start and goal
 			m->SetTerrainType(from.xLoc, from.yLoc, kGround);
@@ -1558,11 +1553,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		int approvedScenaios = 0, x=0;
 		// numLimitedScenarios = max(sl->GetNumExperiments(), numLimitedScenarios);
 		
-		while (approvedScenaios < numLimitedScenarios && x < sl->GetNumExperiments())
+		while ((approvedScenaios < numLimitedScenarios) && (x < sl->GetNumExperiments()))
 		{
 			Experiment exp = sl->GetNthExperiment(x);
-			x+=sl->GetNumExperiments()/1000+1;
-			if(exp.GetDistance()<lowerLimit || exp.GetDistance()>upperLimit) continue;
+			x=x+(sl->GetNumExperiments()/1000)+1;
+			if((exp.GetDistance()<lowerLimit) || (exp.GetDistance()>upperLimit)) continue;
 			else approvedScenaios ++;
 
 			//Reset the previous start and goal
