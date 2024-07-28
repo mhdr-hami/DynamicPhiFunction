@@ -2296,8 +2296,9 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 			}
 			else if(mapcmd == "5"){
-				numScenario += 1;
+				numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
 				Experiment exp = sl->GetNthExperiment(numScenario);
+				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				start.x = exp.GetStartX();
 				start.y = exp.GetStartY();
 				goal.x = exp.GetGoalX();
