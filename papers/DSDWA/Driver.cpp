@@ -26,7 +26,8 @@
 #include "STPInstances.h"
 
 int stepsPerFrame = 1;
-float bound = 4;
+//float bound = 1.25;
+float bound = 3;
 int problemNumber = 0;
 float testScale = 1.0;
 void GetNextWeightRange(float &minWeight, float &maxWeight, point3d currPoint, float nextSlope);
@@ -55,7 +56,7 @@ bool searchRunning = false;
 bool saveSVG = true;
 bool useDH = false;
 bool limitScenarios = false, normalizedSTP= false;
-int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=124;
+int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=50;
 bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
@@ -67,11 +68,12 @@ GridEmbedding *dh;
 // 1=random room map, 2=random map, 3=random maze, 4=designed map, 5=Load map, 6=Load RaceTrack
 std::string mapcmd = "6";
 // std::string mapload = "mazes/maze512-32-6";
-// std::string mapload = "dao/ost003d";
+ std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
-//std::string mapload = "dao/den520d";
- std::string mapload = "dao/arena";
+// std::string mapload = "dao/den520d";
+// std::string mapload = "dao/arena";
 // std::string mapload = "da2/ca_caverns1";
+//std::string mapload = "da2/lt_foundry_n";
 
 int main(int argc, char* argv[])
 {
@@ -106,7 +108,7 @@ void InstallHandlers()
 	InstallCommandLineHandler(MyCLHandler, "-RTdsmap", "-RTdsmap <map> <scenario> <alg> <weight> <numExtendedGoals>", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar <problem> <alg> <weight>", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-DPstp", "-DPstp problem weight puzzleW", "Test STP <problem> <weight> <puzzleW>");
-	InstallCommandLineHandler(MyCLHandler, "-timeDSWA", "-DSDWA* stp problem weight", "Test STP <problem> <weight>");
+	InstallCommandLineHandler(MyCLHandler, "-timeDSWA", "-timeDSWA stp problem weight", "Test STP <problem> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-map", "-map <map> <scenario> alg weight", "Test grid <map> on <scenario> with <algorithm> <weight>");
 	
 	InstallWindowHandler(MyWindowHandler);
@@ -114,15 +116,13 @@ void InstallHandlers()
 	InstallMouseClickHandler(MyClickHandler);
 }
 
-void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
-{
+void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 	if (eType == kWindowDestroyed)
 	{
 		printf("Window %ld destroyed\n", windowID);
 		RemoveFrameHandler(MyFrameHandler, windowID, 0);
 	}
-	else if (eType == kWindowCreated)
-	{
+	else if (eType == kWindowCreated){
 		printf("Window %ld created\n", windowID);
 		InstallFrameHandler(MyFrameHandler, windowID, 0);
 		ReinitViewports(windowID, {-1, -1, 0, 1}, kScaleToSquare);
@@ -220,7 +220,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 		}
 		else if(mapcmd == "5"){
 			Experiment exp = sl->GetNthExperiment(numScenario);
-			numScenario += 1;
+			// numScenario += 1;
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
@@ -277,9 +277,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType)
 			}
 		}
 		else if(mapcmd == "6"){
-			numScenario += 1;
 			Experiment exp = sl->GetNthExperiment(numScenario);
-			std::cout<<"Path Length is "<<exp.GetDistance()<<"\n";
+			std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 			if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
 			//Set the start and goal states, weight and policy of the search. 
@@ -2306,9 +2305,9 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(mapcmd == "6"){
 				//Racetrack
-				numScenario += sl->GetNumExperiments()/20+1;
+				numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
 				Experiment exp = sl->GetNthExperiment(numScenario);
-				std::cout<<"Path Length is "<<exp.GetDistance()<<"\n";
+				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
 				//Reset the previous start and goal
@@ -2395,9 +2394,9 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(mapcmd == "6"){
 				//Racetrack
-				numScenario -= 1;
+				numScenario -= sl->GetNumExperiments()/20+1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
-				std::cout<<"Path Length is "<<exp.GetDistance()<<"\n";
+				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
 				//Reset the previous start and goal
