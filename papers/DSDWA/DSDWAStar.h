@@ -1029,17 +1029,20 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
 					if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
 
-						float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-						SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+						// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
 						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 3)));
+						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						// SetNextWeight(maxSlopeH, maxSlopeG, weight);
 					}
-					globalMaxH = openClosedList.Lookup(nodeid).h;
 				}
+				globalMaxH = openClosedList.Lookup(nodeid).h;
 			}
 			else {// To Run BaseLines using DSDWA* for graphic
 				// -> CL code, uses template Astar
@@ -1056,7 +1059,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			GetNextWeightRange(minWeight, maxWeight, maxSlope);
 
 			if (policy == OBDP || policy == CADP)
-				SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
+				SetNextWeight(maxSlopeH, maxSlopeG, weight);
 			else 
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
 		}
