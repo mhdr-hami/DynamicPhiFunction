@@ -1033,12 +1033,12 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
 						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 4)));
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 4)));
 						// SetNextWeight(maxSlopeH, maxSlopeG, weight);
 					}
 				}
