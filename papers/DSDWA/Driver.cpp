@@ -66,7 +66,7 @@ tExpansionPriority prevPolicy;
 GridEmbedding *dh;
 
 // 1=random room map, 2=random map, 3=random maze, 4=designed map, 5=Load map, 6=Load RaceTrack
-std::string mapcmd = "6";
+std::string mapcmd = "1";
 // std::string mapload = "mazes/maze512-32-6";
  std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
