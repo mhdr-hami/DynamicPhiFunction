@@ -35,6 +35,7 @@ float GetPriority(float h, float g);
 float ChooseWeightForTargetPriority(point3d point, float priority, float minWeight, float maxWeight, point3d last, float &K);
 DSDWAStar<xyLoc, tDirection, MapEnvironment> dsd;
 TemplateAStar<xyLoc, tDirection, MapEnvironment> tas;
+DynamicPotentialSearch<xyLoc, tDirection, MapEnvironment> dps;
 std::vector<xyLoc> solution;
 std::vector<xyLoc> theList;
 Map * m = 0;
@@ -67,10 +68,10 @@ tExpansionPriority prevPolicy;
 GridEmbedding *dh;
 
 // 1=DSD random room map, 2=DSD random map, 3=DSD random maze, 4=DSD designed map, 
-// 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load RaceTrack
+// 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load map, 8=DPS Load RaceTrack
 int mapcmd = 7;
-// std::string mapload = "mazes/maze512-32-6";
- std::string mapload = "dao/ost003d";
+std::string mapload = "mazes/maze512-32-6";
+//  std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
 // std::string mapload = "dao/den520d";
 // std::string mapload = "dao/arena";
@@ -161,7 +162,6 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 			std::string tmpscenload = "./Users/mohammadrezahami/Documents/University/Project/hog2-PDB-refactor/DynamicPhiFunction/scenarios/"+ mapload + ".map.scen";
 			std::string tmpmapload = "./Users/mohammadrezahami/Documents/University/Project/hog2-PDB-refactor/DynamicPhiFunction/maps/"+ mapload + ".map";
 			sl = new ScenarioLoader (tmpscenload.c_str());
-			// numScenario = 0;
 			m = new Map(tmpmapload.c_str());
 			me = new MapEnvironment(m);
 			r = new Racetrack(m);
@@ -222,9 +222,9 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 				dsd.SetHeuristic(dh);
 			}
 		}
-		else if(mapcmd == 5){
+		else if(mapcmd == 5 || mapcmd == 7){
+			//Grid Map
 			Experiment exp = sl->GetNthExperiment(numScenario);
-			// numScenario += 1;
 			start.x = exp.GetStartX();
 			start.y = exp.GetStartY();
 			goal.x = exp.GetGoalX();
@@ -233,7 +233,6 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 			me->SetDiagonalCost(1.41);
 			// me->SetDiagonalCost(1.5);
 
-			dsd.policy = kWA;
 			me->SetInputWeight(bound);
 
 			swampedloc = {1,1};
@@ -269,18 +268,26 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 			}
 			me->SetTerrainCost(Tcosts);
 
-			dsd.SetWeight(bound);
-
-			dsd.InitializeSearch(me, start, goal, solution);
-
 			if(useDH){
 				dh = new GridEmbedding(me, 10, kLINF);
 				for (int x = 0; x < 10; x++)
 					dh->AddDimension(kDifferential, kFurthest);
 				dsd.SetHeuristic(dh);
 			}
+			
+			if(mapcmd == 5){
+				dsd.policy = kWA;
+				dsd.SetWeight(bound);
+				dsd.InitializeSearch(me, start, goal, solution);
+			}
+			else if(mapcmd == 7){
+				dps.SetOptimalityBound(bound);
+				dps.InitializeSearch(me, start, goal, solution);
+			}
+		
 		}
-		else if(mapcmd == 6 || mapcmd == 7){
+		else if(mapcmd == 6 || mapcmd == 8){
+			//RaceTrack
 			Experiment exp = sl->GetNthExperiment(numScenario);
 			std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 			if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
@@ -318,7 +325,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 				dsd_track.SetWeight(bound);
 				dsd_track.InitializeSearch(r, from, end, path);
 			}
-			else if(mapcmd == 7){
+			else if(mapcmd == 8){
 				dps_track.SetOptimalityBound(bound);
 				dps_track.InitializeSearch(r, from, end, path);
 			}
@@ -354,7 +361,7 @@ point3d LocalToHOG(point3d p)
 void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 {
 	Graphics::Display &display = getCurrentContext()->display;
-	if(mapcmd <= 5){
+	if(mapcmd <= 5 || mapcmd==7){
 		if (viewport == 0)
 		{
 			if (me)
@@ -365,19 +372,38 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 				{
 					if (solution.size() == 0)
 					{
-						if (dsd.DoSingleSearchStep(solution)){
-							std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
+						if(mapcmd <= 5){
+							if (dsd.DoSingleSearchStep(solution)){
+								std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
+							}
+						}
+						else if(mapcmd == 7){
+							if (dps.DoSingleSearchStep(solution)){
+							std::cout << "Node Expansions: " << dps.GetNodesExpanded() << "\n";
+							}
 						}
 					}
 				}
-				dsd.Draw(display);
+				if(mapcmd <= 5){
+					dsd.Draw(display);
+				}
+				else if(mapcmd == 7){
+					dps.Draw(display);
+				}
+
 			}
 		}
 		if (viewport == 1)
 		{
 			if (searchRunning)
 			{
-				dsd.DrawPriorityGraph(display);
+				if(mapcmd <= 5){
+					dsd.DrawPriorityGraph(display);
+				}
+				else if(mapcmd == 7){
+					//Does not apply here
+					// dps.DrawPriorityGraph(display);
+				}
 			}
 		}
 		if (viewport == 3) // TODO: Add mode for exploration
@@ -452,7 +478,7 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 			display.DrawLine(origin, {-1, -1}, 1./100.0f, Colors::white);
 		}
 	}
-	else if(mapcmd == 6 || mapcmd == 7){
+	else if(mapcmd == 6 || mapcmd == 8){
 		//Racetrack
 		if (viewport == 0)
 		{
@@ -471,7 +497,7 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 							searchRunning = false;
 							}
 						}
-						else if(mapcmd == 7){
+						else if(mapcmd == 8){
 							if (dps_track.DoSingleSearchStep(path)){
 							std::cout << "Node Expansions: " << dps_track.GetNodesExpanded() << "\n";
 							searchRunning = false;
@@ -483,7 +509,7 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 			if(mapcmd == 6){
 				dsd_track.Draw(display);
 			}
-			else if(mapcmd == 7){
+			else if(mapcmd == 8){
 				dps_track.Draw(display);
 			}
 		}
@@ -493,9 +519,9 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 				if(mapcmd == 6){
 					dsd_track.DrawPriorityGraph(display);
 				}
-				else if(mapcmd == 7){
+				else if(mapcmd == 8){
                     //Does not apply here
-//					dps_track.DrawPriorityGraph(display);
+					// dps_track.DrawPriorityGraph(display);
 				}
 			}
 		}
@@ -1844,13 +1870,13 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 		case 's':
 			{
 				//Reset the last problem's swamped states.
-				if(exper==4 && mapcmd<=5){
+				if(exper==4 && (mapcmd<=5 || mapcmd==7)){
 					for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
-				else if(exper==7 && mapcmd<=5){
+				else if(exper==7 && (mapcmd<=5 || mapcmd==7)){
 					for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
@@ -1868,7 +1894,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kTrees)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
-				else if(exper==8 && mapcmd<=5){
+				else if(exper==8 && (mapcmd<=5 || mapcmd==7)){
 					if(swampedloc.x == 0){
 						for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
 							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
@@ -1882,7 +1908,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 									me->GetMap()->SetTerrainType(i, j, kGround);
 					}
 				}
-				else if(exper==9 && mapcmd<=5){
+				else if(exper==9 && (mapcmd<=5 || mapcmd==7)){
 					Map *m = new Map(200, 200);
 					// srandom(20221228);
 
@@ -1900,7 +1926,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					me->SetDiagonalCost(1.41);
 					// me->SetDiagonalCost(1.5);
 				}
-				else if(exper==10 && mapcmd<=5){
+				else if(exper==10 && (mapcmd<=5 || mapcmd==7)){
 					for(int tNode=0; tNode<theList.size(); tNode++){
 						me->GetMap()->SetTerrainType(theList[tNode].x, theList[tNode].y, kGround);
 					}
@@ -1918,7 +1944,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						goal.y = random()%me->GetMap()->GetMapHeight();
 					} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 				}
-				else if(mapcmd == 5){
+				else if(mapcmd==5 || mapcmd==7){
 					numScenario += 1;
 					Experiment exp = sl->GetNthExperiment(numScenario);
 					start.x = exp.GetStartX();
@@ -1928,7 +1954,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				}
 
 				//Change one or more squares of ground states to swamp type.
-				if(exper==0 && mapcmd<=5){
+				if(exper==0 && (mapcmd<=5 || mapcmd==7)){
 					//Set the square around the start state.
 					swampedloc.x = start.x;
 					swampedloc.y = start.y;
@@ -1943,7 +1969,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 				}
-				else if(exper==1 && mapcmd<=5){
+				else if(exper==1 && (mapcmd<=5 || mapcmd==7)){
 					//Set the square around the goal state.
 					swampedloc.x = goal.x;
 					swampedloc.y = goal.y;
@@ -1959,7 +1985,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 
 				}
-				else if(exper==2 && mapcmd<=5){
+				else if(exper==2 && (mapcmd<=5 || mapcmd==7)){
 					//Set the square around a random state with a center on the [start-goal] line.
 					if(goal.x == start.x) swampedloc.x = start.x;
 					else swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
@@ -1977,7 +2003,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 				}
-				else if(exper==3 && mapcmd<=5){
+				else if(exper==3 && (mapcmd<=5 || mapcmd==7)){
 					//Set the square around a random state with a center on the (start+10%)-(goal-10%) line.
 					if(goal.x == start.x) swampedloc.x = start.x;
 					else swampedloc.x = random()%(abs(goal.x-start.x) - 2*(int(0.1*abs(goal.x-start.x))+int(tsx/2))) + min(goal.x, start.x) +int(0.1*abs(goal.x-start.x))+int(tsx/2);
@@ -1995,7 +2021,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 				}
-				else if(exper==4 && mapcmd<=5){
+				else if(exper==4 && (mapcmd<=5 || mapcmd==7)){
 					//Run the search once, to find the solution path using WA*, and place the swamp area on that.
 					prevPolicy = dsd.policy;
 					dsd.policy = kWA;
@@ -2022,7 +2048,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 				}
-				else if(exper==5 && mapcmd<=5){
+				else if(exper==5 && (mapcmd<=5 || mapcmd==7)){
 					//Run the search once, to find the solution path using WA*, and place the swamp area on that.
 					//It leaves a margin between the start state and the goal state of the solution.
 					prevPolicy = dsd.policy;
@@ -2041,7 +2067,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 				}
-				else if(exper==6 && mapcmd<=5){
+				else if(exper==6 && (mapcmd<=5 || mapcmd==7)){
 					//Set two squares around two random states on the start-goal line.
 					//swampedloc.x = random()%abs(goal.x-start.x) + min(goal.x, start.x);
 					if(goal.x == start.x) swampedloc.x = start.x;
@@ -2067,7 +2093,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 				}
-				else if(exper==7 && mapcmd<=5){
+				else if(exper==7 && (mapcmd<=5 || mapcmd==7)){
 					//Run the search once, to find the solution path using WA*, and place the swamp area on that.
 					prevPolicy = dsd.policy;
 					dsd.policy = kWA;
@@ -2122,7 +2148,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kTrees);
 				}
-				else if(exper==8 && mapcmd<=5){
+				else if(exper==8 && (mapcmd<=5 || mapcmd==7)){
 					//Set the size of the swamp area using the tspp argument.
 					ts = tspp/100*(abs(goal.x-start.x) + abs(goal.y-start.y));
 					// ts = tspp/100*(solution.size());
@@ -2166,7 +2192,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						swampedloc.x = 0;
 					}
 				}
-				else if(exper==9 && mapcmd<=5){
+				else if(exper==9 && (mapcmd<=5 || mapcmd==7)){
 					//Set the size of the swamp area using the tspp argument.
 					tsx = max(tspp/100*abs(goal.x-start.x), 10);
 					tsy = max(tspp/100*abs(goal.y-start.y), 10);
@@ -2208,7 +2234,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						swampedloc.x = 0;
 					}
 				}
-				else if(exper==10 && mapcmd<=5){
+				else if(exper==10 && (mapcmd<=5 || mapcmd==7)){
 					tas.SetPhi([=](double h,double g){return g;});
 					tas.ExtendGoal(me, goal, theList, 0);
 					for(int tNode=0; tNode<theList.size(); tNode++){
@@ -2240,6 +2266,24 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					dsd_track.InitializeSearch(r, from, end, path);
 				}
 				else if(mapcmd == 7){
+					problemNumber +=1;
+					printf("==============\n");
+					printf("Problem: %d\n", problemNumber);
+					printf("DPS Algorithm\n");
+					printf("Bound: %f\n", bound);
+					for(int i=0; i<4; i++){
+						//[0]=kSwamp, [1]=kWater ,[2]=kGrass, [3]=kTrees
+						string type;
+						if(i==0) type="Swamp";
+						if(i==1) type="Water";
+						if(i==2) type="Grass";
+						if(i==3) type="Trees";
+						std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
+					}
+					data.resize(0);
+					dps.InitializeSearch(me, start, goal, solution);
+				}
+				else if(mapcmd == 8){
 					//Does not apply to Racetrack
 					data.resize(0);
 					dps_track.InitializeSearch(r, from, end, path);
@@ -2277,6 +2321,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					dsd_track.InitializeSearch(r, from, end, path);
 				}
 				else if(mapcmd == 7){
+					printf("==============\n");
+					printf("Problem: %d\n", problemNumber);
+					printf("DPS Algorithm\n");
+					printf("Bound: %f\n", bound);
+					data.resize(0);
+					dps.InitializeSearch(me, start, goal, solution);
+				}
+				else if(mapcmd == 8){
 					//RaceTrack
 					printf("==============\n");
 					printf("Problem: %d\n", problemNumber);
@@ -2343,6 +2395,17 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					dsd_track.InitializeSearch(r, from, end, path);
 				}
 				else if(mapcmd == 7){
+					//Set the input weight to the new bound
+					dps.SetOptimalityBound(bound);
+
+					printf("==============\n");
+					printf("Problem: %d\n", problemNumber);
+					printf("DPS Algorithm\n");
+					printf("Bound: %f\n", bound);
+					data.resize(0);
+					dps.InitializeSearch(me, start, goal, solution);
+				}
+				else if(mapcmd == 8){
 					//RaceTrack
 
 					//Set the input weight to the new bound
@@ -2386,6 +2449,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					printf("DPS Algorithm\n");
 					printf("Bound: %f\n", bound);
 					data.resize(0);
+					dps.InitializeSearch(me, start, goal, solution);
+				}
+				else if(mapcmd == 8){
+					//Does not apply here
+					printf("Problem: %d\n", problemNumber);
+					printf("DPS Algorithm\n");
+					printf("Bound: %f\n", bound);
+					data.resize(0);
 					dps_track.InitializeSearch(r, from, end, path);
 				}
 				
@@ -2417,6 +2488,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					printf("DPS Algorithm\n");
 					printf("Bound: %f\n", bound);
 					data.resize(0);
+					dps.InitializeSearch(me, start, goal, solution);
+				}
+				else if(mapcmd == 8){
+					//Does not apply here
+					printf("Problem: %d\n", problemNumber);
+					printf("DPS Algorithm\n");
+					printf("Bound: %f\n", bound);
+					data.resize(0);
 					dps_track.InitializeSearch(r, from, end, path);
 				}
 				
@@ -2436,7 +2515,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					goal.y = random()%me->GetMap()->GetMapHeight();
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 			}
-			else if(mapcmd == 5){
+			else if(mapcmd == 5 || mapcmd == 7){
 				numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
 				Experiment exp = sl->GetNthExperiment(numScenario);
 				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
@@ -2445,7 +2524,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				goal.x = exp.GetGoalX();
 				goal.y = exp.GetGoalY();
 			}
-			else if(mapcmd == 6 || mapcmd == 7){
+			else if(mapcmd == 6 || mapcmd == 8){
 				//Racetrack
 				numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
 				Experiment exp = sl->GetNthExperiment(numScenario);
@@ -2515,6 +2594,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				printf("DPS Algorithm\n");
 				printf("Bound: %f\n", bound);
 				data.resize(0);
+				dps.InitializeSearch(me, start, goal, solution);
+			}
+			else if(mapcmd == 8){
+				problemNumber += 1;
+				printf("Problem: %d\n", problemNumber);
+				printf("DPS Algorithm\n");
+				printf("Bound: %f\n", bound);
+				data.resize(0);
 				dps_track.InitializeSearch(r, from, end, path);
 			}
 
@@ -2534,7 +2621,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					goal.y = random()%me->GetMap()->GetMapHeight();
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 			}
-			else if(mapcmd == 5){
+			else if(mapcmd == 5 || mapcmd == 7){
 				numScenario -= 1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
 				start.x = exp.GetStartX();
@@ -2542,7 +2629,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				goal.x = exp.GetGoalX();
 				goal.y = exp.GetGoalY();
 			}
-			else if(mapcmd == 6 || mapcmd == 7){
+			else if(mapcmd == 6 || mapcmd == 8){
 				//Racetrack
 				numScenario -= sl->GetNumExperiments()/20+1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
@@ -2607,6 +2694,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				dsd_track.InitializeSearch(r, from, end, path);
 			}
 			else if(mapcmd == 7){
+				problemNumber -= 1;
+				printf("Problem: %d\n", problemNumber);
+				printf("DPS Algorithm\n");
+				printf("Bound: %f\n", bound);
+				data.resize(0);
+				dps.InitializeSearch(me, start, goal, solution);
+			}
+			else if(mapcmd == 8){
 				problemNumber -= 1;
 				printf("Problem: %d\n", problemNumber);
 				printf("DPS Algorithm\n");
