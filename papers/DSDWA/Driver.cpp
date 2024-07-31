@@ -69,14 +69,14 @@ GridEmbedding *dh;
 
 // 1=DSD random room map, 2=DSD random map, 3=DSD random maze, 4=DSD designed map, 
 // 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load map, 8=DPS Load RaceTrack
-int mapcmd = 7;
-std::string mapload = "mazes/maze512-32-6";
-//  std::string mapload = "dao/ost003d";
+int mapcmd = 5;
+// std::string mapload = "mazes/maze512-32-6";
+// std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
 // std::string mapload = "dao/den520d";
 // std::string mapload = "dao/arena";
-// std::string mapload = "da2/ca_caverns1";
-//std::string mapload = "da2/lt_foundry_n";
+std::string mapload = "da2/ca_caverns1";
+// std::string mapload = "da2/lt_foundry_n";
 
 int main(int argc, char* argv[])
 {
@@ -1714,6 +1714,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		DPS_mnp.GetPath(&mnp, start, goal, path);
 
 		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), 6, atof(argument[2]), DPS_mnp.GetNodesExpanded(), path.size());
+		
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-rtDPS") == 0)
@@ -2518,6 +2519,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			else if(mapcmd == 5 || mapcmd == 7){
 				numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
 				Experiment exp = sl->GetNthExperiment(numScenario);
+				printf("==============\n");
 				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				start.x = exp.GetStartX();
 				start.y = exp.GetStartY();
@@ -2572,7 +2574,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 
 			if(mapcmd <= 5){
 				problemNumber +=1;
-				printf("==============\n");
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
 				printf("Bound: %f\n", bound);
@@ -2622,8 +2623,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				} while (me->GetMap()->GetTerrainType(goal.x, goal.y) != kGround);
 			}
 			else if(mapcmd == 5 || mapcmd == 7){
-				numScenario -= 1;
+				numScenario -= sl->GetNumExperiments()/20+1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
+				printf("==============\n");
+				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				start.x = exp.GetStartX();
 				start.y = exp.GetStartY();
 				goal.x = exp.GetGoalX();
@@ -2633,6 +2636,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				//Racetrack
 				numScenario -= sl->GetNumExperiments()/20+1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
+				printf("==============\n");
 				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
 
@@ -2677,7 +2681,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 
 			if(mapcmd <= 5){
 				problemNumber -=1;
-				printf("==============\n");
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
 				printf("Bound: %f\n", bound);

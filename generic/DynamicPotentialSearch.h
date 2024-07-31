@@ -178,7 +178,7 @@ void DynamicPotentialSearch<state,action,environment>::GetPath(environment *_env
 	}
 	while (!DoSingleSearchStep(thePath))
 	{ 
-		if (10000000 == nodesExpanded){
+		if (10000000 <= nodesExpanded){
 			//Terminate the search after 10 million node expansions.
 			printf("%" PRId64 " nodes expanded, %" PRId64 " generated. ", nodesExpanded, nodesTouched);
 			std::cout<<"DPS => Terminated.\n";
@@ -365,7 +365,8 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 	if (next == 0)
 	{
 		// no path found
-		return true;
+		// return true;
+		return false;
 	}
 	// Note: will move to closed at the end
 	
@@ -432,6 +433,7 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 		RebuildOpenQ();
 	return false;
 }
+
 template <class state, class action, class environment>
 void DynamicPotentialSearch<state, action,environment>::RebuildOpenQ()
 {
@@ -441,7 +443,6 @@ void DynamicPotentialSearch<state, action,environment>::RebuildOpenQ()
 		openQ.insert({(bound * fmin - i.second.g)/i.second.h,
 			env->GetStateHash(i.second.data)});
 }
-
 
 template <class state, class action, class environment>
 double DynamicPotentialSearch<state, action,environment>::GetBestFMin()

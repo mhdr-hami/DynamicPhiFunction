@@ -1022,27 +1022,48 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			}
 			else if (policy == OBDP)
 			{
+				// float minWeight, maxWeight;
+				// GetNextWeightRange(minWeight, maxWeight, maxSlope);
+				// float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+				// assert(angle>=0 && angle<=90);
+				// if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
+				// 	if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
+				// 		// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
+				// 		// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
+				// 		// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
+				// 		float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+				// 		SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+				// 	}
+				// 	else{ //easy problems: lower weights
+				// 		//1, 3 best
+				// 		float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
+				// 		SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+				// 		// SetNextWeight(maxSlopeH, maxSlopeG, weight);
+				// 	}
+				// }
+				// globalMaxH = openClosedList.Lookup(nodeid).h;
+
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
 				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
 				assert(angle>=0 && angle<=90);
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
-					if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
+					if(fless(prevH, maxSlopeH)){
 
 						// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
 						// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
 						// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(maxSlopeH/globalMaxH*90/angle));
 					}
 					else{ //easy problems: lower weights
 						//1, 3 best
 						float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
+						SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(maxSlopeH/globalMaxH*90/angle));
 						// SetNextWeight(maxSlopeH, maxSlopeG, weight);
 					}
+				prevH = maxSlopeH;
 				}
-				globalMaxH = openClosedList.Lookup(nodeid).h;
 			}
 			else {// To Run BaseLines using DSDWA* for graphic
 				// -> CL code, uses template Astar
@@ -1187,7 +1208,6 @@ uint64_t DSDWAStar<state, action,environment,openList>::GetNecessaryExpansions()
 	return n;
 }
 
-
 /**
  * A function that prints the number of states in the closed list and open
  * queue.
@@ -1277,7 +1297,6 @@ bool DSDWAStar<state, action,environment,openList>::GetClosedItem(const state &s
 
 }
 
-
 /**
  * Draw the open/closed list
  * @author Nathan Sturtevant
@@ -1347,7 +1366,6 @@ void DSDWAStar<state, action,environment,openList>::Draw(Graphics::Display &disp
 	env->SetColor(1.0, 0.5, 1.0, 0.5);
 	env->Draw(disp, goal);
 }
-
 
 template <class state, class action, class environment, class openList>
 void DSDWAStar<state, action,environment,openList>::DrawPriorityGraph(Graphics::Display &display) const
