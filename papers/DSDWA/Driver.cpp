@@ -102,7 +102,7 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Swamped Problems", "Increment swamped problem", kAnyModifier, 's');
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
 
-	InstallCommandLineHandler(MyCLHandler, "-stp", "-stp <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
+	InstallCommandLineHandler(MyCLHandler, "-stpDSD", "-stpDSD <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-stpBaseLines", "-stpBaseLines <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-exp0", "-exp0 <map> <alg> <weight> <TerrainSize> <mapType>", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-gridDSD", "-gridDSD <map> <scenario> <alg> <weight> <TerrainSize> <SwampHardness> <Experiment>", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
@@ -601,7 +601,7 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 
 int MyCLHandler(char *argument[], int maxNumArgs)
 {
-	if (strcmp(argument[0], "-stp") == 0)
+	if (strcmp(argument[0], "-stpDSD") == 0)
 	{
 		assert(maxNumArgs >= 5);
 		
@@ -1781,7 +1781,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			dps_track.InitializeSearch(r, from, end, path);
 			dps_track.GetPath(r, from, end, path);
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dps_track.GetNodesExpanded());
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps_track.GetNodesExpanded());
 
 		}
 		
