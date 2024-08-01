@@ -1719,7 +1719,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 	}
 	else if (strcmp(argument[0], "-rtDPS") == 0)
 	{
-		assert(maxNumArgs >= 6);
+		assert(maxNumArgs >= 5);
 		Map * m = new Map(argument[1]);
 		r = new Racetrack(m);
 		me = new MapEnvironment(m);
