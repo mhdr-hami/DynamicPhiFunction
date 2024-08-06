@@ -271,6 +271,7 @@ void TemplateAStar<state,action,environment,openList>::ExtendGoal(environment *_
 	double h=0;
 	
 	openClosedList.AddOpenNode(start, env->GetStateHash(start), phi(h, 0), 0, h);
+	theList.push_back(start);
 
 	while (nodesExpanded < NumGoalStates)
 	{
