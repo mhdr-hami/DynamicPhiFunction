@@ -96,7 +96,7 @@ public:
 	
 	void PrintStats();
 //	uint64_t GetUniqueNodesExpanded() { return uniqueNodesExpanded; }
-	void ResetNodeCount() { nodesExpanded = nodesTouched = 0; uniqueNodesExpanded = 0; }
+	void ResetNodeCount() { nodesExpanded = nodesTouched = nodesReOpened = openRebuild = 0; uniqueNodesExpanded = 0; }
 	int GetMemoryUsage();
 
 	double GetBestFMin();
@@ -123,7 +123,7 @@ private:
 	DPSData<state> *GetBestOnOpen();
 	void RebuildOpenQ();
 
-	uint64_t nodesTouched, nodesExpanded;
+	uint64_t nodesTouched, nodesExpanded, nodesReOpened, openRebuild;
 	
 	std::vector<state> neighbors;
 //	std::vector<uint64_t> neighborID;
@@ -184,6 +184,10 @@ void DynamicPotentialSearch<state,action,environment>::GetPath(environment *_env
 			std::cout<<"DPS => Terminated.\n";
 			break;
 		}
+		if (nodesExpanded % 100000 == 0){
+			//Print information of expanded nodes and nodes in open.
+			std::cout<<nodesExpanded<<" nodes are expanded and "<<nodesReOpened<<" nodes are re-opened.\n";
+		}
 	}
 }
 
@@ -203,7 +207,6 @@ void DynamicPotentialSearch<state,action,environment>::GetPath(environment *_env
 		path.push_back(_env->GetAction(thePath[x], thePath[x+1]));
 	}
 }
-
 
 /**
  * Initialize the A* search
@@ -319,7 +322,6 @@ DPSData<state> *DynamicPotentialSearch<state,action,environment>::GetBestOnOpen(
 //				continue;
 //			assert(o.first == (bound * fmin - i->second.g)/i->second.h);
 //		}
-
 //		assert(fequal((bound * fmin - next->g)/next->h,
 //					  (bound * fmin - i->second.g)/i->second.h));
 		return &(i->second);
@@ -365,8 +367,7 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 	if (next == 0)
 	{
 		// no path found
-		// return true;
-		return false;
+		return true;
 	}
 	// Note: will move to closed at the end
 	
@@ -414,6 +415,7 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 			auto &i = itemClosed->second;
 			if (fless(next->g+edgeCost+i.h, i.g+i.h)) // found shorter path
 			{
+				nodesReOpened ++;
 				i.parent = next->data;
 				i.g = next->g+edgeCost;
 				i.reopened = true;
@@ -437,6 +439,9 @@ bool DynamicPotentialSearch<state,action,environment>::DoSingleSearchStep(std::v
 template <class state, class action, class environment>
 void DynamicPotentialSearch<state, action,environment>::RebuildOpenQ()
 {
+	openRebuild ++;
+	if(openRebuild%100==0)
+		std::cout<<openRebuild<<" = number of rebuilding the open.\n";
 	openQ.clear();
 	double fmin = GetBestFMin();
 	for (const auto &i : open)

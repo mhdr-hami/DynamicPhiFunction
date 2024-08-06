@@ -58,7 +58,7 @@ bool searchRunning = false;
 bool saveSVG = true;
 bool useDH = false;
 bool limitScenarios = false, normalizedSTP= false;
-int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=50;
+int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=598;
 bool flag = false;
 bool showExtraLog = false;
 int randomIndex;
@@ -69,13 +69,14 @@ GridEmbedding *dh;
 
 // 1=DSD random room map, 2=DSD random map, 3=DSD random maze, 4=DSD designed map, 
 // 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load map, 8=DPS Load RaceTrack
-int mapcmd = 5;
+int mapcmd = 8;
 // std::string mapload = "mazes/maze512-32-6";
 // std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
 // std::string mapload = "dao/den520d";
 // std::string mapload = "dao/arena";
-std::string mapload = "da2/ca_caverns1";
+// std::string mapload = "da2/ca_caverns1";
+std::string mapload = "da2/lt_undercityserialkiller";
 // std::string mapload = "da2/lt_foundry_n";
 
 int main(int argc, char* argv[])
@@ -2528,7 +2529,8 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(mapcmd == 6 || mapcmd == 8){
 				//Racetrack
-				numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
+				// numScenario = (numScenario + sl->GetNumExperiments()/20+1) % sl->GetNumExperiments();
+				numScenario = numScenario + +1 % sl->GetNumExperiments();
 				Experiment exp = sl->GetNthExperiment(numScenario);
 				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
 				if(numExtendedGoals) numExtendedGoals = exp.GetDistance()/3;
@@ -2634,7 +2636,8 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(mapcmd == 6 || mapcmd == 8){
 				//Racetrack
-				numScenario -= sl->GetNumExperiments()/20+1;
+				// numScenario -= sl->GetNumExperiments()/20+1;
+				numScenario -= 1;
 				Experiment exp = sl->GetNthExperiment(numScenario);
 				printf("==============\n");
 				std::cout<<"Path Length is "<<exp.GetDistance()<<" (scen "<<numScenario<<"/"<<sl->GetNumExperiments()<<")\n";
