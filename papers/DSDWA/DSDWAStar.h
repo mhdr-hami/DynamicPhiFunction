@@ -767,6 +767,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				}
 				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
 
+					// std::cout<<theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data)<<" "<<openClosedList.Lookup(nodeid).g<<" "<<nodeid<<"\n";
+
 					float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight, lowHighMidWeight, highLowMidWeight, highHighMidWeight, lowLowMidWeight;
 					GetNextWeightRange(minWeight, maxWeight, maxSlope);
 					midWeight = (maxWeight + minWeight)/2;
@@ -786,10 +788,10 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 					float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
 
-					float rangeTop = (thirdLast + secondLast + firstLast)/2;
-					// float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
-					float rangeButtom = (thirdLast + secondLast + firstLast)/6;
-					// float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
+					// float rangeTop = (thirdLast + secondLast + firstLast)/2;
+					float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
+					// float rangeButtom = (thirdLast + secondLast + firstLast)/6;
+					float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
 					
 					////LARGER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
 					//// 0<=weightGuider<=1
@@ -800,17 +802,17 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
 					//// 0<=weightGuider<=1
-					if(rangeTop - rangeButtom !=0)
-						weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-					else
-						weightGuider = 0;
+					// if(rangeTop - rangeButtom !=0)
+					// 	weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
+					// else
+					// 	weightGuider = 0;
 
 					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES EXPANDED IN THE MOST RECENT SECTION = WMA)
 					//// 0<=weightGuider<=1
-					// if(rangeTop - rangeButtom !=0)
-					// 	weightGuider = 1-(abs(WMA-firstLast) - rangeButtom)/(rangeTop - rangeButtom);
-					// else
-					// 	weightGuider = 0;
+					if(rangeTop - rangeButtom !=0)
+						weightGuider = 1-(abs(WMA-firstLast) - rangeButtom)/(rangeTop - rangeButtom);
+					else
+						weightGuider = 0;
 
 					////WEIGHTS IN THE RANGE OF minWeight to midWeight
 					// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
