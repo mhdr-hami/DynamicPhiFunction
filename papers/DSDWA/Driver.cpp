@@ -69,7 +69,7 @@ GridEmbedding *dh;
 
 // 1=DSD random room map, 2=DSD random map, 3=DSD random maze, 4=DSD designed map, 
 // 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load map, 8=DPS Load RaceTrack
-int mapcmd = 8;
+int mapcmd = 6;
 // std::string mapload = "mazes/maze512-32-6";
 // std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
