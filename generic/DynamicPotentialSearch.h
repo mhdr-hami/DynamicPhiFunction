@@ -184,10 +184,10 @@ void DynamicPotentialSearch<state,action,environment>::GetPath(environment *_env
 			std::cout<<"DPS => Terminated.\n";
 			break;
 		}
-		if (nodesExpanded % 100000 == 0){
-			//Print information of expanded nodes and nodes in open.
-			std::cout<<nodesExpanded<<" nodes are expanded and "<<nodesReOpened<<" nodes are re-opened.\n";
-		}
+		// if (nodesExpanded % 10000 == 0){
+		// 	// Print information of expanded nodes and nodes in open.
+		// 	std::cout<<nodesExpanded<<" nodes are expanded and "<<nodesReOpened<<" nodes are re-opened.\n";
+		// }
 	}
 }
 
@@ -440,8 +440,8 @@ template <class state, class action, class environment>
 void DynamicPotentialSearch<state, action,environment>::RebuildOpenQ()
 {
 	openRebuild ++;
-	if(openRebuild%100==0)
-		std::cout<<openRebuild<<" = number of rebuilding the open.\n";
+	// if(openRebuild%10000==0)
+		// std::cout<<openRebuild<<" = number of rebuilding the open.\n";
 	openQ.clear();
 	double fmin = GetBestFMin();
 	for (const auto &i : open)
