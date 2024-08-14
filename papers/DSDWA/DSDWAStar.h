@@ -20,10 +20,10 @@ enum tExpansionPriority {
 	kXDP=3,
 	kXUP=4,
 	OBDP=85,
-	CADP=65,
+	CADP=5,
 	ECBP=95,
 	kDSMAP11=55,
-	kMAP=5,
+	kMAP=65,
 	kHalfEdgeDrop=95,
 	kDSMAP8=38,
 	kDSMAP7=18,
@@ -817,9 +817,9 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					////WEIGHTS IN THE RANGE OF minWeight to midWeight
 					// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
 					////WEIGHTS IN THE RANGE OF lowMidWeight to highMidWeight
-					// float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
+					float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
 					////WEIGHTS IN THE RANGE OF minWeight to maxWeight
-					float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
+					// float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
 
 					SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
 
