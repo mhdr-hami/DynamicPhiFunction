@@ -1102,7 +1102,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			float minWeight, maxWeight;
 			GetNextWeightRange(minWeight, maxWeight, maxSlope);
 
-			if (policy == OBDP || policy == CADP)
+			if (policy == OBDP || policy == DWP)
 				SetNextWeight(maxSlopeH, maxSlopeG, weight);
 			else 
 				SetNextPriority(maxSlopeH, maxSlopeG, 0.01);
