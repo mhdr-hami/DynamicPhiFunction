@@ -19,11 +19,11 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	OBDP=85,
-	CADP=65,
+	kMAP=7,
+	DWP=6,
 	ECBP=95,
 	kDSMAP11=55,
-	kMAP=5,
+	OBDP=85,
 	kHalfEdgeDrop=95,
 	kDSMAP8=38,
 	kDSMAP7=18,
@@ -32,7 +32,7 @@ enum tExpansionPriority {
 	kFullEdgeDrop=85,
 	kDSMAP6=51,
 	kPathSuboptDouble=70,
-	kXDP90=7,
+	kXDP90=97,
  	kDSDPolicyCount=12,
 };
 
@@ -1020,7 +1020,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
 				}
 			}
-			else if (policy == CADP)
+			else if (policy == DWP)
 			{
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);

@@ -55,7 +55,7 @@ float a, b, tspp=30,ts=10, tsx=10, tsy=10, tsx2=10, tsy2=10, tsx3=10, tsy3=10, t
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
 bool searchRunning = false;
-bool saveSVG = true;
+bool saveSVG = false;
 bool useDH = false;
 bool limitScenarios = false, normalizedSTP= false;
 int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=598;
