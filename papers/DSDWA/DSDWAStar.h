@@ -19,7 +19,7 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	kMAP=7,
+	kMAP=5,
 	DWP=6,
 	ECBP=95,
 	kDSMAP11=55,
@@ -802,17 +802,17 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 
 					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
 					//// 0<=weightGuider<=1
-					// if(rangeTop - rangeButtom !=0)
-					// 	weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-					// else
-					// 	weightGuider = 0;
+					if(rangeTop - rangeButtom !=0)
+						weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
+					else
+						weightGuider = 0;
 
 					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES EXPANDED IN THE MOST RECENT SECTION = WMA)
 					//// 0<=weightGuider<=1
-					if(rangeTop - rangeButtom !=0)
-						weightGuider = 1-(abs(WMA-firstLast) - rangeButtom)/(rangeTop - rangeButtom);
-					else
-						weightGuider = 0;
+					// if(rangeTop - rangeButtom !=0)
+					// 	weightGuider = 1-(abs(WMA-firstLast) - rangeButtom)/(rangeTop - rangeButtom);
+					// else
+					// 	weightGuider = 0;
 
 					////WEIGHTS IN THE RANGE OF minWeight to midWeight
 					// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
