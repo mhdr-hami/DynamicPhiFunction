@@ -69,14 +69,14 @@ GridEmbedding *dh;
 
 // 1=DSD random room map, 2=DSD random map, 3=DSD random maze, 4=DSD designed map, 
 // 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load map, 8=DPS Load RaceTrack
-int mapcmd = 6;
-// std::string mapload = "mazes/maze512-32-6";
+int mapcmd = 3;
+std::string mapload = "mazes/maze512-32-6";
 // std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
 // std::string mapload = "dao/den520d";
 // std::string mapload = "dao/arena";
 // std::string mapload = "da2/ca_caverns1";
-std::string mapload = "da2/lt_undercityserialkiller";
+// std::string mapload = "da2/lt_undercityserialkiller";
 // std::string mapload = "da2/lt_foundry_n";
 
 int main(int argc, char* argv[])
@@ -1511,7 +1511,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
-					swampedloc.y = 0;
+					swampedloc.y = 0;	
 				}
 				else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
 					// swampedloc.y = (goal.y+start.y)/2;
@@ -2546,6 +2546,8 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
 						swampedloc.y = 0;
+						// std::cout<<"columns\n";
+					
 					}
 					else if(abs(goal.y-start.y) > abs(goal.x-start.x) && abs(goal.y-start.y)!=0){
 						// swampedloc.y = (goal.y+start.y)/2;
@@ -2555,6 +2557,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
 						swampedloc.x = 0;
+						// std::cout<<"rows\n";
 					}
 					else if(abs(goal.x-start.x) > abs(goal.y-start.y)){
 						swampedloc.x = (goal.x+start.x)/2;
