@@ -750,85 +750,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 				assert(angle>=0 && angle<=90);
                 SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(angle/90));
 			}
-			else if (policy == kMAP)
-			{
-				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH SECTION IT WAS FROM.
-				//ADD ONE TO THE NUMBER OF THAT SECTION.
-				float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
-				float weightGuider;
-				if(data.size()>=3)
-				{
-					if(nodeSlope <= data[data.size()-3].slope)
-						thirdLast += 1;
-					else if(nodeSlope <= data[data.size()-2].slope)
-						secondLast += 1;
-					else if(nodeSlope <= data[data.size()-1].slope)
-						firstLast += 1;
-				}
-				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
-
-					// std::cout<<theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data)<<" "<<openClosedList.Lookup(nodeid).g<<" "<<nodeid<<"\n";
-
-					float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight, lowHighMidWeight, highLowMidWeight, highHighMidWeight, lowLowMidWeight;
-					GetNextWeightRange(minWeight, maxWeight, maxSlope);
-					midWeight = (maxWeight + minWeight)/2;
-					lowMidWeight = (midWeight + minWeight)/2;
-					highMidWeight = (maxWeight + midWeight)/2;
-					// lowHighMidWeight = (lowMidWeight + midWeight)/2;
-					// highLowMidWeight = (highMidWeight + midWeight)/2;
-					// highHighMidWeight = (maxWeight + highMidWeight)/2;
-					// lowLowMidWeight = (lowMidWeight + minWeight)/2;
-
-					std::vector<uint64_t> tempRegionsVec;
-					tempRegionsVec.push_back(firstLast);
-					tempRegionsVec.push_back(secondLast);
-					tempRegionsVec.push_back(thirdLast);
-					std::sort(tempRegionsVec.begin(), tempRegionsVec.end());
-					// std::cout<<tempRegionsVec[0]<<" "<<tempRegionsVec[1]<<" "<<tempRegionsVec[2]<<"\n";
-
-					float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
-
-					// float rangeTop = (thirdLast + secondLast + firstLast)/2;
-					float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
-					// float rangeButtom = (thirdLast + secondLast + firstLast)/6;
-					float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
-					
-					////LARGER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
-					//// 0<=weightGuider<=1
-					// if(rangeTop - rangeButtom !=0)
-					// 	weightGuider = (WMA - rangeButtom)/(rangeTop - rangeButtom);
-					// else
-					// 	weightGuider = 0;
-
-					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
-					//// 0<=weightGuider<=1
-					if(rangeTop - rangeButtom !=0)
-						weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-					else
-						weightGuider = 0;
-
-					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES EXPANDED IN THE MOST RECENT SECTION = WMA)
-					//// 0<=weightGuider<=1
-					// if(rangeTop - rangeButtom !=0)
-					// 	weightGuider = 1-(abs(WMA-firstLast) - rangeButtom)/(rangeTop - rangeButtom);
-					// else
-					// 	weightGuider = 0;
-
-					////WEIGHTS IN THE RANGE OF minWeight to midWeight
-					// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
-					////WEIGHTS IN THE RANGE OF lowMidWeight to highMidWeight
-					float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
-					////WEIGHTS IN THE RANGE OF minWeight to maxWeight
-					// float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
-
-					SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
-
-					// maxRegion = lastRegion;
-					thirdLast = secondLast;
-					secondLast = firstLast;
-					firstLast = 0;
-				}
-			}
 			else if (policy == kXDP)
 			{
 				float minWeight, maxWeight;
@@ -1020,6 +941,85 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 					SetNextWeight(maxSlopeH, maxSlopeG, minWeight);
 				}
 			}
+			else if (policy == kMAP)
+			{
+				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH SECTION IT WAS FROM.
+				//ADD ONE TO THE NUMBER OF THAT SECTION.
+				float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
+				float weightGuider;
+				if(data.size()>=3)
+				{
+					if(nodeSlope <= data[data.size()-3].slope)
+						thirdLast += 1;
+					else if(nodeSlope <= data[data.size()-2].slope)
+						secondLast += 1;
+					else if(nodeSlope <= data[data.size()-1].slope)
+						firstLast += 1;
+				}
+				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
+
+					// std::cout<<theHeuristic->HCost(start, openClosedList.Lookup(nodeid).data)<<" "<<openClosedList.Lookup(nodeid).g<<" "<<nodeid<<"\n";
+
+					float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight, lowHighMidWeight, highLowMidWeight, highHighMidWeight, lowLowMidWeight;
+					GetNextWeightRange(minWeight, maxWeight, maxSlope);
+					midWeight = (maxWeight + minWeight)/2;
+					lowMidWeight = (midWeight + minWeight)/2;
+					highMidWeight = (maxWeight + midWeight)/2;
+					// lowHighMidWeight = (lowMidWeight + midWeight)/2;
+					// highLowMidWeight = (highMidWeight + midWeight)/2;
+					// highHighMidWeight = (maxWeight + highMidWeight)/2;
+					// lowLowMidWeight = (lowMidWeight + minWeight)/2;
+
+					std::vector<uint64_t> tempRegionsVec;
+					tempRegionsVec.push_back(firstLast);
+					tempRegionsVec.push_back(secondLast);
+					tempRegionsVec.push_back(thirdLast);
+					std::sort(tempRegionsVec.begin(), tempRegionsVec.end());
+					// std::cout<<tempRegionsVec[0]<<" "<<tempRegionsVec[1]<<" "<<tempRegionsVec[2]<<"\n";
+
+					float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
+
+					// float rangeTop = (thirdLast + secondLast + firstLast)/2;
+					float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
+					// float rangeButtom = (thirdLast + secondLast + firstLast)/6;
+					float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
+					
+					////LARGER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
+					//// 0<=weightGuider<=1
+					// if(rangeTop - rangeButtom !=0)
+					// 	weightGuider = (WMA - rangeButtom)/(rangeTop - rangeButtom);
+					// else
+					// 	weightGuider = 0;
+
+					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT SECTION)
+					//// 0<=weightGuider<=1
+					if(rangeTop - rangeButtom !=0)
+						weightGuider = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
+					else
+						weightGuider = 0;
+
+					////SMALLER WEIGHTS IF (PROGRESS MADE => NODES EXPANDED IN THE MOST RECENT SECTION = WMA)
+					//// 0<=weightGuider<=1
+					// if(rangeTop - rangeButtom !=0)
+					// 	weightGuider = 1-(abs(WMA-firstLast) - rangeButtom)/(rangeTop - rangeButtom);
+					// else
+					// 	weightGuider = 0;
+
+					////WEIGHTS IN THE RANGE OF minWeight to midWeight
+					// float TheNextWeight = minWeight + (midWeight-minWeight)*weightGuider;
+					////WEIGHTS IN THE RANGE OF lowMidWeight to highMidWeight
+					float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*weightGuider;
+					////WEIGHTS IN THE RANGE OF minWeight to maxWeight
+					// float TheNextWeight = minWeight + (maxWeight-minWeight)*weightGuider;
+
+					SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+
+					// maxRegion = lastRegion;
+					thirdLast = secondLast;
+					secondLast = firstLast;
+					firstLast = 0;
+				}
+			}
 			else if (policy == DWP)
 			{
 				float minWeight, maxWeight;
@@ -1040,26 +1040,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
 			}
 			else if (policy == OBDP)
 			{
-				// float minWeight, maxWeight;
-				// GetNextWeightRange(minWeight, maxWeight, maxSlope);
-				// float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
-				// assert(angle>=0 && angle<=90);
-				// if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
-				// 	if(fgreater(globalMaxH, openClosedList.Lookup(nodeid).h)){
-				// 		// float nextF = (maxSlopeG+maxSlopeH+sqrt((maxSlopeG+maxSlopeH)*(maxSlopeG+maxSlopeH)+4*weight*(weight-1)*maxSlopeH*maxSlopeH))/(2*weight);
-				// 		// SetNextPriority(maxSlopeH, maxSlopeG, nextF);
-				// 		// SetNextWeight(maxSlopeH, maxSlopeG, maxWeight);
-				// 		float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-				// 		SetNextWeight(maxSlopeH, maxSlopeG, maxWeight-(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
-				// 	}
-				// 	else{ //easy problems: lower weights
-				// 		//1, 3 best
-				// 		float prevAngle = max(prevBuckerAngle, prevBuckerAngle3);
-				// 		SetNextWeight(maxSlopeH, maxSlopeG, minWeight+(maxWeight-minWeight)*(pow(((angle-prevAngle)/(90-prevAngle)), 1)));
-				// 		// SetNextWeight(maxSlopeH, maxSlopeG, weight);
-				// 	}
-				// }
-				// globalMaxH = openClosedList.Lookup(nodeid).h;
 
 				float minWeight, maxWeight;
 				GetNextWeightRange(minWeight, maxWeight, maxSlope);
