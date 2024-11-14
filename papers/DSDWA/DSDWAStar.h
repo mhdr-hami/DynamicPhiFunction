@@ -10,8 +10,8 @@ enum tExpansionPriority {
 	kpwXU=2,
 	kXDP=3,
 	kXUP=4,
-	MAP=6,
 	DWP=5,
+	MAP=6,
 	kHalfEdgeDrop=7,
 	kGreedy=8,
 	kDSDPolicyCount=9,
@@ -1115,6 +1115,7 @@ bool DSDWAStar<state,action,environment,openList>::InitializeSearch_v3(environme
 	}
 
 	LookUpVector.resize(0);
+	//Insert a dummy element, to start the LookUpVector from index 1.
 	point3d crossPoint1;
 	crossPoint1.x = 1.0f;
 	crossPoint1.y = 1.0f;
@@ -1825,20 +1826,35 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
 
 				//CHECK THE SLOPE OF THE EXPANDED NODE TO SEE WHICH REGION IT WAS FROM.
 				//ADD ONE TO THE NUMBER OF THAT REGION.
+				float minWeight, maxWeight;
+				GetNextWeightRange_v3(minWeight, maxWeight, maxSlope);
+				float angle = atan2f(maxSlopeG,maxSlopeH)/PID180;
+				int rounded_angle = int(angle*(1/table_step));
+				int next_angle = LookUpVector.size();
+
 				float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
 				float wma_N;
-				if(data.size()>=3)
+				if(next_angle>=3)
 				{
-					if(nodeSlope <= data[data.size()-3].slope)
+					double prev_angle = (next_angle-1)/(1/table_step);
+					double prev_slope = std::tan(prev_angle* PID180);
+
+					double second_prev_angle = (next_angle-2)/(1/table_step);
+					double second_prev_slope = std::tan(second_prev_angle* PID180);
+
+					double third_prev_angle = (next_angle-3)/(1/table_step);
+					double third_prev_slope = std::tan(third_prev_angle* PID180);
+					
+					if(nodeSlope <= third_prev_slope)
 						thirdLast += 1;
-					else if(nodeSlope <= data[data.size()-2].slope)
+					else if(nodeSlope <= second_prev_slope)
 						secondLast += 1;
-					else if(nodeSlope <= data[data.size()-1].slope)
+					else if(nodeSlope <= prev_slope)
 						firstLast += 1;
 				}
-				if(fgreater(maxSlope, data.back().slope) || data.size() == 0){
+				if(next_angle == 1 || fgreater(rounded_angle, next_angle-1)){
 					float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
-					GetNextWeightRange(minWeight, maxWeight, maxSlope);
+					GetNextWeightRange_v3(minWeight, maxWeight, maxSlope);
 
 					// maxWeight = MAXFLOAT;
 
@@ -1866,7 +1882,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
 
 					float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
 					
-					SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
+					SetNextWeight_v3(maxSlopeH, maxSlopeG, TheNextWeight);
 
 					thirdLast = secondLast;
 					secondLast = firstLast;
