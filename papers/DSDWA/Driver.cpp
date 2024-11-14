@@ -25,7 +25,7 @@
 #include "MNPuzzle.h"
 #include "STPInstances.h"
 
-int stepsPerFrame = 0;
+int stepsPerFrame = 1;
 float bound = 3;
 int problemNumber = 0;
 float testScale = 1.0;
@@ -50,33 +50,51 @@ RacetrackState from;
 RacetrackState end;
 int numExtendedGoals = 300;
 int exper=8; //Exper 8 is to make DW domains. Use any other number for other domains.
-float a, b, tspp=30, tsx=10, tsy=10;
+float terrain_size=30, terrain_width=10, terrain_height=10;
 double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
 bool searchRunning = false;
 bool saveSVG = false;
 bool useDH = false;
-bool limitScenarios = false, normalizedSTP= false;
+bool useLookUpTable = true;
+bool limitScenarios = false;
 int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=598;
-bool flag = false;
-bool showExtraLog = false;
 int randomIndex;
 xyLoc xyLocRandomState;
 MNPuzzleState<4, 4> mnpRandomState;
-tExpansionPriority prevPolicy;
 GridEmbedding *dh;
 
 // 1=DSD random room map, 2=DSD random map, 3=DSD random maze, 4=DSD designed map, 
 // 5=DSD Load map, 6=DSD Load RaceTrack, 7=DPS Load map, 8=DPS Load RaceTrack
-int mapcmd = 3;
-std::string mapload = "mazes/maze512-32-6";
-// std::string mapload = "dao/ost003d";
+int mapcmd = 2;
+
+//std::string mapload = "mazes/maze512-32-6";
+ std::string mapload = "dao/ost003d";
 // std::string mapload = "dao/orz000d";
-// std::string mapload = "dao/den520d";
+// std::string mapload = "dao/den520d"; 
 // std::string mapload = "dao/arena";
 // std::string mapload = "da2/ca_caverns1";
 // std::string mapload = "da2/lt_undercityserialkiller";
 // std::string mapload = "da2/lt_foundry_n";
+
+//#include "Plot2D.h"
+struct DSDdata {
+	float slope;
+	float weight;
+	float K;
+	point3d crossPoint; // cached for simplicity
+};
+std::vector<DSDdata> data;
+
+struct DSDdata_v2 {
+	float weight;
+	float K;
+	point3d crossPoint; // cached for simplicity
+};
+std::unordered_map<double, DSDdata_v2> look_up_table;
+double last_in_lookup;
+
+std::vector<DSDdata_v2> LookUpVector;
 
 int main(int argc, char* argv[])
 {
@@ -101,15 +119,18 @@ void InstallHandlers()
 	InstallKeyboardHandler(MyDisplayHandler, "Problem", "Decrement problem", kAnyModifier, '-');
 	InstallKeyboardHandler(MyDisplayHandler, "Swamped Problems", "Increment swamped problem", kAnyModifier, 's');
 	InstallKeyboardHandler(MyDisplayHandler, "Bound", "Increment bound", kAnyModifier, 'w');
+	InstallKeyboardHandler(MyDisplayHandler, "toggle_lookUp_Table", "toggle lookUp Table", kAnyModifier, 't');
 
 	InstallCommandLineHandler(MyCLHandler, "-stpDSD", "-stpDSD <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-stpBaseLines", "-stpBaseLines <problem> <alg> <weight> <puzzleW>", "Test STP <problem> <algorithm> <weight> <puzzleW>");
-	InstallCommandLineHandler(MyCLHandler, "-exp0", "-exp0 <map> <alg> <weight> <TerrainSize> <mapType>", "Test grid <map> with <algorithm> <weight> <TerrainSize> <mapType>");
 	InstallCommandLineHandler(MyCLHandler, "-gridDSD", "-gridDSD <map> <scenario> <alg> <weight> <TerrainSize> <SwampHardness> <Experiment>", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
 	InstallCommandLineHandler(MyCLHandler, "-gridDPS", "-gridDPS <map> <scenario> <weight> <TerrainSize> <SwampHardness> <Experiment>", "Test grid <map> on <scenario> with <weight> <TerrainSize> <SwampHardness> and <Experiment>");
 	InstallCommandLineHandler(MyCLHandler, "-gridBaseLines", "-gridBaseLines <map> <scenario> <alg> <weight> <TerrainSize> <SwampHardness> <Experiment>", "Test grid <map> on <scenario> with <algorithm> <weight> <TerrainSize> <SwampHardness> and <Experiment>");
 	InstallCommandLineHandler(MyCLHandler, "-rtBaseLines", "-rtBaseLines <map> <scenario> <alg> <weight> <numExtendedGoals>", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
 	InstallCommandLineHandler(MyCLHandler, "-rtDSD", "-rtDSD <map> <scenario> <alg> <weight> <numExtendedGoals>", "Test grid <map> on <scenario> with <algorithm> <weight> <numExtendedGoals>");
+	InstallCommandLineHandler(MyCLHandler, "-exp0BaseLines", "-exp0BaseLines <alg> <weight> <TerrainSize> <mapType> <SwampHardness>", "Test grid with <algorithm> <weight> <TerrainSize> <mapType> <SwampHardness>");
+	InstallCommandLineHandler(MyCLHandler, "-exp0DSD", "-exp0DSD <alg> <weight> <TerrainSize> <mapType> <SwampHardness>", "Test grid with <algorithm> <weight> <TerrainSize> <mapType> <SwampHardness>");
+	InstallCommandLineHandler(MyCLHandler, "-exp0DPS", "-exp0DPS <weight> <TerrainSize> <mapType> <SwampHardness>", "Test grid <weight> <TerrainSize> <mapType> <SwampHardness>");
 	InstallCommandLineHandler(MyCLHandler, "-stpAstar", "-stpAstar <problem> <alg> <weight>", "Test STP <problem> <algorithm> <weight>");
 	InstallCommandLineHandler(MyCLHandler, "-stpDPS", "-stpDPS problem weight puzzleW", "Test STP <problem> <weight> <puzzleW>");
 	InstallCommandLineHandler(MyCLHandler, "-rtDPS", "-rtDPS <map> <scenario> <weight> <numExtendedGoals>", "Test grid <map> on <scenario> with <weight> <numExtendedGoals>");
@@ -155,7 +176,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 		}
 		else if(mapcmd==4){
 			m = new Map(200, 200);
-     		MakeDesignedMap(m, 20, 3);
+     		MakeDesignedMap(m, 30, 6);
 			// default 8-connected with ROOT_TWO edge costs
 			me = new MapEnvironment(m);
 		}
@@ -170,8 +191,8 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 
 		//load the scenario, or initiate it randomly.
 		if(mapcmd <=4){
-			start = {1,1};
-			goal = {198, 198};
+			start = {1,99};
+			goal = {198, 99};
 
 			me->SetDiagonalCost(1.41);
 			// me->SetDiagonalCost(1.5);
@@ -195,7 +216,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 				// rdm = random()%101;
 				// hardness[i] = rdm/101+1;
 				//Or 2. Hardcoded Hardness
-				hardness[0]=1.5; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+				hardness[0]=2; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
 				
 				// Use Hardness to define Cost
 				// 1. Hardness with respect to input w
@@ -211,8 +232,18 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 
 			dsd.SetWeight(bound);
 
-			dsd.InitializeSearch(me, start, goal, solution);
+			if(useLookUpTable){
+				// look_up_table.clear();
+				// dsd.InitializeSearch_v2(me, start, goal, solution);
+				LookUpVector.clear();
+				dsd.InitializeSearch_v3(me, start, goal, solution);
 
+			}
+			else{
+				data.resize(0);
+				dsd.InitializeSearch(me, start, goal, solution);
+			}
+			
 			if(useDH){
 				dh = new GridEmbedding(me, 10, kLINF);
 				for (int x = 0; x < 10; x++)
@@ -329,16 +360,9 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 		searchRunning = true;
 
 	}
+
 }
 
-//#include "Plot2D.h"
-struct DSDdata {
-	float slope;
-	float weight;
-	float K;
-	point3d crossPoint; // cached for simplicity
-};
-std::vector<DSDdata> data;
 point3d zero(0, 0);
 point3d origin(-1, 1);
 
@@ -367,7 +391,15 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 				{
 					if (solution.size() == 0)
 					{
-						if(mapcmd <= 5){
+						if(mapcmd <= 5 && useLookUpTable){
+							// if (dsd.DoSingleSearchStep_v2(solution)){
+							// 	std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
+							// }
+							if (dsd.DoSingleSearchStep_v3(solution)){
+								std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
+							}
+						}
+						if(mapcmd <= 5 && !useLookUpTable){
 							if (dsd.DoSingleSearchStep(solution)){
 								std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
 							}
@@ -392,8 +424,15 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
 		{
 			if (searchRunning)
 			{
-				if(mapcmd <= 5){
+				// if(mapcmd <= 5){
+				// 	dsd.DrawPriorityGraph(display);
+				// }
+				if(mapcmd <= 5 && !useLookUpTable){
 					dsd.DrawPriorityGraph(display);
+				}
+				if(mapcmd <= 5 && useLookUpTable){
+					// dsd.DrawPriorityGraph_v2(display);
+					dsd.DrawPriorityGraph_v3(display);
 				}
 				else if(mapcmd == 7){
 					//Does not apply here
@@ -616,8 +655,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// Order of calling these functions matters.
 		mnp.SetInputWeight(atof(argument[3])); //0
 
-		//If swamped mode
-		if(atoi(argument[4])==1){
+		//If DW mode
+		if(atoi(argument[4])==5){
 
 			//Assign a heuristic value, so all states within that range of heuristic value
 			//from the start state are going to be weighted.
@@ -628,8 +667,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		}
 		
 		mnp.SetPuzzleWeight(atoi(argument[4])); //1
-		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
-		// case 3:Squared, case 4:UnitPlusFrac, case 5:SquarePlusOneRoot
+		// case 0:UnitWeight, case 1:SquareRoot, case 2:Squared, 
+		// case 3:UnitPlusFrac, case 4:SquarePlusOneRoot, case 5:DW
 
 		mnp.SetMaxMinTileCost(start); //2
 
@@ -684,8 +723,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 		// std::cout<<"Heuristic start to goal in alg "<<argument[2]<<" weight "<<argument[3]<<" is "<<mnp.HCost(start, goal)<<"\n";
 
-		//if swamped mode
-		if(atoi(argument[4])==1){
+		//if DW mode
+		if(atoi(argument[4])==5){
 
 			//Assign a heuristic value, so all states within that range of heuristic value
 			//from the start state are going to be weighted.
@@ -696,8 +735,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		}
 
 		mnp.SetPuzzleWeight(atoi(argument[4])); //1
-		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
-		// case 3:Squared, case 4:UnitPlusFrac, case 5:SquarePlusOneRoot
+		// case 0:UnitWeight, case 1:SquareRoot, case 2:Squared, 
+		// case 3:UnitPlusFrac, case 4:SquarePlusOneRoot, case 5:DW
 
 		mnp.SetMaxMinTileCost(start); //2
 
@@ -732,8 +771,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		DPS_mnp.SetOptimalityBound(atof(argument[2]));
 		// printf("Solving STP Korf instance [%d of %d] using DSD weight %f\n", atoi(argument[1])+1, 100, atof(argument[2]));
 
-		//if swamped mode
-		if(atoi(argument[3])==1){
+		//if DW mode
+		if(atoi(argument[3])==5){
 			//Assign a heuristic value, so all states within that range of heuristic value
 			//from the start state are going to be weighted.
 
@@ -743,8 +782,8 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		}
 
 		mnp.SetPuzzleWeight(atoi(argument[3])); //1
-		// case 0:UnitWeight, case 1:SwampedMode, case 2:SquareRoot, 
-		// case 3:Squared, case 4:UnitPlusFrac, case 5:SquarePlusOneRoot
+		// case 0:UnitWeight, case 1:SquareRoot, case 2:Squared, 
+		// case 3:UnitPlusFrac, case 4:SquarePlusOneRoot, case 5:DW
 
 		DPS_mnp.InitializeSearch(&mnp, start, goal, path);
 		DPS_mnp.GetPath(&mnp, start, goal, path);
@@ -788,13 +827,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			if(exper==8){
 				if(swampedloc.x == 0){
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 				else if(swampedloc.y == 0){
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
@@ -824,9 +863,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 				// Use Hardness to define Cost
 				// 1. Hardness with respect to input w
-				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+				// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				//Or 2. Hardness as the exact Cost
-				// Tcosts[i] = hardness[i];
+				Tcosts[i] = hardness[i];
 				//Or 3. The exact Cost hardcoded
             	// Tcosts[i] = 4.5;
 
@@ -841,15 +880,15 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			//Change one or more squares of ground states to swamp type.
 			if(exper==8){
-				//Set the size of the swamp area using the tspp argument.
-				tsx = max(tspp/100*abs(goal.x-start.x), 10);
-				tsy = max(tspp/100*abs(goal.y-start.y), 10);
+				//Set the size of the swamp area using the terrain_size argument.
+				terrain_width = max(terrain_size/100*abs(goal.x-start.x), 10);
+				terrain_height = max(terrain_size/100*abs(goal.y-start.y), 10);
 
 				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
 					// swampedloc.x = (goal.x+start.x)/2;
 					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.y = 0;
@@ -858,7 +897,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					// swampedloc.y = (goal.y+start.y)/2;
 					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.x = 0;
@@ -867,7 +906,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.x = (goal.x+start.x)/2;
 					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.y = 0;
@@ -876,7 +915,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.y = (goal.y+start.y)/2;
 					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.x = 0;
@@ -950,13 +989,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			if(exper==8){
 				if(swampedloc.x == 0){
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 				else if(swampedloc.y == 0){
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
@@ -986,9 +1025,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 				//Use Hardness to define Cost
 				// 1. Hardness with respect to input w
-				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+				// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				//Or 2. Hardness as the exact Cost
-				// Tcosts[i] = hardness[i];
+				Tcosts[i] = hardness[i];
 				//Or 3. The exact Cost hardcoded
             	// Tcosts[i] = 4.5;
 
@@ -1003,15 +1042,15 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			//Change one or more squares of ground states to swamp type.
 			if(exper==8){
-				//Set the size of the swamp area using the tspp argument.
-				tsx = max(tspp/100*abs(goal.x-start.x), 10);
-				tsy = max(tspp/100*abs(goal.y-start.y), 10);
+				//Set the size of the swamp area using the terrain_size argument.
+				terrain_width = max(terrain_size/100*abs(goal.x-start.x), 10);
+				terrain_height = max(terrain_size/100*abs(goal.y-start.y), 10);
 
 				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
 					// swampedloc.x = (goal.x+start.x)/2;
 					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.y = 0;	
@@ -1020,7 +1059,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					// swampedloc.y = (goal.y+start.y)/2;
 					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.x = 0;
@@ -1029,7 +1068,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.x = (goal.x+start.x)/2;
 					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.y = 0;
@@ -1038,7 +1077,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.y = (goal.y+start.y)/2;
 					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.x = 0;
@@ -1086,13 +1125,13 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			if(exper==8){
 				if(swampedloc.x == 0){
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
 				else if(swampedloc.y == 0){
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 								me->GetMap()->SetTerrainType(i, j, kGround);
 				}
@@ -1122,9 +1161,9 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 				//Use Hardness to define Cost
 				// 1. Hardness with respect to input w
-				Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+				// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
 				//Or 2. Hardness as the exact Cost
-				// Tcosts[i] = hardness[i];
+				Tcosts[i] = hardness[i];
 				//Or 3. The exact Cost hardcoded
             	// Tcosts[i] = 4.5;
 
@@ -1139,15 +1178,15 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			
 			//Change one or more squares of ground states to swamp type.
 			if(exper==8){
-				//Set the size of the swamp area using the tspp argument.
-				tsx = max(tspp/100*abs(goal.x-start.x), 10);
-				tsy = max(tspp/100*abs(goal.y-start.y), 10);
+				//Set the size of the swamp area using the terrain_size argument.
+				terrain_width = max(terrain_size/100*abs(goal.x-start.x), 10);
+				terrain_height = max(terrain_size/100*abs(goal.y-start.y), 10);
 
 				if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
 					// swampedloc.x = (goal.x+start.x)/2;
 					swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.y = 0;
@@ -1156,7 +1195,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					// swampedloc.y = (goal.y+start.y)/2;
 					swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.x = 0;
@@ -1165,7 +1204,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.x = (goal.x+start.x)/2;
 					// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 					for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-						for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+						for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.y = 0;
@@ -1174,7 +1213,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 					swampedloc.y = (goal.y+start.y)/2;
 					// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 					for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-						for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+						for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 							if(me->GetMap()->GetTerrainType(i, j) == kGround)
 								me->GetMap()->SetTerrainType(i, j, kSwamp);
 					swampedloc.x = 0;
@@ -1412,21 +1451,184 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		
 		exit(0);
 	}
-	else if (strcmp(argument[0], "-exp0") == 0)
+	else if (strcmp(argument[0], "-exp0BaseLines") == 0)
 	{
 		Map *m = new Map(200, 200);
-		MakeDesignedMap(m, atoi(argument[4]), atoi(argument[5]));
-		// std::string filename = argument[1];
-		// m->Save(filename.c_str());
-		assert(maxNumArgs >= 5);
-		me = new MapEnvironment(m);
+		MakeDesignedMap(m, atoi(argument[3]), atoi(argument[4]));
+		// MakeDesignedMap(m, 30, 6);
 
-		start = {1,1};
-		goal = {198, 198};
-		dsd.policy = (tExpansionPriority)atoi(argument[2]);
-		dsd.SetWeight(atof(argument[3]));
+		me = new MapEnvironment(m);
+		// me->SetDiagonalCost(1.5);
+		me->SetDiagonalCost(1.41);
+
+		assert(maxNumArgs >= 5);
+		//Set the cost of each terrain type randomly.
+		for(int i=0; i<4; i++){
+			//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
+
+			// Define the Hardness
+			// 1. Random Hardness
+			// rdm = random()%101;
+			// hardness[i] = rdm/101+1;
+			//Or 2. Hardcoded Hardness
+			// hardness[0]=2; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+			//Or 3. Get Hardness from Input Argument
+			hardness[0]=atof(argument[5]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+
+			// Use Hardness to define Cost
+			// 1. Hardness with respect to input w
+			// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+			//Or 2. Hardness as the exact Cost
+			Tcosts[i] = hardness[i];
+			//Or 3. The exact Cost hardcoded
+			// Tcosts[i] = 4.5;
+
+			string type;
+			if(i==0) type="Swamp";
+			if(i==1) type="Water";
+			if(i==2) type="Grass";
+			if(i==3) type="Trees";
+			// std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
+		}
+		me->SetTerrainCost(Tcosts);
+
+		double proveBound = atof(argument[2]);
+		tas.SetWeight(proveBound);
+		me->SetInputWeight(atof(argument[2]));
+
+		start = {1,99};
+		goal = {198, 99};
+
+		//Set the Baseline Policy.
+		if(atoi(argument[1]) == 0){ //WA*
+		tas.SetPhi([=](double h,double g){return g+proveBound*h;});
+		}
+		else if(atoi(argument[1]) == 1){ //PWXD
+		tas.SetPhi([=](double h,double g){return (h>g)?(g+h):(g/proveBound+h*(2*proveBound-1)/proveBound);});
+		}
+		else if(atoi(argument[1]) == 2){ //PWXU
+		tas.SetPhi([=](double h,double g){return (h*(2*proveBound-1)>g)?(g/(2*proveBound-1)+h):(1/proveBound*(g+h));});
+		}
+		else if(atoi(argument[1]) == 3){ //XDP
+		tas.SetPhi([=](double h,double g){return (g+(2*proveBound-1)*h+sqrt((g-h)*(g-h)+4*proveBound*g*h))/(2*proveBound);});
+		}
+		else if(atoi(argument[1]) == 4){ //XUP
+		tas.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
+		}
+		else if(atoi(argument[1]) == 5){ //A*
+		tas.SetPhi([=](double h,double g){return g+h;});
+		}
+		
+		tas.InitializeSearch(me, start, goal, solution);
+
+		tas.GetPath(me, start, goal, solution);
+		printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", "Exp0", 0, 197, atoi(argument[1]), atof(argument[2]), tas.GetNodesExpanded(), me->GetPathLength(solution));
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-exp0DSD") == 0){
+		Map *m = new Map(200, 200);
+		MakeDesignedMap(m, atoi(argument[3]), atoi(argument[4]));
+		// MakeDesignedMap(m, 30, 6);
+
+		me = new MapEnvironment(m);
+		// me->SetDiagonalCost(1.5);
+		me->SetDiagonalCost(1.41);
+
+		assert(maxNumArgs >= 5);
+		//Set the cost of each terrain type randomly.
+		for(int i=0; i<4; i++){
+			//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
+
+			// Define the Hardness
+			// 1. Random Hardness
+			// rdm = random()%101;
+			// hardness[i] = rdm/101+1;
+			//Or 2. Hardcoded Hardness
+			// hardness[0]=2; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+			//Or 3. Get Hardness from Input Argument
+			hardness[0]=atof(argument[5]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+
+			// Use Hardness to define Cost
+			// 1. Hardness with respect to input w
+			// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+			//Or 2. Hardness as the exact Cost
+			Tcosts[i] = hardness[i];
+			//Or 3. The exact Cost hardcoded
+			// Tcosts[i] = 4.5;
+
+			string type;
+			if(i==0) type="Swamp";
+			if(i==1) type="Water";
+			if(i==2) type="Grass";
+			if(i==3) type="Trees";
+			// std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
+		}
+		me->SetTerrainCost(Tcosts);
+
+		dsd.policy = (tExpansionPriority)atoi(argument[1]);
+		dsd.SetWeight(atof(argument[2]));
+		me->SetInputWeight(atof(argument[2]));
+
+		start = {1,99};
+		goal = {198, 99};
+
+		dsd.InitializeSearch(me, start, goal, solution);
 		dsd.GetPath(me, start, goal, solution);
-		printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], "dummy", 0.0, atoi(argument[2]), atof(argument[3]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+		printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", "Exp0", 0, 197, atoi(argument[1]), atof(argument[2]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+		
+		exit(0);
+	}
+	else if (strcmp(argument[0], "-exp0DPS") == 0){
+		Map *m = new Map(200, 200);
+		MakeDesignedMap(m, atoi(argument[2]), atoi(argument[3]));
+		// MakeDesignedMap(m, 30, 6);
+
+		me = new MapEnvironment(m);
+		// me->SetDiagonalCost(1.5);
+		me->SetDiagonalCost(1.41);
+
+		assert(maxNumArgs >= 5);
+		//Set the cost of each terrain type randomly.
+		for(int i=0; i<4; i++){
+			//[0]=kSwamp, [1]=kWater, [2]=kGrass, [3]=kTrees
+
+			// Define the Hardness
+			// 1. Random Hardness
+			// rdm = random()%101;
+			// hardness[i] = rdm/101+1;
+			//Or 2. Hardcoded Hardness
+			// hardness[0]=2; hardness[1]=1.45; hardness[2]=1.25; hardness[3]=1.95;
+			//Or 3. Get Hardness from Input Argument
+			hardness[0]=atof(argument[4]);/*Followings are "Don't Care":*/hardness[1]=100.0; hardness[2]=100.0; hardness[3]=100.0;
+
+			// Use Hardness to define Cost
+			// 1. Hardness with respect to input w
+			// Tcosts[i] = hardness[i]*(me->GetInputWeight())-(hardness[i]-1);
+			//Or 2. Hardness as the exact Cost
+			Tcosts[i] = hardness[i];
+			//Or 3. The exact Cost hardcoded
+			// Tcosts[i] = 4.5;
+
+			string type;
+			if(i==0) type="Swamp";
+			if(i==1) type="Water";
+			if(i==2) type="Grass";
+			if(i==3) type="Trees";
+			// std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
+		}
+		me->SetTerrainCost(Tcosts);
+
+		start = {1,99};
+		goal = {198, 99};
+
+		dps.SetOptimalityBound(atof(argument[1]));
+		me->SetInputWeight(atof(argument[1]));
+
+		dps.InitializeSearch(me, start, goal, solution);
+			
+		dps.GetPath(me, start, goal, solution);
+		printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", "Exp0", 0, 197, 6, atof(argument[1]), dps.GetNodesExpanded(), me->GetPathLength(solution));
+		
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-timeDSWA") == 0)
@@ -1515,13 +1717,13 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				if(exper==8 && (mapcmd<=5 || mapcmd==7)){
 					if(swampedloc.x == 0){
 						for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 								if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 									me->GetMap()->SetTerrainType(i, j, kGround);
 					}
 					else if(swampedloc.y == 0){
 						for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-							for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 								if(me->GetMap()->GetTerrainType(i, j) == kSwamp)
 									me->GetMap()->SetTerrainType(i, j, kGround);
 					}
@@ -1550,15 +1752,15 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 
 				//Change one or more squares of ground states to swamp type.
 				if(exper==8 && (mapcmd<=5 || mapcmd==7)){
-					//Set the size of the swamp area using the tspp argument.
-					tsx = max(tspp/100*abs(goal.x-start.x), 10);
-					tsy = max(tspp/100*abs(goal.y-start.y), 10);
+					//Set the size of the swamp area using the terrain_size argument.
+					terrain_width = max(terrain_size/100*abs(goal.x-start.x), 10);
+					terrain_height = max(terrain_size/100*abs(goal.y-start.y), 10);
 
 					if(abs(goal.x-start.x) > abs(goal.y-start.y) && abs(goal.x-start.x)!=0){
 						// swampedloc.x = (goal.x+start.x)/2;
 						swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 						for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-							for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
 						swampedloc.y = 0;
@@ -1569,7 +1771,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						// swampedloc.y = (goal.y+start.y)/2;
 						swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 						for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
 						swampedloc.x = 0;
@@ -1579,7 +1781,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						swampedloc.x = (goal.x+start.x)/2;
 						// swampedloc.x = random()%(abs(goal.x-start.x))+min(goal.x,start.x);
 						for(int j=0; j < me->GetMap()->GetMapHeight(); j++)
-							for(int i=swampedloc.x-int(tsx/2); i<=swampedloc.x+int(tsx/2); i++)
+							for(int i=swampedloc.x-int(terrain_width/2); i<=swampedloc.x+int(terrain_width/2); i++)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
 						swampedloc.y = 0;
@@ -1588,7 +1790,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						swampedloc.y = (goal.y+start.y)/2;
 						// swampedloc.y = random()%(abs(goal.y-start.y))+min(goal.y,start.y);
 						for(int i=0; i < me->GetMap()->GetMapWidth(); i++)
-							for(int j=swampedloc.y-int(tsy/2); j<=swampedloc.y+int(tsy/2); j++)
+							for(int j=swampedloc.y-int(terrain_height/2); j<=swampedloc.y+int(terrain_height/2); j++)
 								if(me->GetMap()->GetTerrainType(i, j) == kGround)
 									me->GetMap()->SetTerrainType(i, j, kSwamp);
 						swampedloc.x = 0;
@@ -1610,13 +1812,28 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						if(i==3) type="Trees";
 						std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
 					}
-					data.resize(0);
-					dsd.InitializeSearch(me, start, goal, solution);
+					if(useLookUpTable){
+						// look_up_table.clear();
+						// dsd.InitializeSearch_v2(me, start, goal, solution);
+						LookUpVector.clear();
+						dsd.InitializeSearch_v3(me, start, goal, solution);
+						
+					}
+					else{
+						data.resize(0);
+						dsd.InitializeSearch(me, start, goal, solution);
+					}
 				}
 				else if(mapcmd == 6){
 					//Does not apply to Racetrack
-					data.resize(0);
-					dsd_track.InitializeSearch(r, from, end, path);
+					if(useLookUpTable){
+						look_up_table.clear();
+						dsd.InitializeSearch_v2(me, start, goal, solution);
+					}
+					else{
+						data.resize(0);
+						dsd.InitializeSearch(me, start, goal, solution);
+					}
 				}
 				else if(mapcmd == 7){
 					problemNumber +=1;
@@ -1661,8 +1878,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 						if(i==3) type="Trees";
 						std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
 					}
-					data.resize(0);
-					dsd.InitializeSearch(me, start, goal, solution);
+					if(useLookUpTable){
+						// look_up_table.clear();
+						// dsd.InitializeSearch_v2(me, start, goal, solution);
+						LookUpVector.clear();
+						dsd.InitializeSearch_v3(me, start, goal, solution);
+					}
+					else{
+						data.resize(0);
+						dsd.InitializeSearch(me, start, goal, solution);
+					}
 				}
 				else if(mapcmd == 6){
 					//RaceTrack
@@ -1732,8 +1957,10 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					printf("Problem: %d\n", problemNumber);
 					printf("Policy: %d\n", dsd.policy);
 					printf("Bound: %f\n", bound);
-					data.resize(0);
-					dsd.InitializeSearch(me, start, goal, solution);
+					// data.resize(0);
+					// dsd.InitializeSearch(me, start, goal, solution);
+					look_up_table.clear();
+					dsd.InitializeSearch_v2(me, start, goal, solution);
 				}
 				else if(mapcmd == 6){
 					//RaceTrack
@@ -1784,8 +2011,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					printf("Problem: %d\n", problemNumber);
 					printf("Policy: %d\n", dsd.policy);
 					printf("Bound: %f\n", bound);
-					data.resize(0);
-					dsd.InitializeSearch(me, start, goal, solution);
+					if(useLookUpTable){
+						// look_up_table.clear();
+						// dsd.InitializeSearch_v2(me, start, goal, solution);
+						LookUpVector.clear();
+						dsd.InitializeSearch_v3(me, start, goal, solution);
+					}
+					else{
+						data.resize(0);
+						dsd.InitializeSearch(me, start, goal, solution);
+					}
 				}
 				else if(mapcmd == 6){
 					//RaceTrack
@@ -1823,8 +2058,17 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 					printf("Problem: %d\n", problemNumber);
 					printf("Policy: %d\n", dsd.policy);
 					printf("Bound: %f\n", bound);
-					data.resize(0);
-					dsd.InitializeSearch(me, start, goal, solution);
+					if(useLookUpTable){
+						// look_up_table.clear();
+						// dsd.InitializeSearch_v2(me, start, goal, solution);
+						LookUpVector.clear();
+						dsd.InitializeSearch_v3(me, start, goal, solution);
+					}
+					else{
+						data.resize(0);
+						dsd.InitializeSearch(me, start, goal, solution);
+					}
+					
 				}
 				else if(mapcmd == 6){
 					//RaceTrack
@@ -1930,8 +2174,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
 				printf("Bound: %f\n", bound);
-				data.resize(0);
-				dsd.InitializeSearch(me, start, goal, solution);
+				if(useLookUpTable){
+					// look_up_table.clear();
+					// dsd.InitializeSearch_v2(me, start, goal, solution);
+					LookUpVector.clear();
+					dsd.InitializeSearch_v3(me, start, goal, solution);
+				}
+				else{
+					data.resize(0);
+					dsd.InitializeSearch(me, start, goal, solution);
+				}
 			}
 			else if(mapcmd == 6){
 				//RaceTrack
@@ -2038,8 +2290,16 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 				printf("Problem: %d\n", problemNumber);
 				printf("Policy: %d\n", dsd.policy);
 				printf("Bound: %f\n", bound);
-				data.resize(0);
-				dsd.InitializeSearch(me, start, goal, solution);
+				if(useLookUpTable){
+					// look_up_table.clear();
+					// dsd.InitializeSearch_v2(me, start, goal, solution);
+					LookUpVector.clear();
+					dsd.InitializeSearch_v3(me, start, goal, solution);
+				}
+				else{
+					data.resize(0);
+					dsd.InitializeSearch(me, start, goal, solution);
+				}
 			}
 			else if(mapcmd == 6){
 				//RaceTrack
@@ -2060,6 +2320,65 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
 			}
 			else if(mapcmd == 8){
 				problemNumber -= 1;
+				printf("Problem: %d\n", problemNumber);
+				printf("DPS Algorithm\n");
+				printf("Bound: %f\n", bound);
+				data.resize(0);
+				dps_track.InitializeSearch(r, from, end, path);
+			}
+			
+			searchRunning = true;
+			break;
+		}
+		case 't':
+		{
+			useLookUpTable = !useLookUpTable;
+
+			if(mapcmd <= 5){
+				printf("==============\n");
+				printf("Problem: %d\n", problemNumber);
+				printf("Policy: %d\n", dsd.policy);
+				printf("Bound: %f\n", bound);
+				for(int i=0; i<4; i++){
+					//[0]=kSwamp, [1]=kWater ,[2]=kGrass, [3]=kTrees
+					string type;
+					if(i==0) type="Swamp";
+					if(i==1) type="Water";
+					if(i==2) type="Grass";
+					if(i==3) type="Trees";
+					std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
+				}
+				if(useLookUpTable){
+					// look_up_table.clear();
+					// dsd.InitializeSearch_v2(me, start, goal, solution);
+					LookUpVector.clear();
+					dsd.InitializeSearch_v3(me, start, goal, solution);
+				}
+				else{
+					data.resize(0);
+					dsd.InitializeSearch(me, start, goal, solution);
+				}
+			}
+			else if(mapcmd == 6){
+				//RaceTrack
+				printf("==============\n");
+				printf("Problem: %d\n", problemNumber);
+				printf("Policy: %d\n", dsd_track.policy);
+				printf("Bound: %f\n", bound);
+				data.resize(0);
+				dsd_track.InitializeSearch(r, from, end, path);
+			}
+			else if(mapcmd == 7){
+				printf("==============\n");
+				printf("Problem: %d\n", problemNumber);
+				printf("DPS Algorithm\n");
+				printf("Bound: %f\n", bound);
+				data.resize(0);
+				dps.InitializeSearch(me, start, goal, solution);
+			}
+			else if(mapcmd == 8){
+				//RaceTrack
+				printf("==============\n");
 				printf("Problem: %d\n", problemNumber);
 				printf("DPS Algorithm\n");
 				printf("Bound: %f\n", bound);
