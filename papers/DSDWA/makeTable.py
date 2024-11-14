@@ -9,7 +9,9 @@ plt.rcParams["figure.figsize"] = [7.00, 7.00]
 plt.rcParams["legend.framealpha"] = 1.00
 ## Args: PythonAdrress Domain #Experiment #Policies #Weights DataAdrress
 
-weight_to_int = {"1.50":0, "2.00":1, '3.00':2, '4.00':3, '5.00':4, '6.00':5, '7.00':6, '8.00':7, '9.00':8, '10.00':9}
+# weight_to_int = {"1.50":0, "2.00":1, '3.00':2, '4.00':3, '5.00':4, '6.00':5, '7.00':6, '8.00':7, '9.00':8, '10.00':9}
+# weight_to_int = {"1.50":0, "2.00":1, "2.50":2, "3.00":3, "3.50":4, "4.00":5, "4.50":6, "5.00":7, "5.50":8, "6.00":9, "6.50":10, "7.00":11, "7.50":12, "8.00":13, "8.50":14, "9.00":15, "9.50":16, "10.00":17}
+weight_to_int = {"1.20":0, "1.40":1, "1.60":2, "1.80":3, "2.00":4, "2.20":5, "2.40":6, "2.60":7, "2.80":8, "3.00":9, "3.20":10, "3.40":11, "3.60":12, "3.80":13, "4.00":14, "4.20":15, "4.40":16, "4.60":17, "4.80":18, "5.00":19, "5.20":20, "5.40":21, "5.60":22, "5.80":23, "6.00":24, "6.20":25, "6.40":26, "6.60":27, "6.80":28, "7.00":29, "7.20":30, "7.40":31, "7.60":32, "7.80":33, "8.00":34, "8.20":35, "8.40":36, "8.60":37, "8.80":38, "9.00":39, "9.20":40, "9.40":41, "9.60":42, "9.80":43, "10.00":44}
 
 cost='5.0'
 mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamond', 3:'Swamped Diamond Cost='+cost, 4:'Obstacle Circle', 5:'Swamped Circle Cost='+cost, 6: sys.argv[5]+" Cost="+sys.argv[8]}
@@ -18,17 +20,17 @@ mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamo
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'MAP'}
 # colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:cyan']
 
-markers = [',', '^', 'X', '8', 's', '*'] ##DWP=5
-int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP'}
-colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue']
+# markers = [',', '^', 'X', '8', 's', '*'] ##DWP=5
+# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP'}
+# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue']
 
 # markers = [',', '^', 'X', '8', 's', 'o', 'd', '*'] ##DWP=7, MAP=5
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'MAP', 6:'DPS', 7:'DWP'}
 # colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:cyan', 'tab:olive', 'tab:blue']
 
-# markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
-# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
-# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
+markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
+int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
+colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
 
 # markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
@@ -54,8 +56,8 @@ linestyles = OrderedDict(
      ('densely dashdotted',  (0, (3, 1, 1, 1))),
      ('loosely dashdotdotted', (0, (3, 10, 1, 10, 1, 10))),
      ('densely dashdotdotted', (0, (3, 1, 1, 1, 1, 1)))])
-showErrorBar = True
-tableType = 1
+showErrorBar = False
+tableType = 0
 
 if sys.argv[1] == '-stp':
     if sys.argv[2] == '1':
@@ -276,7 +278,9 @@ if sys.argv[1] == '-stp':
 
         result = np.divide(table, count_table)
 
-        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        # Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        Weights = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]
+        # Weights = [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6, 5.8, 6.0, 6.2, 6.4, 6.6, 6.8, 7.0, 7.2, 7.4, 7.6, 7.8, 8.0, 8.2, 8.4, 8.6, 8.8, 9.0, 9.2, 9.4, 9.6, 9.8, 10.0]
         
         xpoints = np.array(Weights)
         works = []
@@ -618,7 +622,11 @@ elif sys.argv[1] == '-map':
                         TheDataSet[int(data[5])][weight_to_int[data[7]]].append(int(data[9]))
 
         result = np.divide(table, count_table)
-        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+
+        # Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        # Weights = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]
+        Weights = [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6, 5.8, 6.0, 6.2, 6.4, 6.6, 6.8, 7.0, 7.2, 7.4, 7.6, 7.8, 8.0, 8.2, 8.4, 8.6, 8.8, 9.0, 9.2, 9.4, 9.6, 9.8, 10.0]
+        
         xpoints = np.array(Weights)
         works = []
         for policy in int_to_alg:
@@ -673,8 +681,9 @@ elif sys.argv[1] == '-map':
                         TheDataSet[int(data[5])][weight_to_int[data[7]]].append(float(data[11]))
 
         result = np.divide(table, count_table)
-        # Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        # Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        Weights = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]
+
         xpoints = np.array(Weights)
         works = []
         for policy in int_to_alg:

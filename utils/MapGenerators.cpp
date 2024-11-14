@@ -355,7 +355,13 @@ void MakeDesignedMap(Map *map, int obstacleSize, int type)
 				if(sqrt(pow(i-xloc,2) + pow(j-yloc,2)) <= obstacleSize)
 					map->SetTerrainType(i, j, kSwamp);
 		break;
-	
+
+	case 6:
+		/* Some columns of swamp states in the center of empty map */
+		for(int i=xloc-obstacleSize; i<=xloc+obstacleSize; i++)
+			for(int j=0; j<map->GetMapHeight(); j++)
+				map->SetTerrainType(i, j, kSwamp);
+		break;	
 	default:
 		break;
 	}
