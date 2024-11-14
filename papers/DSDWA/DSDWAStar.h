@@ -443,9 +443,12 @@ public:
 			// connect to y axis at bound*(1)
 			float K = 1/(last.y+w*last.x);
 
-			for(int i=next_angle; i<= 90*(1/table_step); i++){
-				LookUpVector.push_back({w, K, {static_cast<float>(weight), 0.0f}});
-			}
+			//Method 1: use for loop and push_back
+			// for(int i=next_angle; i<= 90*(1/table_step); i++){
+			// 	LookUpVector.push_back({w, K, {static_cast<float>(weight), 0.0f}});
+			// }
+			//Method 2: use insert instead of for loop and push_back
+			LookUpVector.insert(LookUpVector.end(), 90*(1/table_step)-next_angle+1, {w, K, {static_cast<float>(weight), 0.0f}});
 		}
 		if (fgreater(h, 0) && fgreater(g, 0))
 		{
@@ -475,9 +478,14 @@ public:
 				crossPoint1.y = crossPoint1.x*slope;
 				
 				// loop through all angles between last in lookup and angle and define all of them with nextWeight
-				for(int i=next_angle; i<= rounded_angle; i++){
-					LookUpVector.push_back({nextWeight, K, crossPoint1});
-				}
+
+				//Method 1: use for loop and push_back
+				// for(int i=next_angle; i<= rounded_angle; i++){
+				// 	LookUpVector.push_back({nextWeight, K, crossPoint1});
+				// }
+				//Method 2: use insert instead of for loop and push_back
+				LookUpVector.insert(LookUpVector.end(), rounded_angle-next_angle+1, {nextWeight, K, crossPoint1});
+
 				// std::cout<<"prev angle "<<next_angle-1<<" | rounded_angle: "<<rounded_angle<<"| nextWeight: "<<nextWeight<<"\n";
 
 			}
@@ -716,9 +724,12 @@ public:
 			// connect to y axis at bound*(1)
 			float K = 1/(last.y+w*last.x);
 			
-			for(int i=next_angle; i<= 90*(1/table_step); i++){
-				LookUpVector.push_back({w, K, {static_cast<float>(weight), 0.0f}});
-			}
+			//Method 1: use for loop and push_back
+			// for(int i=next_angle; i<= 90*(1/table_step); i++){
+			// 	LookUpVector.push_back({w, K, {static_cast<float>(weight), 0.0f}});
+			// }
+			//Method 2: use insert instead of for loop and push_back
+			LookUpVector.insert(LookUpVector.end(), 90*(1/table_step)-next_angle+1, {w, K, {static_cast<float>(weight), 0.0f}});
 
 		}
 		if (fgreater(h, 0) && fgreater(g, 0))
@@ -778,19 +789,23 @@ public:
 				crossPoint1.y = crossPoint1.x*slope;
 				
 				// loop through all slopes between last in lookup and slope and define all of them with nextWeight
-				for(int i=next_angle; i<= rounded_angle; i++){
-					LookUpVector.push_back({nextWeight, K, crossPoint1});
-				}
+
+				//Method 1: use for loop and push_back
+				// for(int i=next_angle; i<= rounded_angle; i++){
+				// 	LookUpVector.push_back({nextWeight, K, crossPoint1});
+				// }
+				//Method 2: use insert instead of for loop and push_back
+				LookUpVector.insert(LookUpVector.end(), rounded_angle-next_angle+1, {nextWeight, K, crossPoint1});
 
 				// std::cout<<"prev angle "<<next_angle-1<<" | rounded_angle: "<<rounded_angle<<"| nextWeight: "<<nextWeight<<"\n";
 				
-	//			std::cout << "Cross Priorities: ";
-	//			for (const auto &i : data)
-	//			{
-	//				std::cout << i.crossPoint << ": ";
-	//				std::cout << GetPriority(i.crossPoint.x, i.crossPoint.y) << " ";
-	//			}
-	//			std::cout << "\n";
+				// std::cout << "Cross Priorities: ";
+				// for (const auto &i : data)
+				// {
+				// 	std::cout << i.crossPoint << ": ";
+				// 	std::cout << GetPriority(i.crossPoint.x, i.crossPoint.y) << " ";
+				// }
+				// std::cout << "\n";
 			}
 		}
 	}
