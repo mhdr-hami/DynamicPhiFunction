@@ -1832,31 +1832,30 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
 				int rounded_angle = int(angle*(1/table_step));
 				int next_angle = LookUpVector.size();
 
-				float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
-				float wma_N;
-				if(next_angle>=3)
-				{
-					double prev_angle = (next_angle-1)/(1/table_step);
-					double prev_slope = std::tan(prev_angle* PID180);
-
-					double second_prev_angle = (next_angle-2)/(1/table_step);
-					double second_prev_slope = std::tan(second_prev_angle* PID180);
-
-					double third_prev_angle = (next_angle-3)/(1/table_step);
-					double third_prev_slope = std::tan(third_prev_angle* PID180);
-					
-					if(nodeSlope <= third_prev_slope)
-						thirdLast += 1;
-					else if(nodeSlope <= second_prev_slope)
-						secondLast += 1;
-					else if(nodeSlope <= prev_slope)
-						firstLast += 1;
-				}
 				if(next_angle == 1 || fgreater(rounded_angle, next_angle-1)){
+					float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
+					float wma_N;
+					if(next_angle>=3)
+					{
+						double prev_angle = (next_angle-1)/(1/table_step);
+						double prev_slope = std::tan(prev_angle* PID180);
+
+						double second_prev_angle = (next_angle-2)/(1/table_step);
+						double second_prev_slope = std::tan(second_prev_angle* PID180);
+
+						double third_prev_angle = (next_angle-3)/(1/table_step);
+						double third_prev_slope = std::tan(third_prev_angle* PID180);
+						
+						if(nodeSlope <= third_prev_slope)
+							thirdLast += 1;
+						else if(nodeSlope <= second_prev_slope)
+							secondLast += 1;
+						else if(nodeSlope <= prev_slope)
+							firstLast += 1;
+					}
+
 					float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
 					GetNextWeightRange_v3(minWeight, maxWeight, maxSlope);
-
-					// maxWeight = MAXFLOAT;
 
 					midWeight = (maxWeight + minWeight)/2;
 					lowMidWeight = (midWeight + minWeight)/2;
