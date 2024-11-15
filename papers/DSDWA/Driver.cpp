@@ -817,7 +817,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		end_time = clock();
 		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
 			
-		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), 6, atoi(argument[2]), atof(argument[3]), DPS_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), 6, atoi(argument[2], DPS_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
 		
 
 		exit(0);
@@ -1284,7 +1284,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			end_time = clock();
 			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
 				
-			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dps.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
 
 		}
 		exit(0);
