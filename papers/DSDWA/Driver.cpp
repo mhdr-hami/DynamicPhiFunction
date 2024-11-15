@@ -695,11 +695,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// tas_mnp.GetPath(&mnp, start, goal, path);
 		// printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), tas_mnp.GetNodesExpanded(), path.size());
 
-		tas_mnp.InitializeSearch_v3(&mnp, start, goal, path);
+		tas_mnp.InitializeSearch(&mnp, start, goal, path);
 		clock_t start_time, end_time;
     	start_time = clock();
 
-		float avg_runtime_per_node = tas_mnp.GetPath_v3(&mnp, start, goal, path);
+		float avg_runtime_per_node = tas_mnp.GetPath_v2(&mnp, start, goal, path);
 
 		end_time = clock();
 		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
@@ -808,11 +808,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// DPS_mnp.GetPath(&mnp, start, goal, path);
 		// printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), 6, atof(argument[2]), DPS_mnp.GetNodesExpanded(), path.size());
 		
-		DPS_mnp.InitializeSearch_v3(&mnp, start, goal, path);
+		DPS_mnp.InitializeSearch(&mnp, start, goal, path);
 		clock_t start_time, end_time;
     	start_time = clock();
 
-		float avg_runtime_per_node = DPS_mnp.GetPath_v3(&mnp, start, goal, path);
+		float avg_runtime_per_node = DPS_mnp.GetPath_v2(&mnp, start, goal, path);
 
 		end_time = clock();
 		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
@@ -976,11 +976,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			// tas.GetPath(me, start, goal, solution);
 			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), me->GetPathLength(solution));
 
-			tas.InitializeSearch_v3(me, start, goal, solution);
+			tas.InitializeSearch(me, start, goal, solution);
 			clock_t start_time, end_time;
 			start_time = clock();
 
-			float avg_runtime_per_node = tas.GetPath_v3(me, start, goal, solution);
+			float avg_runtime_per_node = tas.GetPath_v2(me, start, goal, solution);
 
 			end_time = clock();
 			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
@@ -1275,11 +1275,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			// dps.GetPath(me, start, goal, solution);
 			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps.GetNodesExpanded(), me->GetPathLength(solution));
 
-			dps.InitializeSearch_v3(me, start, goal, solution);
+			dps.InitializeSearch(me, start, goal, solution);
 			clock_t start_time, end_time;
 			start_time = clock();
 
-			float avg_runtime_per_node = dps.GetPath_v3(me, start, goal, solution);
+			float avg_runtime_per_node = dps.GetPath_v2(me, start, goal, solution);
 
 			end_time = clock();
 			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
@@ -1370,11 +1370,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			// tas_track.GetPath(r, from, end, path);
 			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas_track.GetNodesExpanded());
 
-			tas_track.InitializeSearch_v3(r, from, end, path);
+			tas_track.InitializeSearch(r, from, end, path);
 			clock_t start_time, end_time;
 			start_time = clock();
 
-			float avg_runtime_per_node = tas_track.GetPath_v3(r, from, end, path);
+			float avg_runtime_per_node = tas_track.GetPath_v2(r, from, end, path);
 
 			end_time = clock();
 			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
@@ -1529,11 +1529,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			// dps_track.GetPath(r, from, end, path);
 			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps_track.GetNodesExpanded());
 
-			dps_track.InitializeSearch_v3(r, from, end, path);
+			dps_track.InitializeSearch(r, from, end, path);
 			clock_t start_time, end_time;
 			start_time = clock();
 
-			float avg_runtime_per_node = dps_track.GetPath_v3(r, from, end, path);
+			float avg_runtime_per_node = dps_track.GetPath_v2(r, from, end, path);
 
 			end_time = clock();
 			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
@@ -1542,7 +1542,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 
 		}
-		
 		
 		exit(0);
 	}
