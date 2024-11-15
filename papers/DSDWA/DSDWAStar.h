@@ -1036,7 +1036,7 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 template <class state, class action, class environment, class openList>
 float DSDWAStar<state,action,environment,openList>::GetPath_v3(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
 {
-	if (!InitializeSearch_3(_env, from, to, thePath))
+	if (!InitializeSearch_v3(_env, from, to, thePath))
 	{
 		return;
 	}
@@ -1045,7 +1045,7 @@ float DSDWAStar<state,action,environment,openList>::GetPath_v3(environment *_env
 	float average_time_per_node = 0;
 	clock_t start_time, end_time;
     start_time = clock();
-	while (!DoSingleSearchStep_3(thePath))
+	while (!DoSingleSearchStep_v3(thePath))
 	{
 		end_time = clock();
 		float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
