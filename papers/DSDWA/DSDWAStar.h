@@ -1038,7 +1038,7 @@ float DSDWAStar<state,action,environment,openList>::GetPath_v3(environment *_env
 {
 	if (!InitializeSearch_v3(_env, from, to, thePath))
 	{
-		return;
+		return 0.0;
 	}
 	// keeps doing single search step, which is expansion of one node, and adding its successors to open 
 	// until the solution is found or open is empty.
