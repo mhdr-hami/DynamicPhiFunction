@@ -817,7 +817,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		end_time = clock();
 		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
 			
-		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), 6, atoi(argument[2], DPS_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), 6, atoi(argument[2]), DPS_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
 		
 
 		exit(0);
