@@ -1036,7 +1036,32 @@ void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, co
 template <class state, class action, class environment, class openList>
 float DSDWAStar<state,action,environment,openList>::GetPath_v3(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
 {
-	if (!InitializeSearch_v3(_env, from, to, thePath))
+	// if (!InitializeSearch_v3(_env, from, to, thePath))
+	// {
+	// 	return 0.0;
+	// }
+	// // keeps doing single search step, which is expansion of one node, and adding its successors to open 
+	// // until the solution is found or open is empty.
+	// float average_time_per_node = 0;
+	// clock_t start_time, end_time;
+    // start_time = clock();
+	// while (!DoSingleSearchStep_v3(thePath))
+	// {
+	// 	end_time = clock();
+	// 	float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+	// 	average_time_per_node += runningTime;
+	// 	if (10000000 == nodesExpanded){
+	// 		//Terminate the search after 10 million node expansions.
+	// 		printf("%" PRId64 " nodes expanded, %" PRId64 " generated. ", nodesExpanded, nodesTouched);
+	// 		std::cout<<"Policy "<<policy<<" => Terminated.\n";
+	// 		break;
+	// 	}
+	// 	start_time = clock();
+	// }
+	// average_time_per_node = average_time_per_node / nodesExpanded;
+	// return average_time_per_node;
+
+	if (!InitializeSearch(_env, from, to, thePath))
 	{
 		return 0.0;
 	}
@@ -1045,7 +1070,7 @@ float DSDWAStar<state,action,environment,openList>::GetPath_v3(environment *_env
 	float average_time_per_node = 0;
 	clock_t start_time, end_time;
     start_time = clock();
-	while (!DoSingleSearchStep_v3(thePath))
+	while (!DoSingleSearchStep(thePath))
 	{
 		end_time = clock();
 		float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
