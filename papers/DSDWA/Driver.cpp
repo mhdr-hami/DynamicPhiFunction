@@ -1133,9 +1133,11 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			start_time = clock();
 
 			float avg_runtime_per_node = dsd.GetPath_v3(me, start, goal, solution);
+			avg_runtime_per_node *= pow(10, 9);
 
 			end_time = clock();
 			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+			total_runningTime *= pow(10, 9);
 				
 			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
 
