@@ -22,6 +22,7 @@
 #include "GenericSearchAlgorithm.h"
 #include <unordered_map>
 #include <map>
+#include <ctime>
 
 template<typename state>
 class DPSData {
@@ -53,6 +54,7 @@ public:
 	DynamicPotentialSearch() { ResetNodeCount(); env = 0; weight=3; bound = 1.5; theHeuristic = 0; }
 	virtual ~DynamicPotentialSearch() {}
 	void GetPath(environment *env, const state& from, const state& to, std::vector<state> &thePath);
+	float GetPath_v2(environment *env, const state& from, const state& to, std::vector<state> &thePath);
 	void GetPath(environment *, const state& , const state& , std::vector<action> & );
 	
 //	AStarOpenClosed<state, AStarCompare<state>> open;
@@ -189,6 +191,50 @@ void DynamicPotentialSearch<state,action,environment>::GetPath(environment *_env
 		// 	std::cout<<nodesExpanded<<" nodes are expanded and "<<nodesReOpened<<" nodes are re-opened.\n";
 		// }
 	}
+}
+
+/**
+ * Perform an A* search between two states.
+ * @author Nathan Sturtevant
+ * @date 03/22/06
+ *
+ * @param _env The search environment
+ * @param from The start state
+ * @param to The goal state
+ * @param thePath A vector of states which will contain an optimal path
+ * between from and to when the function returns, if one exists.
+ * This is a new version that returns average time per node.
+ */
+template <class state, class action, class environment>
+float DynamicPotentialSearch<state,action,environment>::GetPath_v2(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
+{
+	//discardcount=0;
+	if (!InitializeSearch(_env, from, to, thePath))
+	{
+		return 0.0;
+	}
+	float average_time_per_node = 0;
+	clock_t start_time, end_time;
+	start_time = clock();
+	while (!DoSingleSearchStep(thePath))
+	{ 
+		end_time = clock();
+		float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+		average_time_per_node += runningTime;
+		if (10000000 <= nodesExpanded){
+			//Terminate the search after 10 million node expansions.
+			printf("%" PRId64 " nodes expanded, %" PRId64 " generated. ", nodesExpanded, nodesTouched);
+			std::cout<<"DPS => Terminated.\n";
+			break;
+		}
+		start_time = clock();
+		// if (nodesExpanded % 10000 == 0){
+		// 	// Print information of expanded nodes and nodes in open.
+		// 	std::cout<<nodesExpanded<<" nodes are expanded and "<<nodesReOpened<<" nodes are re-opened.\n";
+		// }
+	}
+	average_time_per_node = average_time_per_node / nodesExpanded;
+	return average_time_per_node;
 }
 
 template <class state, class action, class environment>
