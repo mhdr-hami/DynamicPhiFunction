@@ -691,11 +691,20 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			tas.SetPhi([=](double h,double g){return g+h;});
 		}
 		
-		tas_mnp.InitializeSearch(&mnp, start, goal, path);
+		// tas_mnp.InitializeSearch(&mnp, start, goal, path);
+		// tas_mnp.GetPath(&mnp, start, goal, path);
+		// printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), tas_mnp.GetNodesExpanded(), path.size());
 
-		tas_mnp.GetPath(&mnp, start, goal, path);
+		tas_mnp.InitializeSearch_v3(&mnp, start, goal, path);
+		clock_t start_time, end_time;
+    	start_time = clock();
+
+		float avg_runtime_per_node = tas_mnp.GetPath_v3(&mnp, start, goal, path);
+
+		end_time = clock();
+		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
 			
-		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), tas_mnp.GetNodesExpanded(), path.size());
+		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), tas_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
 			
 		exit(0);
 	}
@@ -740,10 +749,22 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 		mnp.SetMaxMinTileCost(start); //2
 
-		dsd_mnp.InitializeSearch(&mnp, start, goal, path);
+		// dsd_mnp.InitializeSearch(&mnp, start, goal, path);
+		// dsd_mnp.GetPath(&mnp, start, goal, path);
+		// printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
 
-		dsd_mnp.GetPath(&mnp, start, goal, path);
+		dsd_mnp.InitializeSearch_v3(&mnp, start, goal, path);
+		clock_t start_time, end_time;
+    	start_time = clock();
 
+		float avg_runtime_per_node = dsd_mnp.GetPath_v3(&mnp, start, goal, path);
+
+		end_time = clock();
+		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+			
+		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+		
+		
 		//Save the SVG of the isoloines plots
 		if(saveSVG && (dsd_mnp.policy==5)){
 			Graphics::Display d;
@@ -751,8 +772,6 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			std::string s = "stp="+ string(argument[1])+"_w="+string(argument[3])+".svg";
 			MakeSVG(d, s.c_str(), 750,750,0);
 		}
-			
-		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), atoi(argument[2]), atof(argument[3]), dsd_mnp.GetNodesExpanded(), path.size());
 			
 		exit(0);
 	}
@@ -785,11 +804,22 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 		// case 0:UnitWeight, case 1:SquareRoot, case 2:Squared, 
 		// case 3:UnitPlusFrac, case 4:SquarePlusOneRoot, case 5:DW
 
-		DPS_mnp.InitializeSearch(&mnp, start, goal, path);
-		DPS_mnp.GetPath(&mnp, start, goal, path);
-
-		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), 6, atof(argument[2]), DPS_mnp.GetNodesExpanded(), path.size());
+		// DPS_mnp.InitializeSearch(&mnp, start, goal, path);
+		// DPS_mnp.GetPath(&mnp, start, goal, path);
+		// printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu\n", atoi(argument[1]), 6, atof(argument[2]), DPS_mnp.GetNodesExpanded(), path.size());
 		
+		DPS_mnp.InitializeSearch_v3(&mnp, start, goal, path);
+		clock_t start_time, end_time;
+    	start_time = clock();
+
+		float avg_runtime_per_node = DPS_mnp.GetPath_v3(&mnp, start, goal, path);
+
+		end_time = clock();
+		float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+			
+		printf("Time - STP %d ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f \n", atoi(argument[1]), 6, atoi(argument[2]), atof(argument[3]), DPS_mnp.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+		
+
 		exit(0);
 	}
 	else if (strcmp(argument[0], "-gridBaseLines") == 0){
@@ -942,10 +972,20 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			tas.SetPhi([=](double h,double g){return g+h;});
 			}
 			
-			tas.InitializeSearch(me, start, goal, solution);
+			// tas.InitializeSearch(me, start, goal, solution);
+			// tas.GetPath(me, start, goal, solution);
+			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), me->GetPathLength(solution));
 
-			tas.GetPath(me, start, goal, solution);
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), me->GetPathLength(solution));
+			tas.InitializeSearch_v3(me, start, goal, solution);
+			clock_t start_time, end_time;
+			start_time = clock();
+
+			float avg_runtime_per_node = tas.GetPath_v3(me, start, goal, solution);
+
+			end_time = clock();
+			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+				
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
 
 		}
 		exit(0);
@@ -1084,10 +1124,21 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				}
 			}
 			
-			dsd.InitializeSearch(me, start, goal, solution);
-			
-			dsd.GetPath(me, start, goal, solution);
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+			// dsd.InitializeSearch(me, start, goal, solution);
+			// dsd.GetPath(me, start, goal, solution);
+			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), me->GetPathLength(solution));
+
+			dsd.InitializeSearch_v3(me, start, goal, solution);
+			clock_t start_time, end_time;
+			start_time = clock();
+
+			float avg_runtime_per_node = dsd.GetPath_v3(me, start, goal, solution);
+
+			end_time = clock();
+			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+				
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+
 		}
 		exit(0);
 	}
@@ -1220,10 +1271,21 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 				}
 			}
 			
-			dps.InitializeSearch(me, start, goal, solution);
-			
-			dps.GetPath(me, start, goal, solution);
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps.GetNodesExpanded(), me->GetPathLength(solution));
+			// dps.InitializeSearch(me, start, goal, solution);
+			// dps.GetPath(me, start, goal, solution);
+			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu path %f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps.GetNodesExpanded(), me->GetPathLength(solution));
+
+			dps.InitializeSearch_v3(me, start, goal, solution);
+			clock_t start_time, end_time;
+			start_time = clock();
+
+			float avg_runtime_per_node = dps.GetPath_v3(me, start, goal, solution);
+
+			end_time = clock();
+			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+				
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dps.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+
 		}
 		exit(0);
 	}
@@ -1304,10 +1366,21 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			tas_track.SetPhi([=](double h,double g){return (g+h+sqrt((g+h)*(g+h)+4*proveBound*(proveBound-1)*h*h))/(2*proveBound);});
 			}
 
-			tas_track.InitializeSearch(r, from, end, path);
-			tas_track.GetPath(r, from, end, path);
+			// tas_track.InitializeSearch(r, from, end, path);
+			// tas_track.GetPath(r, from, end, path);
+			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas_track.GetNodesExpanded());
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas_track.GetNodesExpanded());
+			tas_track.InitializeSearch_v3(r, from, end, path);
+			clock_t start_time, end_time;
+			start_time = clock();
+
+			float avg_runtime_per_node = tas_track.GetPath_v3(r, from, end, path);
+
+			end_time = clock();
+			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+				
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), tas_track.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+
 
 		}
 		exit(0);
@@ -1372,10 +1445,21 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 
 			r->UpdateMap(m);
 
-			dsd_track.InitializeSearch(r, from, end, path);
-			dsd_track.GetPath(r, from, end, path);
+			// dsd_track.InitializeSearch(r, from, end, path);
+			// dsd_track.GetPath(r, from, end, path);
+			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd_track.GetNodesExpanded());
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd_track.GetNodesExpanded());
+			dsd_track.InitializeSearch_v3(r, from, end, path);
+			clock_t start_time, end_time;
+			start_time = clock();
+
+			float avg_runtime_per_node = dsd_track.GetPath_v3(r, from, end, path);
+
+			end_time = clock();
+			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+				
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), atoi(argument[3]), atof(argument[4]), dsd_track.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+
 
 		}
 		exit(0);
@@ -1441,10 +1525,21 @@ int MyCLHandler(char *argument[], int maxNumArgs)
 			double proveBound = atof(argument[3]);
 			dps_track.SetOptimalityBound(proveBound);
 
-			dps_track.InitializeSearch(r, from, end, path);
-			dps_track.GetPath(r, from, end, path);
+			// dps_track.InitializeSearch(r, from, end, path);
+			// dps_track.GetPath(r, from, end, path);
+			// printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps_track.GetNodesExpanded());
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu \n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps_track.GetNodesExpanded());
+			dps_track.InitializeSearch_v3(r, from, end, path);
+			clock_t start_time, end_time;
+			start_time = clock();
+
+			float avg_runtime_per_node = dps_track.GetPath_v3(r, from, end, path);
+
+			end_time = clock();
+			float total_runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
+				
+			printf("Time - MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu total_runningTime %1.3f avg_runtime_per_node %1.3f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps_track.GetNodesExpanded(), total_runningTime, avg_runtime_per_node);
+
 
 		}
 		
