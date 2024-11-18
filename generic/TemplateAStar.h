@@ -30,7 +30,6 @@
 #include "BucketOpenClosed.h"
 //#include "SearchEnvironment.h" // for the SearchEnvironment class
 #include "float.h"
-#include <ctime>
 
 #include <algorithm> // for vector reverse
 
@@ -82,7 +81,6 @@ public:
 	}
 	virtual ~TemplateAStar() {}
 	void GetPath(environment *env, const state& from, const state& to, std::vector<state> &thePath);
-	float GetPath_v2(environment *env, const state& from, const state& to, std::vector<state> &thePath);
 	void GetPath(environment *, const state&, const state&, std::vector<action> & ); 
 	void ExtendGoal(environment *env, const state& theNode, std::vector<state> &theList, int NumGoalStates);
 	
@@ -233,46 +231,6 @@ void TemplateAStar<state,action,environment,openList>::GetPath(environment *_env
 //		if (0 == nodesExpanded%100000)
 //			printf("%" PRId64 " nodes expanded, %" PRId64 " generated\n", nodesExpanded, nodesTouched);
 	}
-}
-
-/**
- * Perform an A* search between two states.  
- * @author Nathan Sturtevant
- * @date 03/22/06
- *
- * @param _env The search environment
- * @param from The start state
- * @param to The goal state
- * @param thePath A vector of states which will contain an optimal path 
- * between from and to when the function returns, if one exists. 
- */
-template <class state, class action, class environment, class openList>
-float TemplateAStar<state,action,environment,openList>::GetPath_v2(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
-{
-	if (!InitializeSearch(_env, from, to, thePath))
-    {
-        return 0.0;
-    }
-    // keeps doing single search step, which is expansion of one node, and adding its successors to open
-    // until the solution is found or open is empty.
-    float average_time_per_node = 0;
-    clock_t start_time, end_time;
-    start_time = clock();
-    while (!DoSingleSearchStep(thePath))
-    {
-        end_time = clock();
-        float runningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
-        average_time_per_node += runningTime;
-        if (10000000 == nodesExpanded){
-            //Terminate the search after 10 million node expansions.
-            printf("%" PRId64 " nodes expanded, %" PRId64 " generated. ", nodesExpanded, nodesTouched);
-            std::cout<<"Policy "<<policy<<" => Terminated.\n";
-            break;
-        }
-        start_time = clock();
-    }
-    average_time_per_node = average_time_per_node / nodesExpanded;
-    return average_time_per_node;
 }
 
 template <class state, class action, class environment, class openList>
