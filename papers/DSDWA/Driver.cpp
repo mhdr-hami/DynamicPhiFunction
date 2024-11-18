@@ -234,7 +234,7 @@ void MyWindowHandler(unsigned long windowID, tWindowEventType eType){
 
             if(useLookUpTable){
                 // look_up_table.clear();
-                // dsd.InitializeSearch_v2(me, start, goal, solution);
+                // dsd.InitializeSearch_v3(me, start, goal, solution);
                 LookUpVector.clear();
                 dsd.InitializeSearch_v3(me, start, goal, solution);
 
@@ -392,9 +392,6 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
                     if (solution.size() == 0)
                     {
                         if(mapcmd <= 5 && useLookUpTable){
-                            // if (dsd.DoSingleSearchStep_v2(solution)){
-                            //     std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
-                            // }
                             if (dsd.DoSingleSearchStep_v3(solution)){
                                 std::cout << "Node Expansions: " << dsd.GetNodesExpanded() << "\n";
                             }
@@ -431,7 +428,6 @@ void MyFrameHandler(unsigned long windowID, unsigned int viewport, void *)
                     dsd.DrawPriorityGraph(display);
                 }
                 if(mapcmd <= 5 && useLookUpTable){
-                    // dsd.DrawPriorityGraph_v2(display);
                     dsd.DrawPriorityGraph_v3(display);
                 }
                 else if(mapcmd == 7){
@@ -1925,8 +1921,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                         std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
                     }
                     if(useLookUpTable){
-                        // look_up_table.clear();
-                        // dsd.InitializeSearch_v2(me, start, goal, solution);
                         LookUpVector.clear();
                         dsd.InitializeSearch_v3(me, start, goal, solution);
                         
@@ -1940,7 +1934,7 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                     //Does not apply to Racetrack
                     if(useLookUpTable){
                         look_up_table.clear();
-                        dsd.InitializeSearch_v2(me, start, goal, solution);
+                        dsd.InitializeSearch_v3(me, start, goal, solution);
                     }
                     else{
                         data.resize(0);
@@ -1991,8 +1985,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                         std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
                     }
                     if(useLookUpTable){
-                        // look_up_table.clear();
-                        // dsd.InitializeSearch_v2(me, start, goal, solution);
                         LookUpVector.clear();
                         dsd.InitializeSearch_v3(me, start, goal, solution);
                     }
@@ -2069,10 +2061,14 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                     printf("Problem: %d\n", problemNumber);
                     printf("Policy: %d\n", dsd.policy);
                     printf("Bound: %f\n", bound);
-                    // data.resize(0);
-                    // dsd.InitializeSearch(me, start, goal, solution);
-                    look_up_table.clear();
-                    dsd.InitializeSearch_v2(me, start, goal, solution);
+                    if(useLookUpTable){
+                        LookUpVector.clear();
+                        dsd.InitializeSearch_v3(me, start, goal, solution);
+                    }
+                    else{
+                        data.resize(0);
+                        dsd.InitializeSearch(me, start, goal, solution);
+                    }
                 }
                 else if(mapcmd == 6){
                     //RaceTrack
@@ -2124,8 +2120,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                     printf("Policy: %d\n", dsd.policy);
                     printf("Bound: %f\n", bound);
                     if(useLookUpTable){
-                        // look_up_table.clear();
-                        // dsd.InitializeSearch_v2(me, start, goal, solution);
                         LookUpVector.clear();
                         dsd.InitializeSearch_v3(me, start, goal, solution);
                     }
@@ -2171,8 +2165,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                     printf("Policy: %d\n", dsd.policy);
                     printf("Bound: %f\n", bound);
                     if(useLookUpTable){
-                        // look_up_table.clear();
-                        // dsd.InitializeSearch_v2(me, start, goal, solution);
                         LookUpVector.clear();
                         dsd.InitializeSearch_v3(me, start, goal, solution);
                     }
@@ -2287,8 +2279,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                 printf("Policy: %d\n", dsd.policy);
                 printf("Bound: %f\n", bound);
                 if(useLookUpTable){
-                    // look_up_table.clear();
-                    // dsd.InitializeSearch_v2(me, start, goal, solution);
                     LookUpVector.clear();
                     dsd.InitializeSearch_v3(me, start, goal, solution);
                 }
@@ -2403,8 +2393,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                 printf("Policy: %d\n", dsd.policy);
                 printf("Bound: %f\n", bound);
                 if(useLookUpTable){
-                    // look_up_table.clear();
-                    // dsd.InitializeSearch_v2(me, start, goal, solution);
                     LookUpVector.clear();
                     dsd.InitializeSearch_v3(me, start, goal, solution);
                 }
@@ -2461,8 +2449,6 @@ void MyDisplayHandler(unsigned long windowID, tKeyboardModifier mod, char key)
                     std::cout<<"Cost "<<type<<"="<<Tcosts[i]<<" ("<<hardness[i]<<"*"<<me->GetInputWeight()<<"-"<<(hardness[i]-1)<<")"<<std::endl;
                 }
                 if(useLookUpTable){
-                    // look_up_table.clear();
-                    // dsd.InitializeSearch_v2(me, start, goal, solution);
                     LookUpVector.clear();
                     dsd.InitializeSearch_v3(me, start, goal, solution);
                 }
