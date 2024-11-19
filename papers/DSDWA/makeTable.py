@@ -713,7 +713,6 @@ elif sys.argv[1] == '-map':
 
         ##Experiment 6.0: Creates the work/weight plot
         ##arg[3] is the number of algs and arg[4] is the number of weights
-        print("Hello?!")
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
@@ -767,7 +766,6 @@ elif sys.argv[1] == '-map':
 
         ##Experiment 6.1: Creates the total Running time/weight plot
         ##arg[3] is the number of algs and arg[4] is the number of weights
-        print("Hello?!")
         table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
         TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
