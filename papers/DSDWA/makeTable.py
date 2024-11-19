@@ -23,13 +23,13 @@ mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamo
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'MAP', 6:'DPS', 7:'DWP'}
 # colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:cyan', 'tab:olive', 'tab:blue']
 
-# markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
-# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
-# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
+markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
+int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
+colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
 
-markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
-int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
-colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan']
+# markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
+# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
+# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan']
 
 # markers = [',', '^', 'X', '8', 's', 'o', '*'] ##DWP=6, MAP=5
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'MAP', 6:'DWP'}
@@ -707,3 +707,115 @@ elif sys.argv[1] == '-map':
         # plt.xscale('log')
         plt.savefig(sys.argv[5]+"E5.pdf", format="pdf", bbox_inches="tight")
         plt.show()
+    
+    ##############################################
+    elif sys.argv[2] == '6':
+
+        ##Experiment 6.0: Creates the work/weight plot
+        ##arg[3] is the number of algs and arg[4] is the number of weights
+        print("Hello?!")
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
+
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "MAP" and (data[7] in list(weight_to_int.keys())) and (int(data[5]) in list(int_to_alg.keys())) : #and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
+                        table[int(data[5])][weight_to_int[data[7]]] += int(data[9])
+                        count_table[int(data[5])][weight_to_int[data[7]]] += 1
+                        TheDataSet[int(data[5])][weight_to_int[data[7]]].append(int(data[9]))
+
+        result = np.divide(table, count_table)
+        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        xpoints = np.array(Weights)
+        works = []
+        for policy in int_to_alg:
+            work_i = []
+            for w in list(weight_to_int.keys()):
+                work_i.append(result[policy][weight_to_int[w]])
+            works.append(work_i)
+        for policy in int_to_alg:
+            ypoints = []
+            for i in works[policy]:
+                ypoints.append(i)
+            ypoints = np.array(ypoints)
+
+            if int_to_alg[policy]!='DWP' and int_to_alg[policy]!='MAP':
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy], alpha=0.5)
+            else:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
+            
+            if showErrorBar:
+                for w in range(len(xpoints)):
+                    d = np.array(TheDataSet[policy][w])
+                    l, u = st.norm.interval(confidence=0.95, loc=np.mean(d), scale=st.sem(d))
+                    plt.errorbar(x=xpoints[w], y=ypoints[w], yerr=[[np.mean(d)-l], [u-np.mean(d)]], color=colours[policy], capsize=8)
+            
+        font = {'family':'serif','color':'darkred','size':12}
+        plt.ylabel("Work", fontdict=font)
+        plt.xlabel("Weights", fontdict=font)
+        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        # plt.legend(fontsize="25")
+        plt.xticks(xpoints) 
+        plt.yscale('log')
+        # plt.xscale('log')
+        plt.grid(axis='y', color='0.80', which='major')
+        # plt.savefig(sys.argv[5]+"E4.pdf", format="pdf", bbox_inches="tight")
+        plt.show()
+
+        ##Experiment 6.1: Creates the total Running time/weight plot
+        ##arg[3] is the number of algs and arg[4] is the number of weights
+        print("Hello?!")
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
+
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "MAP" and (data[7] in list(weight_to_int.keys())) and (int(data[5]) in list(int_to_alg.keys())) : #and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
+                        table[int(data[5])][weight_to_int[data[7]]] += float(data[11])
+                        count_table[int(data[5])][weight_to_int[data[7]]] += 1
+                        TheDataSet[int(data[5])][weight_to_int[data[7]]].append(float(data[11]))
+
+        result = np.divide(table, count_table)
+        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        xpoints = np.array(Weights)
+        works = []
+        for policy in int_to_alg:
+            work_i = []
+            for w in list(weight_to_int.keys()):
+                work_i.append(result[policy][weight_to_int[w]])
+            works.append(work_i)
+        for policy in int_to_alg:
+            ypoints = []
+            for i in works[policy]:
+                ypoints.append(i)
+            ypoints = np.array(ypoints)
+
+            if int_to_alg[policy]!='DWP' and int_to_alg[policy]!='MAP':
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy], alpha=0.5)
+            else:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
+            
+            if showErrorBar:
+                for w in range(len(xpoints)):
+                    d = np.array(TheDataSet[policy][w])
+                    l, u = st.norm.interval(confidence=0.95, loc=np.mean(d), scale=st.sem(d))
+                    plt.errorbar(x=xpoints[w], y=ypoints[w], yerr=[[np.mean(d)-l], [u-np.mean(d)]], color=colours[policy], capsize=8)
+            
+        font = {'family':'serif','color':'darkred','size':12}
+        plt.ylabel("Total RunTime (x 10^9)", fontdict=font)
+        plt.xlabel("Weights", fontdict=font)
+        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        # plt.legend(fontsize="25")
+        plt.xticks(xpoints) 
+        plt.yscale('log')
+        # plt.xscale('log')
+        plt.grid(axis='y', color='0.80', which='major')
+        # plt.savefig(sys.argv[5]+"E4.pdf", format="pdf", bbox_inches="tight")
+        plt.show()
+    
