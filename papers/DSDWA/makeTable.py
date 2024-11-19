@@ -23,13 +23,13 @@ mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamo
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'MAP', 6:'DPS', 7:'DWP'}
 # colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:cyan', 'tab:olive', 'tab:blue']
 
-# markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
-# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
-# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
+markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
+int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
+colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
 
-markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
-int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
-colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan']
+# markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
+# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
+# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan']
 
 # markers = [',', '^', 'X', '8', 's', 'o', '*'] ##DWP=6, MAP=5
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'MAP', 6:'DWP'}
@@ -652,7 +652,7 @@ elif sys.argv[1] == '-map':
         # plt.savefig(sys.argv[5]+"E4.pdf", format="pdf", bbox_inches="tight")
         plt.show()
     
-    ############################################################################################
+    ##############################################
     elif sys.argv[2] == '5':
         ##Experiment 5: Creates the solutionQuality/weight plot
         ##arg[3] is the number of algs and arg[4] is the number of weights
@@ -816,4 +816,166 @@ elif sys.argv[1] == '-map':
         plt.grid(axis='y', color='0.80', which='major')
         # plt.savefig(sys.argv[5]+"E4.pdf", format="pdf", bbox_inches="tight")
         plt.show()
+    
+    ##############################################
+    elif sys.argv[2] == '7':
+
+        ##Experiment 7.0: print work table
+        table_0 = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table_0 = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        TheDataSet_0 = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
+
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "MAP" and (data[7] in list(weight_to_int.keys())) and (int(data[5]) in list(int_to_alg.keys())): #and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
+                        table_0[int(data[5])][weight_to_int[data[7]]] += int(data[9])
+                        count_table_0[int(data[5])][weight_to_int[data[7]]] += 1
+                        TheDataSet_0[int(data[5])][weight_to_int[data[7]]].append(int(data[9]))
+
+        result_0 = np.divide(table_0, count_table_0)
+
+        if True:
+            print()
+            print('==========================================  Average Expansions Table  ===========================================')
+            print('Alg / Weight|  1.50   |  2.00   |  3.00   |  4.00   |  5.00   |  6.00   |  7.00   |  8.00   |  9.00   |  10.0   |')
+            print('_________________' * 7)
+            for i in range(len(result_0)):
+                if i!=-1:
+                    print(int_to_alg[i],end="")
+                    for k in range(12-len(int_to_alg[i])):
+                        print(' ',end="")
+                    print('|', end="")
+                    for j in range(len(result_0[i])):
+                        print(round(result_0[i][j], 2), end="")
+                        for k in range(9-len(str(round(result_0[i][j], 2)))):
+                            print(' ',end="")
+                        print('|', end="")
+                    print()
+            print('__________________' * 7)
+                        
+            for cnt in range(len(result_0)):
+                print(str(cnt+1)+' place Alg |', end="")
+                for i in range(len(result_0[0])):
+                    col = result_0[:,i]
+                    print(int_to_alg[np.argsort(col)[cnt]], end="")
+                    # print(int_to_alg[np.argmin(col)], end="")
+                    for k in range(9-len(int_to_alg[np.argsort(col)[cnt]])):
+                        print(' ',end="")
+                    print('|', end="")
+                print()
+            
+            print('=====================================================',end='')
+            for _ in range((26 - len(sys.argv[5]))//2):
+                print(' ', end='')
+            print(sys.argv[5], end='')
+            for _ in range((26 - len(sys.argv[5]))//2):
+                print(' ', end='')
+            print('====================================================')
+            print()
+
+        ##Experiment 7.1: print time table
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
+
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "MAP" and (data[7] in list(weight_to_int.keys())) and (int(data[5]) in list(int_to_alg.keys())): #and data[5]!='0' and data[5]!='1' and data[5]!='6' and data[5]!='8':# and data[9]!='0':
+                        table[int(data[5])][weight_to_int[data[7]]] += float(data[11])
+                        count_table[int(data[5])][weight_to_int[data[7]]] += 1
+                        TheDataSet[int(data[5])][weight_to_int[data[7]]].append(float(data[11]))
+
+        result = np.divide(table, count_table)
+        thousand = np.ones((int(sys.argv[3]), int(sys.argv[4])))
+        thousand = thousand * 1000
+        result = np.divide(result, thousand)
+        
+        if True:
+            print()
+            print('=======================================  Average RunTime (x 10^6) Table  ========================================')
+            print('Alg / Weight|  1.50   |  2.00   |  3.00   |  4.00   |  5.00   |  6.00   |  7.00   |  8.00   |  9.00   |  10.0   |')
+            print('_________________' * 7)
+            for i in range(len(result)):
+                if i!=-1:
+                    print(int_to_alg[i],end="")
+                    for k in range(12-len(int_to_alg[i])):
+                        print(' ',end="")
+                    print('|', end="")
+                    for j in range(len(result[i])):
+                        print(round(result[i][j], 2), end="")
+                        for k in range(9-len(str(round(result[i][j], 2)))):
+                            print(' ',end="")
+                        print('|', end="")
+                    print()
+            print('__________________' * 7)
+                        
+            for cnt in range(len(result)):
+                print(str(cnt+1)+' place Alg |', end="")
+                for i in range(len(result[0])):
+                    col = result[:,i]
+                    print(int_to_alg[np.argsort(col)[cnt]], end="")
+                    # print(int_to_alg[np.argmin(col)], end="")
+                    for k in range(9-len(int_to_alg[np.argsort(col)[cnt]])):
+                        print(' ',end="")
+                    print('|', end="")
+                print()
+            
+            print('=====================================================',end='')
+            for _ in range((26 - len(sys.argv[5]))//2):
+                print(' ', end='')
+            print(sys.argv[5], end='')
+            for _ in range((26 - len(sys.argv[5]))//2):
+                print(' ', end='')
+            print('====================================================')
+            print()
+        
+        ##Experiment 7.2: print avg time per node table
+        result = np.multiply(result, thousand)
+        result = np.divide(result, result_0)
+        
+        if True:
+            print()
+            print('=====================================  Average RunTime/Node (x 10^9) Table  ======================================')
+            print('Alg / Weight|  1.50   |  2.00   |  3.00   |  4.00   |  5.00   |  6.00   |  7.00   |  8.00   |  9.00   |  10.0   |')
+            print('_________________' * 7)
+            for i in range(len(result)):
+                if i!=-1:
+                    print(int_to_alg[i],end="")
+                    for k in range(12-len(int_to_alg[i])):
+                        print(' ',end="")
+                    print('|', end="")
+                    for j in range(len(result[i])):
+                        print(round(result[i][j], 2), end="")
+                        for k in range(9-len(str(round(result[i][j], 2)))):
+                            print(' ',end="")
+                        print('|', end="")
+                    print()
+            print('__________________' * 7)
+                        
+            for cnt in range(len(result)):
+                print(str(cnt+1)+' place Alg |', end="")
+                for i in range(len(result[0])):
+                    col = result[:,i]
+                    print(int_to_alg[np.argsort(col)[cnt]], end="")
+                    # print(int_to_alg[np.argmin(col)], end="")
+                    for k in range(9-len(int_to_alg[np.argsort(col)[cnt]])):
+                        print(' ',end="")
+                    print('|', end="")
+                print()
+            
+            print('=====================================================',end='')
+            for _ in range((26 - len(sys.argv[5]))//2):
+                print(' ', end='')
+            print(sys.argv[5], end='')
+            for _ in range((26 - len(sys.argv[5]))//2):
+                print(' ', end='')
+            print('====================================================')
+            print()
+        
+
+
     
