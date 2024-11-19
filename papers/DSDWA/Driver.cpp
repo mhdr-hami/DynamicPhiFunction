@@ -56,7 +56,7 @@ double Tcosts[4], rdm, hardness[4];
 bool showPlane = false;
 bool searchRunning = false;
 bool saveSVG = false;
-bool useDH = false;
+bool useDH = true;
 bool limitScenarios = false, normalizedSTP= false;
 int numLimitedScenarios = 1000, lowerLimit=50, upperLimit=2500, numScenario=598;
 bool flag = false;
