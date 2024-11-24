@@ -719,13 +719,13 @@ const char *DSDWAStar<state,action,environment,openList>::GetName()
 template <class state, class action, class environment, class openList>
 void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
 {
-    if (!InitializeSearch(_env, from, to, thePath))
+    if (!InitializeSearch_v3(_env, from, to, thePath))
     {
         return;
     }
     // keeps doing single search step, which is expansion of one node, and adding its successors to open
     // until the solution is found or open is empty.
-    while (!DoSingleSearchStep(thePath))
+    while (!DoSingleSearchStep_v3(thePath))
     {
         if (10000000 == nodesExpanded){
             //Terminate the search after 10 million node expansions.
