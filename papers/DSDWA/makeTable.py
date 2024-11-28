@@ -51,7 +51,7 @@ linestyles = OrderedDict(
      ('densely dashdotted',  (0, (3, 1, 1, 1))),
      ('loosely dashdotdotted', (0, (3, 10, 1, 10, 1, 10))),
      ('densely dashdotdotted', (0, (3, 1, 1, 1, 1, 1)))])
-showErrorBar = True
+showErrorBar = False
 tableType = 1
 
 if sys.argv[1] == '-stp':
@@ -366,6 +366,120 @@ if sys.argv[1] == '-stp':
         plt.xticks(xpoints) 
         # plt.yscale('log')
         plt.savefig(sys.argv[5]+"E5.pdf", format="pdf", bbox_inches="tight")
+        plt.show()
+    ##############################################
+    elif sys.argv[2] == '6':
+
+        ##Experiment 6.0: Creates the work/weight plot
+        ##arg[3] is the number of algs and arg[4] is the number of weights
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
+
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "STP" and (data[5] in list(weight_to_int.keys())) and (int(data[3]) in list(int_to_alg.keys())) : #and data[3]!='0' and data[3]!='1' and data[3]!='6' and data[3]!='8': # and data[9]!='0':
+                        table[int(data[3])][weight_to_int[data[5]]] += int(data[7])
+                        count_table[int(data[3])][weight_to_int[data[5]]] += 1
+                        TheDataSet[int(data[3])][weight_to_int[data[5]]].append(int(data[7]))
+
+        result = np.divide(table, count_table)
+
+        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        
+        xpoints = np.array(Weights)
+        works = []
+        for policy in int_to_alg:
+            work_i = []
+            for w in list(weight_to_int.keys()):
+                work_i.append(result[policy][weight_to_int[w]])
+            works.append(work_i)
+        for policy in int_to_alg:
+            ypoints = []
+            for i in works[policy]:
+                ypoints.append(i)
+            ypoints = np.array(ypoints)
+
+            if showErrorBar:
+                for w in range(len(xpoints)):
+                    d = np.array(TheDataSet[policy][w])
+                    l, u = st.norm.interval(confidence=0.95, loc=np.mean(d), scale=st.sem(d))
+                    plt.errorbar(x=xpoints[w], y=ypoints[w], yerr=[[np.mean(d)-l], [u-np.mean(d)]], color=colours[policy], capsize=8)
+
+            if int_to_alg[policy]!='DWP' and int_to_alg[policy]!='MAP':
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy], alpha=0.5)
+            else:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
+
+        font = {'family':'serif','color':'darkred','size':12}
+        plt.ylabel("Work", fontdict=font)
+        plt.xlabel("Weights", fontdict=font)
+        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        # plt.legend(fontsize="26")
+        plt.xticks(xpoints) 
+        plt.yscale('log')
+        plt.grid(axis='y', color='0.80', which='major')
+        # plt.savefig(sys.argv[5]+"E4.pdf", format="pdf", bbox_inches="tight")
+        plt.show()
+
+        ##Experiment 6.1: Creates the Running time/weight plot
+        ##arg[3] is the number of algs and arg[4] is the number of weights
+        table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        count_table = np.zeros((int(sys.argv[3]), int(sys.argv[4])))
+        TheDataSet = [[[] for _ in range(int(sys.argv[4]))] for _ in range(int(sys.argv[3]))]
+
+        with open("./papers/DSDWA/results/"+sys.argv[5]+".txt", "r") as f:
+            for line in f:
+                data = line.split()
+                if(len(data)): ## To check for empy lines
+                    if data[0] == "STP" and (data[5] in list(weight_to_int.keys())) and (int(data[3]) in list(int_to_alg.keys())) : #and data[3]!='0' and data[3]!='1' and data[3]!='6' and data[3]!='8': # and data[9]!='0':
+                        table[int(data[3])][weight_to_int[data[5]]] += float(data[11])
+                        count_table[int(data[3])][weight_to_int[data[5]]] += 1
+                        TheDataSet[int(data[3])][weight_to_int[data[5]]].append(float(data[11]))
+
+        result = np.divide(table, count_table)
+
+        thousand = np.ones((int(sys.argv[3]), int(sys.argv[4])))
+        thousand = thousand * 1000000000
+        result = np.divide(result, thousand)
+
+        Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        
+        xpoints = np.array(Weights)
+        works = []
+        for policy in int_to_alg:
+            work_i = []
+            for w in list(weight_to_int.keys()):
+                work_i.append(result[policy][weight_to_int[w]])
+            works.append(work_i)
+        for policy in int_to_alg:
+            ypoints = []
+            for i in works[policy]:
+                ypoints.append(i)
+            ypoints = np.array(ypoints)
+
+            if showErrorBar:
+                for w in range(len(xpoints)):
+                    d = np.array(TheDataSet[policy][w])
+                    l, u = st.norm.interval(confidence=0.95, loc=np.mean(d), scale=st.sem(d))
+                    plt.errorbar(x=xpoints[w], y=ypoints[w], yerr=[[np.mean(d)-l], [u-np.mean(d)]], color=colours[policy], capsize=8)
+
+            if int_to_alg[policy]!='DWP' and int_to_alg[policy]!='MAP':
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy], alpha=0.5)
+            else:
+                plt.plot(xpoints, ypoints, linestyle=linestyles[list(linestyles.keys())[5]], linewidth = '2.5', marker=markers[policy], ms='10', markeredgecolor="k", label=int_to_alg[policy], color=colours[policy])
+
+        font = {'family':'serif','color':'darkred','size':12}
+        plt.ylabel("Total RunTime", fontdict=font)
+        plt.xlabel("Weights", fontdict=font)
+        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        # plt.legend(fontsize="26")
+        plt.xticks(xpoints) 
+        plt.yscale('log')
+        plt.grid(axis='y', color='0.80', which='major')
+        # plt.savefig(sys.argv[5]+"E4.pdf", format="pdf", bbox_inches="tight")
         plt.show()
     
 ############################################################################################
@@ -780,6 +894,11 @@ elif sys.argv[1] == '-map':
                         TheDataSet[int(data[5])][weight_to_int[data[7]]].append(float(data[11]))
 
         result = np.divide(table, count_table)
+
+        thousand = np.ones((int(sys.argv[3]), int(sys.argv[4])))
+        thousand = thousand * 1000000000
+        result = np.divide(result, thousand)
+
         Weights = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
         xpoints = np.array(Weights)
         works = []
@@ -806,7 +925,7 @@ elif sys.argv[1] == '-map':
                     plt.errorbar(x=xpoints[w], y=ypoints[w], yerr=[[np.mean(d)-l], [u-np.mean(d)]], color=colours[policy], capsize=8)
             
         font = {'family':'serif','color':'darkred','size':12}
-        plt.ylabel("Total RunTime (x 10^9)", fontdict=font)
+        plt.ylabel("Total RunTime", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
         plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
         # plt.legend(fontsize="25")
@@ -836,7 +955,7 @@ elif sys.argv[1] == '-map':
 
         result_0 = np.divide(table_0, count_table_0)
 
-        if True:
+        if False:
             print()
             print('==========================================  Average Expansions Table  ===========================================')
             print('Alg / Weight|  1.50   |  2.00   |  3.00   |  4.00   |  5.00   |  6.00   |  7.00   |  8.00   |  9.00   |  10.0   |')
@@ -894,7 +1013,7 @@ elif sys.argv[1] == '-map':
         thousand = thousand * 1000
         result = np.divide(result, thousand)
         
-        if True:
+        if False:
             print()
             print('=======================================  Average RunTime (x 10^6) Table  ========================================')
             print('Alg / Weight|  1.50   |  2.00   |  3.00   |  4.00   |  5.00   |  6.00   |  7.00   |  8.00   |  9.00   |  10.0   |')
