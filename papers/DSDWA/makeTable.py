@@ -11,16 +11,24 @@ plt.rcParams["legend.framealpha"] = 1.00
 
 weight_to_int = {"1.50":0, "2.00":1, '3.00':2, '4.00':3, '5.00':4, '6.00':5, '7.00':6, '8.00':7, '9.00':8, '10.00':9}
 
-cost='5.0'
-mapType = {0:'Obstacle Square', 1:'Swamped Square Cost='+cost, 2:'Obstacle Diamond', 3:'Swamped Diamond Cost='+cost, 4:'Obstacle Circle', 5:'Swamped Circle Cost='+cost, 6: sys.argv[5]+" Cost="+sys.argv[8]}
 
-markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
-int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
-colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
+
+# markers = [',', '^', 'X', '8', 's', '*', 'd', 'o'] ##DWP=5, MAP=7
+# int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'DPS', 7:'MAP'}
+# colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:olive', 'tab:cyan']
 
 # markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
 # int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
 # colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan']
+
+if int(sys.argv[3])==8:
+    markers = [',', '^', 'X', '8', 's', '*', 'o', 'd'] ##DWP=5, MAP=6, DPS=7
+    int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP', 7:'DPS'}
+    colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan', 'tab:olive']
+if int(sys.argv[3])==7:
+    markers = [',', '^', 'X', '8', 's', '*', 'o'] ##DWP=5, MAP=6
+    int_to_alg = {0:'WA*', 1:'PWXD', 2:'PWXU', 3:'XDP', 4:'XUP', 5:'DWP', 6:'MAP'}
+    colours = ['tab:gray', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:blue', 'tab:cyan']
 
 
 linestyles = OrderedDict(
@@ -289,7 +297,7 @@ if sys.argv[1] == '-stp':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         # plt.legend(fontsize="26")
         plt.xticks(xpoints) 
         plt.yscale('log')
@@ -348,7 +356,7 @@ if sys.argv[1] == '-stp':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         plt.legend(fontsize="26")
         plt.xticks(xpoints) 
         # plt.yscale('log')
@@ -404,7 +412,7 @@ if sys.argv[1] == '-stp':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         # plt.legend(fontsize="26")
         plt.xticks(xpoints) 
         plt.yscale('log')
@@ -462,7 +470,7 @@ if sys.argv[1] == '-stp':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Total RunTime", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         # plt.legend(fontsize="26")
         plt.xticks(xpoints) 
         plt.yscale('log')
@@ -907,7 +915,7 @@ elif sys.argv[1] == '-map':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         # plt.legend(fontsize="25")
         plt.xticks(xpoints) 
         plt.yscale('log')
@@ -964,7 +972,7 @@ elif sys.argv[1] == '-map':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         plt.legend(fontsize="25")
         plt.xticks(xpoints) 
         # plt.yscale('log')
@@ -1019,7 +1027,7 @@ elif sys.argv[1] == '-map':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Work", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         # plt.legend(fontsize="25")
         plt.xticks(xpoints) 
         plt.yscale('log')
@@ -1077,7 +1085,7 @@ elif sys.argv[1] == '-map':
         font = {'family':'serif','color':'darkred','size':12}
         plt.ylabel("Total RunTime", fontdict=font)
         plt.xlabel("Weights", fontdict=font)
-        plt.title(mapType[int(sys.argv[7])]+", Size="+str(sys.argv[6]))
+        plt.title(sys.argv[5])
         # plt.legend(fontsize="25")
         plt.xticks(xpoints) 
         plt.yscale('log')
