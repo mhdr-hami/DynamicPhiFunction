@@ -12,8 +12,8 @@ enum tExpansionPriority {
     kXDP=3,
     kXUP=4,
     DWP=5,
-    MAP=7,
-    kHalfEdgeDrop=6,
+    MAP=6,
+    kHalfEdgeDrop=7,
     kGreedy=8,
     kDSDPolicyCount=9,
 };

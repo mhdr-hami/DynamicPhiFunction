@@ -782,7 +782,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
         float TotalRunningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
         TotalRunningTime *= pow(10, 9);
 
-		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu TotalRunningTime %1.3f\n", atoi(argument[1]), 6, atof(argument[2]), DPS_mnp.GetNodesExpanded(), path.size(), TotalRunningTime);
+		printf("STP %d ALG %d weight %1.2f Nodes %llu path %lu TotalRunningTime %1.3f\n", atoi(argument[1]), 7, atof(argument[2]), DPS_mnp.GetNodesExpanded(), path.size(), TotalRunningTime);
 		
 		exit(0);
 	}
@@ -1971,7 +1971,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
             float TotalRunningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
             TotalRunningTime *= pow(10, 9);
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu TotalRunningTime %1.3f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps.GetNodesExpanded(), TotalRunningTime);
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu TotalRunningTime %1.3f\n", argument[1], x, exp.GetDistance(), 7, atof(argument[3]), dps.GetNodesExpanded(), TotalRunningTime);
 		}
 		exit(0);
 	}
@@ -2216,7 +2216,7 @@ int MyCLHandler(char *argument[], int maxNumArgs)
             float TotalRunningTime = (float) (end_time - start_time) / CLOCKS_PER_SEC;
             TotalRunningTime *= pow(10, 9);
 
-			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu TotalRunningTime %1.3f\n", argument[1], x, exp.GetDistance(), 6, atof(argument[3]), dps_track.GetNodesExpanded(), TotalRunningTime);
+			printf("MAP %s #%d %1.2f ALG %d weight %1.2f Nodes %llu TotalRunningTime %1.3f\n", argument[1], x, exp.GetDistance(), 7, atof(argument[3]), dps_track.GetNodesExpanded(), TotalRunningTime);
 
 		}
 		
