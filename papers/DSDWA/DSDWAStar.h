@@ -1332,8 +1332,8 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                     // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
 
                     double MT = ((secondLast - firstLast) + (thirdLast - secondLast))/(std::abs(double((secondLast - firstLast))) + std::abs(double(thirdLast - secondLast)));
-                    float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*(1-(MT+1)/2);
-                    // float TheNextWeight = minWeight + (maxWeight-minWeight)*(1-(MT+1)/2);
+                    // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*(1-(MT+1)/2);
+                    float TheNextWeight = minWeight + (maxWeight-minWeight)*(1-(MT+1)/2);
                     
                     SetNextWeight_v3(maxSlopeH, maxSlopeG, TheNextWeight);
 
