@@ -18,7 +18,7 @@ enum tExpansionPriority {
     kDSDPolicyCount=9,
 };
 
-double table_step=1.0;
+double table_step=0.5;
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
@@ -1024,28 +1024,28 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep(std::vecto
                     lowMidWeight = (midWeight + minWeight)/2;
                     highMidWeight = (maxWeight + midWeight)/2;
 
-                    // std::vector<uint64_t> tempRegionsVec;
-                    // tempRegionsVec.push_back(firstLast);
-                    // tempRegionsVec.push_back(secondLast);
-                    // tempRegionsVec.push_back(thirdLast);
-                    // std::sort(tempRegionsVec.begin(), tempRegionsVec.end());
+                    std::vector<uint64_t> tempRegionsVec;
+                    tempRegionsVec.push_back(firstLast);
+                    tempRegionsVec.push_back(secondLast);
+                    tempRegionsVec.push_back(thirdLast);
+                    std::sort(tempRegionsVec.begin(), tempRegionsVec.end());
 
-                    // float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
+                    float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
 
-                    // float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
-                    // float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
+                    float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
+                    float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
 
-                    // ////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT REGION)
-                    // //// 0<=wma_N<=1
-                    // if(rangeTop - rangeButtom !=0)
-                    //     wma_N = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-                    // else
-                    //     wma_N = 0;
+                    ////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT REGION)
+                    //// 0<=wma_N<=1
+                    if(rangeTop - rangeButtom !=0)
+                        wma_N = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
+                    else
+                        wma_N = 0;
 
-                    // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
+                    float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
 
-                    double MT = ((secondLast - firstLast) + (thirdLast - secondLast))/(std::abs(double((secondLast - firstLast))) + std::abs(double(thirdLast - secondLast)));
-                    float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*(1-(MT+1)/2);
+                    // double MT = ((secondLast - firstLast) + (thirdLast - secondLast))/(std::abs(double((secondLast - firstLast))) + std::abs(double(thirdLast - secondLast)));
+                    // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*(1-(MT+1)/2);
                     // float TheNextWeight = minWeight + (maxWeight-minWeight)*(1-(MT+1)/2);
                     
                     SetNextWeight(maxSlopeH, maxSlopeG, TheNextWeight);
@@ -1311,29 +1311,29 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                     lowMidWeight = (midWeight + minWeight)/2;
                     highMidWeight = (maxWeight + midWeight)/2;
 
-                    // std::vector<uint64_t> tempRegionsVec;
-                    // tempRegionsVec.push_back(firstLast);
-                    // tempRegionsVec.push_back(secondLast);
-                    // tempRegionsVec.push_back(thirdLast);
-                    // std::sort(tempRegionsVec.begin(), tempRegionsVec.end());
+                    std::vector<uint64_t> tempRegionsVec;
+                    tempRegionsVec.push_back(firstLast);
+                    tempRegionsVec.push_back(secondLast);
+                    tempRegionsVec.push_back(thirdLast);
+                    std::sort(tempRegionsVec.begin(), tempRegionsVec.end());
 
-                    // float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
+                    float WMA = (3*firstLast + 2*secondLast + 1*thirdLast)/6;
 
-                    // float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
-                    // float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
+                    float rangeTop = (3*tempRegionsVec[2] + 2*tempRegionsVec[1] + 1*tempRegionsVec[0])/6;
+                    float rangeButtom = (1*tempRegionsVec[2] + 2*tempRegionsVec[1] + 3*tempRegionsVec[0])/6;
 
-                    // ////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT REGION)
-                    // //// 0<=wma_N<=1
-                    // if(rangeTop - rangeButtom !=0)
-                    //     wma_N = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
-                    // else
-                    //     wma_N = 0;
+                    ////SMALLER WEIGHTS IF (PROGRESS MADE => NODES MOSTLY EXPANDED IN THE MOST RECENT REGION)
+                    //// 0<=wma_N<=1
+                    if(rangeTop - rangeButtom !=0)
+                        wma_N = 1-(WMA - rangeButtom)/(rangeTop - rangeButtom);
+                    else
+                        wma_N = 0;
 
-                    // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
+                    float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
 
-                    double MT = ((secondLast - firstLast) + (thirdLast - secondLast))/(std::abs(double((secondLast - firstLast))) + std::abs(double(thirdLast - secondLast)));
+                    // double MT = ((secondLast - firstLast) + (thirdLast - secondLast))/(std::abs(double((secondLast - firstLast))) + std::abs(double(thirdLast - secondLast)));
                     // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*(1-(MT+1)/2);
-                    float TheNextWeight = minWeight + (maxWeight-minWeight)*(1-(MT+1)/2);
+                    // float TheNextWeight = minWeight + (maxWeight-minWeight)*(1-(MT+1)/2);
                     
                     SetNextWeight_v3(maxSlopeH, maxSlopeG, TheNextWeight);
 
