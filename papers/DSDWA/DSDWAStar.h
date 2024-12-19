@@ -18,7 +18,7 @@ enum tExpansionPriority {
     kDSDPolicyCount=9,
 };
 
-double table_step=2.0;
+double table_step=1.0;
 
 template <class state, class action, class environment, class openList = AStarOpenClosed<state, AStarCompareWithF<state>, AStarOpenClosedDataWithF<state>> >
 class DSDWAStar : public GenericSearchAlgorithm<state,action,environment> {
