@@ -693,6 +693,8 @@ private:
     };
 
     std::vector<DSDdata_v2> LookUpVector;
+
+    static std::array<double, 91> tanTable;
 };
 
 /**
@@ -862,6 +864,11 @@ bool DSDWAStar<state,action,environment,openList>::InitializeSearch_v3(environme
 
     env->SetqueuePiviotState(start);
     env->SetPiviotState();
+
+    for (int i = 0; i <= 90; ++i) {
+        double radians = i * PID180;
+        tanTable[i] = std::tan(radians);
+    }
     
     return true;
 }
@@ -1284,13 +1291,16 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                 if(next_angle>=3)
                 {
                     double prev_angle = (next_angle-1)/(1/table_step);
-                    double prev_slope = std::tan(prev_angle* PID180);
+                    // double prev_slope = std::tan(prev_angle* PID180);
+                    double prev_slope = tanTable[int(prev_angle)];
 
                     double second_prev_angle = (next_angle-2)/(1/table_step);
-                    double second_prev_slope = std::tan(second_prev_angle* PID180);
+                    // double second_prev_slope = std::tan(second_prev_angle* PID180);
+                    double second_prev_slope = tanTable[int(second_prev_angle)];
 
                     double third_prev_angle = (next_angle-3)/(1/table_step);
-                    double third_prev_slope = std::tan(third_prev_angle* PID180);
+                    // double third_prev_slope = std::tan(third_prev_angle* PID180);
+                    double third_prev_slope = tanTable[int(third_prev_angle)];
                     
                     if(maxSlope <= third_prev_slope)
                         thirdLast += 1;
