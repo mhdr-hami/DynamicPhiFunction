@@ -694,7 +694,8 @@ private:
 
     std::vector<DSDdata_v2> LookUpVector;
 
-    std::array<double, 91> tanTable;
+    // std::array<double, 91> tanTable;
+    // std::array<double, 91> tanTable = {0, 0.0174551, 0.0349208, 0.0524078, 0.0699268, 0.0874887, 0.105104, 0.122785, 0.140541, 0.158384, 0.176327, 0.19438, 0.212557, 0.230868, 0.249328, 0.267949, 0.286745, 0.305731, 0.32492, 0.344328, 0.36397, 0.383864, 0.404026, 0.424475, 0.445229, 0.466308, 0.487733, 0.509525, 0.531709, 0.554309, 0.57735, 0.600861, 0.624869, 0.649408, 0.674509, 0.700208, 0.726543, 0.753554, 0.781286, 0.809784, 0.8391, 0.869287, 0.900404, 0.932515, 0.965689, 1, 1.03553, 1.07237, 1.11061, 1.15037, 1.19175, 1.2349, 1.27994, 1.32704, 1.37638, 1.42815, 1.48256, 1.53986, 1.60033, 1.66428, 1.73205, 1.80405, 1.88073, 1.96261, 2.0503, 2.14451, 2.24604, 2.35585, 2.47509, 2.60509, 2.74748, 2.90421, 3.07768, 3.27085, 3.48741, 3.73205, 4.01078, 4.33148, 4.70463, 5.14455, 5.67128, 6.31375, 7.11537, 8.14435, 9.51436, 11.4301, 14.3007, 19.0811, 28.6363, 57.29, 1.63312e+16};
 };
 
 /**
@@ -721,13 +722,13 @@ const char *DSDWAStar<state,action,environment,openList>::GetName()
 template <class state, class action, class environment, class openList>
 void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
 {
-    if (!InitializeSearch(_env, from, to, thePath))
+    if (!InitializeSearch_v3(_env, from, to, thePath))
     {
         return;
     }
     // keeps doing single search step, which is expansion of one node, and adding its successors to open
     // until the solution is found or open is empty.
-    while (!DoSingleSearchStep(thePath))
+    while (!DoSingleSearchStep_v3(thePath))
     {
         if (10000000 == nodesExpanded){
             //Terminate the search after 10 million node expansions.
@@ -864,11 +865,6 @@ bool DSDWAStar<state,action,environment,openList>::InitializeSearch_v3(environme
 
     env->SetqueuePiviotState(start);
     env->SetPiviotState();
-
-    for (int i = 0; i <= 90; ++i) {
-        double radians = i * PID180;
-        tanTable[i] = std::tan(radians);
-    }
     
     return true;
 }
@@ -1291,16 +1287,16 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                 if(next_angle>=3)
                 {
                     double prev_angle = (next_angle-1)/(1/table_step);
-                    // double prev_slope = std::tan(prev_angle* PID180);
-                    double prev_slope = tanTable[(prev_angle)];
+                    double prev_slope = std::tan(prev_angle* PID180);
+                    // double prev_slope = tanTable[(prev_angle)];
 
                     double second_prev_angle = (next_angle-2)/(1/table_step);
-                    // double second_prev_slope = std::tan(second_prev_angle* PID180);
-                    double second_prev_slope = tanTable[(second_prev_angle)];
+                    double second_prev_slope = std::tan(second_prev_angle* PID180);
+                    // double second_prev_slope = tanTable[(second_prev_angle)];
 
                     double third_prev_angle = (next_angle-3)/(1/table_step);
-                    // double third_prev_slope = std::tan(third_prev_angle* PID180);
-                    double third_prev_slope = tanTable[(third_prev_angle)];
+                    double third_prev_slope = std::tan(third_prev_angle* PID180);
+                    // double third_prev_slope = tanTable[(third_prev_angle)];
                     
                     if(maxSlope <= third_prev_slope)
                         thirdLast += 1;
@@ -1313,24 +1309,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                 if(next_angle == 1 || fgreater(rounded_angle, next_angle-1)){
                     float nodeSlope = openClosedList.Lookup(nodeid).g/openClosedList.Lookup(nodeid).h;
                     float wma_N;
-                    // if(next_angle>=3)
-                    // {
-                    //     double prev_angle = (next_angle-1)/(1/table_step);
-                    //     double prev_slope = std::tan(prev_angle* PID180);
-
-                    //     double second_prev_angle = (next_angle-2)/(1/table_step);
-                    //     double second_prev_slope = std::tan(second_prev_angle* PID180);
-
-                    //     double third_prev_angle = (next_angle-3)/(1/table_step);
-                    //     double third_prev_slope = std::tan(third_prev_angle* PID180);
-                        
-                    //     if(nodeSlope <= third_prev_slope)
-                    //         thirdLast += 1;
-                    //     else if(nodeSlope <= second_prev_slope)
-                    //         secondLast += 1;
-                    //     else if(nodeSlope <= prev_slope)
-                    //         firstLast += 1;
-                    // }
 
                     float minWeight, maxWeight, midWeight, lowMidWeight, highMidWeight;
                     GetNextWeightRange_v3(minWeight, maxWeight, maxSlope);
@@ -1358,10 +1336,6 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                         wma_N = 0;
 
                     float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*wma_N;
-
-                    // double MT = ((secondLast - firstLast) + (thirdLast - secondLast))/(std::abs(double((secondLast - firstLast))) + std::abs(double(thirdLast - secondLast)));
-                    // float TheNextWeight = lowMidWeight + (highMidWeight-lowMidWeight)*(1-(MT+1)/2);
-                    // float TheNextWeight = minWeight + (maxWeight-minWeight)*(1-(MT+1)/2);
                     
                     SetNextWeight_v3(maxSlopeH, maxSlopeG, TheNextWeight);
 
