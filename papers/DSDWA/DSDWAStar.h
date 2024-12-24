@@ -1287,15 +1287,18 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                 if(next_angle>=3)
                 {
                     double prev_angle = (next_angle-1)/(1/table_step);
-                    double prev_slope = std::tan(prev_angle* PID180);
+                    // double prev_slope = std::tan(prev_angle* PID180);
+                    double prev_slope = tan(prev_angle* PID180);
                     // double prev_slope = tanTable[(prev_angle)];
 
                     double second_prev_angle = (next_angle-2)/(1/table_step);
-                    double second_prev_slope = std::tan(second_prev_angle* PID180);
+                    // double second_prev_slope = std::tan(second_prev_angle* PID180);
+                    double second_prev_slope = tan(second_prev_angle* PID180);
                     // double second_prev_slope = tanTable[(second_prev_angle)];
 
                     double third_prev_angle = (next_angle-3)/(1/table_step);
-                    double third_prev_slope = std::tan(third_prev_angle* PID180);
+                    // double third_prev_slope = std::tan(third_prev_angle* PID180);
+                    double third_prev_slope = tan(third_prev_angle* PID180);
                     // double third_prev_slope = tanTable[(third_prev_angle)];
                     
                     if(maxSlope <= third_prev_slope)
