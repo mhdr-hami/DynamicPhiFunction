@@ -722,13 +722,13 @@ const char *DSDWAStar<state,action,environment,openList>::GetName()
 template <class state, class action, class environment, class openList>
 void DSDWAStar<state,action,environment,openList>::GetPath(environment *_env, const state& from, const state& to, std::vector<state> &thePath)
 {
-    if (!InitializeSearch_v3(_env, from, to, thePath))
+    if (!InitializeSearch(_env, from, to, thePath))
     {
         return;
     }
     // keeps doing single search step, which is expansion of one node, and adding its successors to open
     // until the solution is found or open is empty.
-    while (!DoSingleSearchStep_v3(thePath))
+    while (!DoSingleSearchStep(thePath))
     {
         if (10000000 == nodesExpanded){
             //Terminate the search after 10 million node expansions.
@@ -1295,7 +1295,7 @@ bool DSDWAStar<state,action,environment,openList>::DoSingleSearchStep_v3(std::ve
                     // double second_prev_slope = tanTable[(second_prev_angle)];
 
                     double third_prev_angle = (next_angle-3)/(1/table_step);
-                    double third_prev_slope = std::tan(third_prev_angle* PID180);
+                    double third_prev_slope = std::tan(third_prev_angle* PID180)
                     // double third_prev_slope = tanTable[(third_prev_angle)];
                     
                     if(maxSlope <= third_prev_slope)
